@@ -1,0 +1,352 @@
+一. 单选题（共20题，66分）
+1. (单选题)课程中提到，在多数普通开发场景下，推荐调用的地理位置接口是(        )
+A. wx.getFuzzyLocation
+B. wx.openLocation
+C. wx.getLocation
+D. wx.chooseAddress
+我的答案:A:wx.getFuzzyLocation;正确答案:A:wx.getFuzzyLocation;
+3.3分
+答案解析：课程中说明，由于精确地理位置接口有限制，大部分场景可使用模糊地理位置接口 getFuzzyLocation。
+知识点：
+地理位置
+模糊定位
+AI讲解
+2. (单选题)在获取用户地理位置之前，首先要做的是(        )
+A. 调用支付接口
+B. 配置 request 域名
+C. 获取用户授权
+D. 创建地图组件
+我的答案:C:获取用户授权;正确答案:C:获取用户授权;
+3.3分
+答案解析：课程中强调，获取地理位置前必须先获得用户授权，这是隐私保护和法规要求。
+知识点：
+地理位置
+用户授权
+AI讲解
+3. (单选题)在小程序中拉起微信支付使用的接口是(        )
+A. wx.openPayment
+B. wx.requestPayment
+C. wx.pay
+D. wx.requestPay
+我的答案:B:wx.requestPayment;正确答案:B:wx.requestPayment;
+3.3分
+答案解析：课程中讲到，前端小程序拉起微信支付页面时使用 wx.requestPayment。
+知识点：
+微信支付
+requestPayment
+AI讲解
+4. (单选题)在小程序缓存接口中，带有 Sync 后缀的方法表示(        )
+A. 同步接口
+B. 网络接口
+C. 回调接口
+D. 加密接口
+我的答案:A:同步接口;正确答案:A:同步接口;
+3.3分
+答案解析：课程中指出，带 Sync 结尾的是同步接口，不带的是异步接口。
+知识点：
+同步与异步
+AI讲解
+5. (单选题)删除指定 key 对应缓存数据的接口是(        )
+A. wx.cleanStorage
+B. wx.deleteStorage
+C. wx.clearStorage
+D. wx.removeStorage
+我的答案:D:wx.removeStorage;正确答案:D:wx.removeStorage;
+3.3分
+答案解析：课程中讲到，删除指定缓存使用 wx.removeStorage。
+知识点：
+本地缓存删除
+removeStorage
+AI讲解
+6. (单选题)课程中提到，小程序前端获取 code 后，下一步通常是(        )
+A. 直接拉起支付
+B. 直接写入本地缓存
+C. 调用后台接口换取登录态
+D. 直接获取 openid
+我的答案:C:调用后台接口换取登录态;正确答案:C:调用后台接口换取登录态;
+3.3分
+答案解析：前端获取 code 后，通常通过 wx.request 调用后台接口，由后台再去换取 openid、unionid 等信息。
+知识点：
+登录流程
+code 换登录态
+AI讲解
+7. (单选题)在微信小程序中，用于异步写入本地缓存的接口是(        )
+A. wx.setStorage
+B. wx.removeStorage
+C. wx.clearStorage
+D. wx.getStorage
+我的答案:A:wx.setStorage;正确答案:A:wx.setStorage;
+3.3分
+答案解析：课程中讲到，写入本地缓存可使用 wx.setStorage，它是不带 Sync 的异步接口。
+知识点：
+本地缓存
+setStorage
+AI讲解
+8. (单选题)下列哪一个接口表示同步读取本地缓存?(        )
+A. wx.removeStorageSync
+B. wx.clearStorageSync
+C. wx.setStorageSync
+D. wx.getStorageSync
+我的答案:D:wx.getStorageSync;正确答案:D:wx.getStorageSync;
+3.3分
+答案解析：课程中明确区分了同步和异步接口，wx.getStorageSync 用于同步读取缓存。
+知识点：
+本地缓存
+getStorageSync
+AI讲解
+9. (单选题)如果要一次性清除小程序中的所有缓存数据，应使用(        )
+A. wx.resetStorage
+B. wx.removeStorage
+C. wx.clearStorage
+D. wx.deleteAllStorage
+我的答案:C:wx.clearStorage;正确答案:C:wx.clearStorage;
+3.3分
+答案解析：课程中说明，wx.clearStorage 用于清除全部缓存数据。
+知识点：
+本地缓存清除
+clearStorage
+AI讲解
+10. (单选题)微信小程序登录时，用于获取登录凭证 code 的接口是(        )
+A. wx.getUserInfo
+B. wx.login
+C. wx.authorize
+D. wx.request
+我的答案:B:wx.login;正确答案:B:wx.login;
+3.3分
+答案解析：课程中明确说明，小程序通过 wx.login 获取登录凭证 code。
+知识点：
+微信登录
+wx.login
+AI讲解
+11. (单选题)在 wx.openDocument 中，如果希望显示右上角菜单按钮，需要设置的参数是(        )
+A. showMenu
+B. showButton
+C. showTopMenu
+D. showRightMenu
+我的答案:A:showMenu;正确答案:A:showMenu;
+3.3分
+答案解析：课程中提到，新版本默认不显示菜单按钮，如需显示要传入 showMenu: true。
+知识点：
+文件打开
+showMenu
+AI讲解
+12. (单选题)下载文件使用的微信小程序接口是(        )
+A. wx.downloadFile
+B. wx.loadFile
+C. wx.fetchFile
+D. wx.saveFile
+我的答案:A:wx.downloadFile;正确答案:A:wx.downloadFile;
+3.3分
+答案解析：课程中说明，文件下载使用 wx.downloadFile。
+知识点：
+文件下载
+downloadFile
+AI讲解
+13. (单选题)若要打开微信内置地图查看某个经纬度位置，应使用(        )
+A. wx.openLocation
+B. wx.mapLocation
+C. wx.openMap
+D. wx.showMap
+我的答案:A:wx.openLocation;正确答案:A:wx.openLocation;
+3.3分
+答案解析：课程中讲到，获取到经纬度后，可通过 wx.openLocation 打开微信内置地图查看。
+知识点：
+地图查看
+openLocation
+AI讲解
+14. (单选题)在 button 上设置用于选择微信头像的 open-type 是(        )
+A. getUserInfo
+B. getAvatar
+C. openAvatar
+D. chooseAvatar
+我的答案:D:chooseAvatar;正确答案:D:chooseAvatar;
+3.3分
+答案解析：课程中讲到，头像获取改为通过 button 的 open-type="chooseAvatar" 实现。
+知识点：
+用户头像
+chooseAvatar
+AI讲解
+15. (单选题)在小程序中，选择用户位置所使用的接口是(        )
+A. wx.selectLocation
+B. wx.getLocation
+C. wx.openLocation
+D. wx.chooseLocation
+我的答案:D:wx.chooseLocation;正确答案:D:wx.chooseLocation;
+3.3分
+答案解析：课程中介绍了 chooseLocation 用于让用户主动选择位置。
+知识点：
+位置选择
+chooseLocation
+AI讲解
+16. (单选题)打开微信客服功能时，课程中提到其适用前提是(        )
+A. 个人小程序即可
+B. 必须是企业小程序
+C. 必须开通云开发
+D. 只要有头像权限即可
+我的答案:B:必须是企业小程序;正确答案:B:必须是企业小程序;
+3.3分
+答案解析：课程中指出，打开微信客服功能要求为企业小程序，个人申请的小程序不能使用。
+知识点：
+微信客服
+企业小程序
+AI讲解
+17. (单选题)用于打开文档文件的微信小程序接口是(        )
+A. wx.openDocument
+B. wx.readDocument
+C. wx.loadDocument
+D. wx.showDocument
+我的答案:A:wx.openDocument;正确答案:A:wx.openDocument;
+3.3分
+答案解析：课程中明确介绍了 wx.openDocument 用于打开文档。
+知识点：
+文件操作
+openDocument
+AI讲解
+18. (单选题)在较新的基础库版本中，获取用户昵称更推荐的方式是(        )
+A. 通过 map 组件填写昵称
+B. 使用 wx.getUserInfo
+C. 通过 input 输入昵称
+D. 使用 wx.getUserProfile
+我的答案:C:通过 input 输入昵称;正确答案:C:通过 input 输入昵称;
+3.3分
+答案解析：课程中说明，较新版本中昵称获取改为通过 input，并设置 type/对应能力为昵称输入方式。
+知识点：
+用户信息获取
+昵称
+AI讲解
+19. (单选题)上传文件到服务器使用的接口是(        )
+A. wx.downloadFile
+B. wx.request
+C. wx.uploadFile
+D. wx.chooseImage
+我的答案:C:wx.uploadFile;正确答案:C:wx.uploadFile;
+3.3分
+答案解析：课程中专门讲解了文件上传接口 wx.uploadFile。
+知识点：
+文件上传
+uploadFile
+AI讲解
+20. (单选题)课程中提到，读取本地缓存时必须传入的参数是(        )
+A. data
+B. url
+C. key
+D. type
+我的答案:C:key;正确答案:C:key;
+3.3分
+答案解析：无论同步还是异步读取缓存，都需要传入 key 来指定读取哪条缓存数据。
+知识点：
+本地缓存读取
+key
+AI讲解
+二. 多选题（共10题，34分）
+21. (多选题)关于文件上传接口 wx.uploadFile，下列说法正确的是(        )
+A. 需要设置文件对应的 name
+B. 上传成功后可在 success 回调中处理业务
+C. 需要指定本地文件路径
+D. 需要指定上传服务器地址
+我的答案:ABCD:需要设置文件对应的 name; 上传成功后可在 success 回调中处理业务; 需要指定本地文件路径; 需要指定上传服务器地址;正确答案:ABCD:需要设置文件对应的 name; 上传成功后可在 success 回调中处理业务; 需要指定本地文件路径; 需要指定上传服务器地址;
+3.4分
+答案解析：课程中对 uploadFile 的主要参数和回调处理都进行了讲解。
+知识点：
+文件上传参数
+AI讲解
+22. (多选题)关于地理位置相关能力，下列说法正确的是(        )
+A. 可通过 chooseLocation 选择位置
+B. 获取位置前通常要完成授权配置
+C. 页面中可借助 map 组件渲染位置
+D. 可通过 openLocation 查看位置
+我的答案:ABCD:可通过 chooseLocation 选择位置; 获取位置前通常要完成授权配置; 页面中可借助 map 组件渲染位置; 可通过 openLocation 查看位置;正确答案:ABCD:可通过 chooseLocation 选择位置; 获取位置前通常要完成授权配置; 页面中可借助 map 组件渲染位置; 可通过 openLocation 查看位置;
+3.4分
+答案解析：这些都是课程中演示过的位置相关常见能力。
+知识点：
+地理位置
+地图组件
+AI讲解
+23. (多选题)微信小程序登录的完整流程中，可能涉及的内容有(        )
+A. wx.request 调用后台接口
+B. wx.login 获取 code
+C. 前端缓存登录态
+D. 后台换取 openid 等凭证
+我的答案:ABCD:wx.request 调用后台接口; wx.login 获取 code; 前端缓存登录态; 后台换取 openid 等凭证;正确答案:ABCD:wx.request 调用后台接口; wx.login 获取 code; 前端缓存登录态; 后台换取 openid 等凭证;
+3.4分
+答案解析：课程中完整梳理了小程序登录流程，从获取 code 到后台校验再到前端缓存登录态。
+知识点：
+登录流程
+AI讲解
+24. (多选题)课程中提到，获取用户地理位置前需要授权的原因包括(        )
+A. 保护用户隐私
+B. 保障用户知情权
+C. 满足法律法规要求
+D. 优化个性化服务
+我的答案:ABCD:保护用户隐私; 保障用户知情权; 满足法律法规要求; 优化个性化服务;正确答案:ABCD:保护用户隐私; 保障用户知情权; 满足法律法规要求; 优化个性化服务;
+3.4分
+答案解析：课程中从隐私、法规、知情权、服务优化四方面解释了为什么必须先授权。
+知识点：
+位置授权原因
+AI讲解
+25. (多选题)课程中提到，较新版本下获取用户相关信息的方式包括(        )
+A. 通过输入框填写昵称
+B. 通过按钮选择微信头像
+C. 一律使用 wx.getUserInfo
+D. 一律使用 wx.getUserProfile
+我的答案:AB:通过输入框填写昵称; 通过按钮选择微信头像;正确答案:AB:通过输入框填写昵称; 通过按钮选择微信头像;
+3.4分
+答案解析：课程中说明新版本对用户信息获取方式做了调整，头像通过按钮选择，昵称通过输入方式获取。
+知识点：
+用户信息获取方式更新
+AI讲解
+26. (多选题)下列哪些文件类型是课程中提到 wx.openDocument 支持打开的?(        )
+A. ppt
+B. pdf
+C. xls
+D. doc
+我的答案:ABCD:ppt; pdf; xls; doc;正确答案:ABCD:ppt; pdf; xls; doc;
+3.4分
+答案解析：课程中明确列举了文档、表格、PPT、PDF 等常见文件类型。
+知识点：
+文件打开
+支持类型
+AI讲解
+27. (多选题)下列属于小程序本地缓存常见操作的是(        )
+A. 清空全部缓存
+B. 删除指定缓存
+C. 写入缓存
+D. 读取缓存
+我的答案:ABCD:清空全部缓存; 删除指定缓存; 写入缓存; 读取缓存;正确答案:ABCD:清空全部缓存; 删除指定缓存; 写入缓存; 读取缓存;
+3.4分
+答案解析：课程中围绕本地缓存讲解了写、读、删除单条、清除全部四类操作。
+知识点：
+本地缓存基本操作
+AI讲解
+28. (多选题)关于微信小程序 AI 推理能力，下列说法正确的是(        )
+A. 可应用于推荐、翻译、智能客服、图像识别等场景
+B. 常见流程包括获取环境、创建会话、加载模型、运行推理
+C. 需要在 AI 平台注册账号并创建应用/模型
+D. 使用前对基础库和微信版本有要求
+我的答案:ABCD:可应用于推荐、翻译、智能客服、图像识别等场景; 常见流程包括获取环境、创建会话、加载模型、运行推理; 需要在 AI 平台注册账号并创建应用/模型; 使用前对基础库和微信版本有要求;正确答案:ABCD:可应用于推荐、翻译、智能客服、图像识别等场景; 常见流程包括获取环境、创建会话、加载模型、运行推理; 需要在 AI 平台注册账号并创建应用/模型; 使用前对基础库和微信版本有要求;
+3.4分
+答案解析：课程中对 AI 推理的前提条件、开发流程和典型场景都做了说明。
+知识点：
+AI推理能力
+应用场景
+AI讲解
+29. (多选题)接入微信支付前，课程中提到通常需要具备的条件有(        )
+A. 配置支付密钥和证书
+B. 商户号
+C. 小程序与商户绑定
+D. 企业小程序 AppID
+我的答案:ABCD:配置支付密钥和证书; 商户号; 小程序与商户绑定; 企业小程序 AppID;正确答案:ABCD:配置支付密钥和证书; 商户号; 小程序与商户绑定; 企业小程序 AppID;
+3.4分
+答案解析：课程中指出，支付接入流程涉及企业主体、商户申请、绑定关系、密钥证书等关键准备工作。
+知识点：
+微信支付接入条件
+AI讲解
+30. (多选题)关于同步接口和异步接口，下列说法正确的是(        )
+A. 同步接口按顺序执行
+B. 带 Sync 后缀的一般为同步接口
+C. 异步接口不必等待当前任务完成
+D. 不带 Sync 的一般为异步接口
+我的答案:ABCD:同步接口按顺序执行; 带 Sync 后缀的一般为同步接口; 异步接口不必等待当前任务完成; 不带 Sync 的一般为异步接口;正确答案:ABCD:同步接口按顺序执行; 带 Sync 后缀的一般为同步接口; 异步接口不必等待当前任务完成; 不带 Sync 的一般为异步接口;
+3.4分
+答案解析：课程中详细说明了同步与异步的区别，以及小程序接口命名上的常见规律。
+知识点：

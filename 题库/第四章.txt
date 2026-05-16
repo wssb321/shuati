@@ -1,0 +1,355 @@
+一. 单选题（共20题，66分）
+1. (单选题)在小程序中，哪一个 API 用于动态设置当前页面的导航栏标题?(        )
+A. wx.setPageTitle
+B. wx.setTitle
+C. wx.navigationTitle
+D. wx.setNavigationBarTitle
+我的答案:D:wx.setNavigationBarTitle;正确答案:D:wx.setNavigationBarTitle;
+3.3分
+答案解析：课程中专门讲解了 wx.setNavigationBarTitle 用于动态设置标题。
+知识点：
+导航栏
+动态标题
+AI讲解
+2. (单选题)课程中提到，小程序 request 合法域名配置时，域名必须使用(        )
+A. https
+B. http
+C. ws
+D. ftp
+我的答案:A:https;正确答案:A:https;
+3.3分
+答案解析：课程明确说明，小程序服务器域名只支持 https 协议。
+知识点：
+合法域名
+https
+AI讲解
+3. (单选题)在微信小程序中，用于给组件传递自定义参数的属性写法是(        )
+A. attr-*
+B. data-*
+C. custom-*
+D. prop-*
+我的答案:B:data-*;正确答案:B:data-*;
+3.3分
+答案解析：课程中讲到，小程序组件可通过 data-* 的方式添加自定义属性，用于参数传递。
+知识点：
+组件自定义属性
+data-*
+AI讲解
+4. (单选题)在课程中，获取页面栈所使用的方法是(        )
+A. wx.getPages(        )
+B. getPageStack(        )
+C. getPages(        )
+D. getCurrentPages(        )
+我的答案:D:getCurrentPages( );正确答案:D:getCurrentPages( );
+3.3分
+答案解析：课程讲到可通过 getCurrentPages( ) 获取当前页面栈。
+知识点：
+页面栈
+getCurrentPages
+AI讲解
+5. (单选题)课程中提到的第二种页面传参方式是通过(        )
+A. 全局数据 globalData
+B. 页面 JSON 配置
+C. 本地缓存
+D. 云开发数据库
+我的答案:A:全局数据 globalData;正确答案:A:全局数据 globalData;
+3.3分
+答案解析：课程讲解了通过 App 中的 globalData 进行页面间传参。
+知识点：
+globalData
+页面传参
+AI讲解
+6. (单选题)以下哪一个 API 可以在页面中显示带标题文本的 loading 提示框?(        )
+A. wx.showLoading
+B. wx.showNavigationBarLoading
+C. wx.showToast
+D. wx.showModal
+我的答案:A:wx.showLoading;正确答案:A:wx.showLoading;
+3.3分
+答案解析：课程中展示了 wx.showLoading，其可以设置 title，如“数据加载中”。
+知识点：
+loading
+wx.showLoading
+AI讲解
+7. (单选题)关于小程序 request 合法域名配置，下列哪项说法是正确的?(        )
+A. 域名必须经过 ICP 备案
+B. 可以直接使用 IP 地址
+C. 必须配置父域名，不能配子域名
+D. 可以直接使用 localhost
+我的答案:A:域名必须经过 ICP 备案;正确答案:A:域名必须经过 ICP 备案;
+3.3分
+答案解析：课程中提到，域名需支持 https、经过 ICP 备案，不能直接使用 IP 或 localhost，且应使用子域名。
+知识点：
+合法域名配置
+ICP
+AI讲解
+8. (单选题)相较于 GET 请求，POST 请求的一个显著特点是(        )
+A. 更适合提交大量数据
+B. 无法携带参数
+C. 安全性一定为零
+D. 参数只能写在 URL 中
+我的答案:A:更适合提交大量数据;正确答案:A:更适合提交大量数据;
+3.3分
+答案解析：课程中讲到，POST 通过请求体传输数据，更适合提交大量数据，安全性也相对更高。
+知识点：
+GET 与 POST 区别
+AI讲解
+9. (单选题)在事件处理函数中，获取当前绑定组件自定义属性值通常使用(        )
+A. e.currentTarget.dataset
+B. e.target.value
+C. e.dataset.currentTarget
+D. e.detail.dataset
+我的答案:A:e.currentTarget.dataset;正确答案:A:e.currentTarget.dataset;
+3.3分
+答案解析：课程中明确说明，获取自定义属性值时，要通过 event.currentTarget.dataset 获取。
+知识点：
+dataset
+事件对象
+AI讲解
+10. (单选题)在目标页面接收 navigateTo 传递参数时，通常在哪个生命周期中通过 options 获取?(        )
+A. onShow
+B. onReady
+C. onHide
+D. onLoad
+我的答案:D:onLoad;正确答案:D:onLoad;
+3.3分
+答案解析：课程中说明，页面跳转时传递的参数，可以在目标页的 onLoad(options) 中获取。
+知识点：
+onLoad
+页面参数获取
+AI讲解
+11. (单选题)当组件上设置了 data-id="1001" 时，在事件函数中获取该值的正确方式是(        )
+A. e.currentTarget.data.id
+B. e.currentTarget.dataset.id
+C. e.target.id
+D. e.dataset.id
+我的答案:B:e.currentTarget.dataset.id;正确答案:B:e.currentTarget.dataset.id;
+3.3分
+答案解析：data-id 会被收集到 dataset 对象中，因此应通过 e.currentTarget.dataset.id 获取。
+知识点：
+dataset
+data-id
+AI讲解
+12. (单选题)课程中提到，设置导航栏颜色时，白色到红色渐变中的“白色”对应的是(        )
+A. 阴影色
+B. 页面背景色
+C. 边框色
+D. 前景色
+我的答案:D:前景色;正确答案:D:前景色;
+3.3分
+答案解析：课程案例中说明，设置导航栏颜色时，白色是前景色，红色是背景色。
+知识点：
+setNavigationBarColor
+前景色背景色
+AI讲解
+13. (单选题)在 wx.request 中，哪个参数是必填的，用于指定服务器接口地址?(        )
+A. header
+B. url
+C. data
+D. method
+我的答案:B:url;正确答案:B:url;
+3.3分
+答案解析：课程中明确说明，url 是必填项，用于设置请求的服务器接口地址。
+知识点：
+wx.request 参数
+url
+AI讲解
+14. (单选题)课程中第三种页面传参方式，是通过什么机制给上一个页面设置数据?(        )
+A. 事件总线
+B. 本地存储
+C. 页面栈
+D. 云函数
+我的答案:C:页面栈;正确答案:C:页面栈;
+3.3分
+答案解析：课程中介绍了通过页面栈获取前一个页面，再调用其 setData 完成传参。
+知识点：
+页面栈
+页面间通信
+AI讲解
+15. (单选题)在小程序页面跳转并携带参数时，课程中介绍的主要 API 是(        )
+A. wx.navigateTo
+B. wx.openPage
+C. wx.redirectUrl
+D. wx.pageTo
+我的答案:A:wx.navigateTo;正确答案:A:wx.navigateTo;
+3.3分
+答案解析：课程中通过 wx.navigateTo 进行页面跳转，并通过 URL 拼接传递参数。
+知识点：
+页面跳转
+wx.navigateTo
+AI讲解
+16. (单选题)如果要在小程序中获取数据，课程建议优先使用哪种请求方式?(        )
+A. DELETE
+B. TRACE
+C. GET
+D. PUT
+我的答案:C:GET;正确答案:C:GET;
+3.3分
+答案解析：课程中指出，获取数据通常使用 GET，请求提交数据通常使用 POST。
+知识点：
+GET
+POST
+AI讲解
+17. (单选题)获取全局应用实例对象的正确方法是(        )
+A. wx.getApplication(        )
+B. this.getApp(        )
+C. getApp(        )
+D. new App(        )
+我的答案:C:getApp( );正确答案:C:getApp( );
+3.3分
+答案解析：课程中说明，通过 getApp( ) 获取全局应用实例，再访问 globalData。
+知识点：
+globalData
+getApp
+AI讲解
+18. (单选题)开启页面下拉刷新的局部配置项是(        )
+A. onReachBottomDistance
+B. pagePullDown
+C. pullRefreshEnable
+D. enablePullDownRefresh
+我的答案:D:enablePullDownRefresh;正确答案:D:enablePullDownRefresh;
+3.3分
+答案解析：课程中说明，开启下拉刷新时可在页面 json 中设置 enablePullDownRefresh: true。
+知识点：
+页面配置
+下拉刷新
+AI讲解
+19. (单选题)课程中提到的页面分享给好友所对应的事件处理函数是(        )
+A. onShareAppMessage
+B. onAddToFavorites
+C. onShareTimeline
+D. onPageShare
+我的答案:A:onShareAppMessage;正确答案:A:onShareAppMessage;
+3.3分
+答案解析：课程中指出，分享给好友使用 onShareAppMessage。
+知识点：
+页面分享
+onShareAppMessage
+AI讲解
+20. (单选题)微信小程序中用于发起网络请求的核心 API 是(        )
+A. wx.fetch
+B. wx.http
+C. wx.request
+D. wx.ajax
+我的答案:C:wx.request;正确答案:C:wx.request;
+3.3分
+答案解析：课程中重点介绍了 wx.request，并提到上传和下载分别是 wx.uploadFile、wx.downloadFile。
+知识点：
+网络请求
+wx.request
+AI讲解
+二. 多选题（共10题，34分）
+21. (多选题)关于 GET 和 POST 请求，下列说法正确的是(        )
+A. POST 更适合提交数据
+B. POST 更适合传递大量数据
+C. GET 常用于获取数据
+D. GET 通过 URL 传参，安全性相对较低
+我的答案:ABCD:POST 更适合提交数据; POST 更适合传递大量数据; GET 常用于获取数据; GET 通过 URL 传参，安全性相对较低;正确答案:ABCD:POST 更适合提交数据; POST 更适合传递大量数据; GET 常用于获取数据; GET 通过 URL 传参，安全性相对较低;
+3.4分
+答案解析：课程中从传输方式、数据量和安全性等方面对 GET 和 POST 进行了对比。
+知识点：
+GET/POST 区别
+AI讲解
+22. (多选题)下列哪些 API 可用于提升网络请求过程中的用户体验?(        )
+A. wx.showToast
+B. wx.showLoading
+C. wx.showModal
+D. wx.showNavigationBarLoading
+我的答案:ABCD:wx.showToast; wx.showLoading; wx.showModal; wx.showNavigationBarLoading;正确答案:ABCD:wx.showToast; wx.showLoading; wx.showModal; wx.showNavigationBarLoading;
+3.4分
+答案解析：课程中讲解了这四种方式，都可用于请求前后或交互过程中的提示与体验优化。
+知识点：
+用户体验优化
+loading/提示框
+AI讲解
+23. (多选题)在 wx.request 中，课程提到的常见参数有(        )
+A. url
+B. header
+C. data
+D. method
+我的答案:ABCD:url; header; data; method;正确答案:ABCD:url; header; data; method;
+3.4分
+答案解析：课程中介绍了 wx.request 的常见参数，包含 url、data、method、header 等。
+知识点：
+wx.request 参数
+AI讲解
+24. (多选题)下列属于课程中提到的小程序网络请求相关 API 的是(        )
+A. wx.connectSocket
+B. wx.downloadFile
+C. wx.request
+D. wx.uploadFile
+我的答案:BCD:wx.downloadFile; wx.request; wx.uploadFile;正确答案:BCD:wx.downloadFile; wx.request; wx.uploadFile;
+3.4分
+答案解析：课程中当前章节明确介绍了这三个网络请求相关 API，其中重点讲了 wx.request。
+知识点：
+网络请求 API
+AI讲解
+25. (多选题)关于小程序合法域名配置，下列说法正确的是(        )
+A. 域名需支持 https
+B. 一般应配置子域名而不是父域名
+C. 域名需完成 ICP 备案
+D. 可以直接使用 localhost 作为正式请求域名
+我的答案:ABC:域名需支持 https; 一般应配置子域名而不是父域名; 域名需完成 ICP 备案;正确答案:ABC:域名需支持 https; 一般应配置子域名而不是父域名; 域名需完成 ICP 备案;
+3.4分
+答案解析：课程中指出，小程序合法域名必须是 https、已备案，不能直接使用 localhost，且一般配置子域名。
+知识点：
+合法域名配置
+AI讲解
+26. (多选题)课程中介绍的小程序页面传参方式包括(        )
+A. 页面栈传参
+B. 事件结合 URL 传参
+C. 全局数据传参
+D. 关系型数据库传参
+我的答案:ABC:页面栈传参; 事件结合 URL 传参; 全局数据传参;正确答案:ABC:页面栈传参; 事件结合 URL 传参; 全局数据传参;
+3.4分
+答案解析：课程讲解了三种页面传参方式:URL 传参、globalData 传参、页面栈传参。
+知识点：
+页面传参方式
+AI讲解
+27. (多选题)下列属于小程序组件常用公共属性的是(        )
+A. class
+B. style
+C. id
+D. data-*
+我的答案:ABCD:class; style; id; data-*;正确答案:ABCD:class; style; id; data-*;
+3.4分
+答案解析：课程中提到，组件常用公共属性包括 id、class、style，同时还可以通过 data-* 添加自定义属性进行传参。
+知识点：
+组件属性
+自定义属性
+AI讲解
+28. (多选题)关于小程序自定义属性 data-*，下列说法正确的是(        )
+A. 获取时常通过 event.currentTarget.dataset
+B. 可用于给组件传递额外参数
+C. * 位置可以自定义名称
+D. 只能传递数字，不能传字符串
+我的答案:ABC:获取时常通过 event.currentTarget.dataset; 可用于给组件传递额外参数; * 位置可以自定义名称;正确答案:ABC:获取时常通过 event.currentTarget.dataset; 可用于给组件传递额外参数; * 位置可以自定义名称;
+3.4分
+答案解析：课程中说明，data-* 用于参数传递，* 可自定义命名，通过 dataset 获取;并未限制只能传数字。
+知识点：
+data-*
+dataset
+AI讲解
+29. (多选题)关于页面事件处理函数，下列说法正确的是(        )
+A. 上拉触底可通过 onReachBottomDistance 配置触发距离
+B. 下拉刷新监听函数是 onPullDownRefresh
+C. 下拉刷新可全局开启，也可局部开启
+D. 一般更建议使用页面级局部配置
+我的答案:ABCD:上拉触底可通过 onReachBottomDistance 配置触发距离; 下拉刷新监听函数是 onPullDownRefresh; 下拉刷新可全局开启，也可局部开启; 一般更建议使用页面级局部配置;正确答案:ABCD:上拉触底可通过 onReachBottomDistance 配置触发距离; 下拉刷新监听函数是 onPullDownRefresh; 下拉刷新可全局开启，也可局部开启; 一般更建议使用页面级局部配置;
+3.4分
+答案解析：课程中完整介绍了下拉刷新和上拉触底的开启方式、配置项以及对应监听函数。
+知识点：
+下拉刷新
+上拉触底
+AI讲解
+30. (多选题)课程中提到的用户分享相关接口或事件包括(        )
+A. onShareQQZone
+B. onShareAppMessage
+C. onAddToFavorites
+D. onShareTimeline
+我的答案:BCD:onShareAppMessage; onAddToFavorites; onShareTimeline;正确答案:BCD:onShareAppMessage; onAddToFavorites; onShareTimeline;
+3.4分
+答案解析：课程中讲到了分享给好友、分享到朋友圈、添加到收藏，分别对应这三个接口/事件。
+知识点：
+分享功能
+收藏功能
