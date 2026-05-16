@@ -33,7 +33,7 @@ export default defineConfig({
       configureServer(server) {
         server.middlewares.use((req, res, next) => {
           if (req.url?.startsWith('/题库/')) {
-            const filePath = path.join(__dirname, req.url);
+            const filePath = path.join(__dirname, 'public', req.url);  // ← 改这里
             if (fs.existsSync(filePath)) {
               const content = fs.readFileSync(filePath, 'utf-8');
               res.setHeader('Content-Type', 'text/plain; charset=utf-8');
@@ -45,7 +45,7 @@ export default defineConfig({
         });
       },
       writeBundle(options, bundle) {
-        const quizDir = path.join(__dirname, '题库');
+        const quizDir = path.join(__dirname, 'public', '题库');  // ← 改这里
         if (fs.existsSync(quizDir)) {
           const files = fs.readdirSync(quizDir);
           files.forEach(file => {
