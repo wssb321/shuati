@@ -82,9 +82,8 @@ export function QuizPage() {
   const loadQuiz = async (quizFile: string) => {
     try {
       setLoading(true);
-      const response = await fetch(`/题库/${quizFile}`);
-      if (!response.ok) {
-        throw new Error('无法加载题库文件');
+      const response = await fetch(`/.题库/${quizFile}`);
+      if (!response.ok) {;
       }
       const content = await response.text();
       const groups = parseQuestionFile(content);
@@ -110,7 +109,7 @@ export function QuizPage() {
     const allQuestions: Question[] = [];
     for (const file of quizFiles) {
       try {
-        const response = await fetch(`/题库/${file}`);
+        const response = await fetch(`/.题库/${file}`);
         if (response.ok) {
           const content = await response.text();
           const groups = parseQuestionFile(content);
