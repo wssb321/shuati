@@ -82,7 +82,7 @@ export function QuizPage() {
   const loadQuiz = async (quizFile: string) => {
     try {
       setLoading(true);
-      const response = await fetch(`/题库/${quizFile}`);
+      const response = await fetch(`/.题库/${quizFile}`);
       if (!response.ok) {;
       }
       const content = await response.text();
@@ -109,7 +109,7 @@ export function QuizPage() {
     const allQuestions: Question[] = [];
     for (const file of quizFiles) {
       try {
-        const response = await fetch(`/题库/${file}`);
+        const response = await fetch(`/.题库/${file}`);
         if (response.ok) {
           const content = await response.text();
           const groups = parseQuestionFile(content);
@@ -233,6 +233,9 @@ export function QuizPage() {
   const handleSelectQuestion = (index: number) => {
     setCurrentQuestionIndex(index);
     setShowMobileMenu(false);
+    if (immediateFeedback && mode === 'practice') {
+      setShowResult(false);
+    }
   };
 
   const handleSubmit = () => {
@@ -874,9 +877,14 @@ export function QuizPage() {
             <div className="flex-1">
               <QuestionCard
                 question={currentQuestion}
-                showResult={showResult}
+                showResult={immediateFeedback ? false : showResult}
                 onAnswerChange={handleAnswerChange}
                 immediateFeedback={immediateFeedback}
+                onCorrectAnswer={() => {
+                  if (currentQuestionIndex < questions.length - 1) {
+                    setCurrentQuestionIndex(currentQuestionIndex + 1);
+                  }
+                }}
                 onAnswerConfirmed={handleAnswerConfirmed}
               />
             </div>
@@ -908,6 +916,7 @@ export function QuizPage() {
           onNext={handleNext}
           onSubmit={handleSubmit}
           showResult={showResult}
+          showSubmit={!immediateFeedback || mode !== 'practice'}
         />
       ) : null}
     </div>

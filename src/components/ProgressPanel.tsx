@@ -8,6 +8,7 @@ interface ProgressPanelProps {
   onNext: () => void;
   onSubmit: () => void;
   showResult: boolean;
+  showSubmit?: boolean;
 }
 
 export function ProgressPanel({
@@ -19,7 +20,8 @@ export function ProgressPanel({
   onPrev,
   onNext,
   onSubmit,
-  showResult
+  showResult,
+  showSubmit = true
 }: ProgressPanelProps) {
   const progress = ((currentIndex + 1) / totalQuestions) * 100;
   const answeredProgress = (answeredCount / totalQuestions) * 100;
@@ -69,7 +71,7 @@ export function ProgressPanel({
             ← 上一题
           </button>
           
-          {!showResult ? (
+          {showSubmit && (!showResult ? (
             <button
               onClick={onSubmit}
               className="flex-1 sm:flex-none px-6 sm:px-8 py-2.5 sm:py-3 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition-colors text-sm sm:text-base font-medium"
@@ -83,7 +85,7 @@ export function ProgressPanel({
             >
               重新开始
             </button>
-          )}
+          ))}
           
           <button
             onClick={onNext}
