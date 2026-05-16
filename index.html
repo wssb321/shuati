@@ -7,6 +7,20 @@
     <meta name="theme-color" content="#ffffff" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <title>Steam游戏管家</title>
+    
+    <!-- 隐藏 Trae Solo 弹窗 -->
+    <style>
+      body > div:last-child {
+        display: none !important;
+      }
+      
+      div[class*="trae-solo"],
+      div[id*="trae-solo"],
+      iframe[src*="trae"] {
+        display: none !important;
+      }
+    </style>
+    
     <script type="module">
       if (import.meta.hot?.on) {
         import.meta.hot.on('vite:error', (error) => {
@@ -19,6 +33,7 @@
       }
     </script>
   </head>
+
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
