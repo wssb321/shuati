@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client'
 import App from './App'
 import './index.css'
 
-console.log('作者:不是我,域名:zzrbsw.com','联系作者:https://github.com/zzrbsw','电话:15989454108,邮箱:3067805413@qq.com','这是挂了服务器的网站,希望不要有人来攻击我,我只用来学习')
+console.log('作者:不是我,域名:zzrbsw.com','github地址:https://github.com/wssb321/shuati','电话:15989454108,邮箱:3067805413@qq.com','仅供学习与参考,请勿用于商业用途,目前网页还没备案,都给我老实一点')
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

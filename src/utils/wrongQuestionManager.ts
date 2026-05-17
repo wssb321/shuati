@@ -9,6 +9,7 @@ export interface WrongQuestion {
   knowledgePoints: string[];
   wrongCount: number;
   lastWrongTime: number;
+  consecutiveCorrect: number;
   sourceQuiz: string;
 }
 
@@ -24,6 +25,7 @@ export function saveWrongQuestion(question: any, userAnswer: string[], sourceQui
     existingQuestion.wrongCount += 1;
     existingQuestion.lastWrongTime = Date.now();
     existingQuestion.userAnswer = userAnswer;
+    existingQuestion.consecutiveCorrect = 0;
   } else {
     wrongQuestions.push({
       id,
@@ -36,11 +38,35 @@ export function saveWrongQuestion(question: any, userAnswer: string[], sourceQui
       knowledgePoints: question.knowledgePoints,
       wrongCount: 1,
       lastWrongTime: Date.now(),
+      consecutiveCorrect: 0,
       sourceQuiz
     });
   }
   
   localStorage.setItem(STORAGE_KEY, JSON.stringify(wrongQuestions));
+}
+
+export function recordCorrectAnswer(questionId: number, sourceQuiz: string): boolean {
+  const wrongQuestions = getWrongQuestions();
+  const id = `${sourceQuiz}_${questionId}`;
+  
+  const existingQuestion = wrongQuestions.find(q => q.id === id);
+  
+  if (!existingQuestion) {
+    return false;
+  }
+  
+  existingQuestion.consecutiveCorrect += 1;
+  
+  // 如果连续答对3次，从错题库中移除
+  if (existingQuestion.consecutiveCorrect >= 3) {
+    const filtered = wrongQuestions.filter(q => q.id !== id);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(filtered));
+    return true;
+  }
+  
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(wrongQuestions));
+  return false;
 }
 
 export function getWrongQuestions(): WrongQuestion[] {

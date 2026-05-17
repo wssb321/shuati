@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Question } from '../utils/questionParser';
+import { isBookmarked, toggleBookmark } from '../utils/bookmarkManager';
 
 interface QuestionCardProps {
   question: Question;
@@ -8,11 +9,26 @@ interface QuestionCardProps {
   immediateFeedback?: boolean;
   onCorrectAnswer?: () => void;
   onAnswerConfirmed?: (answers: string[]) => void;
+  quizFile?: string;
 }
 
-export function QuestionCard({ question, showResult, onAnswerChange, immediateFeedback = false, onCorrectAnswer, onAnswerConfirmed }: QuestionCardProps) {
+export function QuestionCard({ question, showResult, onAnswerChange, immediateFeedback = false, onCorrectAnswer, onAnswerConfirmed, quizFile = '' }: QuestionCardProps) {
   const [selected, setSelected] = useState<string[]>(question.userAnswer || []);
   const [showAnswer, setShowAnswer] = useState(false);
+  const [bookmarked, setBookmarked] = useState(false);
+
+  useEffect(() => {
+    if (quizFile) {
+      setBookmarked(isBookmarked(question.id, quizFile));
+    }
+  }, [question.id, quizFile]);
+
+  const handleBookmarkToggle = () => {
+    if (quizFile) {
+      const newStatus = toggleBookmark(question.id, quizFile);
+      setBookmarked(newStatus);
+    }
+  };
 
   useEffect(() => {
     setSelected(question.userAnswer || []);
@@ -115,7 +131,30 @@ export function QuestionCard({ question, showResult, onAnswerChange, immediateFe
           </span>
           <span className="text-xs sm:text-sm text-gray-500">第 {question.id} 题</span>
         </div>
-        <span className="text-sm sm:text-base font-semibold text-amber-600">{question.score} 分</span>
+        <div className="flex items-center gap-2">
+          <span className="text-sm sm:text-base font-semibold text-amber-600">{question.score} 分</span>
+          {quizFile && (
+            <button
+              onClick={handleBookmarkToggle}
+              className={`p-1.5 rounded-lg transition-colors ${
+                bookmarked 
+                  ? 'text-yellow-500 hover:text-yellow-600 bg-yellow-50' 
+                  : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100'
+              }`}
+              title={bookmarked ? '取消收藏' : '收藏题目'}
+            >
+              {bookmarked ? (
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                </svg>
+              ) : (
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                </svg>
+              )}
+            </button>
+          )}
+        </div>
       </div>
       
       <h3 className="text-base sm:text-lg font-medium text-gray-800 mb-3 sm:mb-4 leading-relaxed">

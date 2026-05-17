@@ -1,13 +1,82 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { QuestionCard } from '../components/QuestionCard';
 import { ProgressPanel } from '../components/ProgressPanel';
 import { QuestionList } from '../components/QuestionList';
+import FuzzyText from '../components/FuzzyText';
 import { parseQuestionFile, Question, QuestionGroup, shuffleArray } from '../utils/questionParser';
-import { saveWrongQuestion, getWrongQuestions, removeWrongQuestion, clearWrongQuestions, convertToQuestion } from '../utils/wrongQuestionManager';
+import { saveWrongQuestion, getWrongQuestions, removeWrongQuestion, clearWrongQuestions, convertToQuestion, recordCorrectAnswer } from '../utils/wrongQuestionManager';
+import { getBookmarks } from '../utils/bookmarkManager';
+import { 
+  saveQuizProgress, 
+  getQuizProgress, 
+  clearQuizProgress, 
+  hasQuizProgress, 
+  QuizProgress as StoredQuizProgress, 
+  AnswerRecord,
+  shouldCleanup,
+  clearExpiredProgress
+} from '../utils/progressManager';
 
 type Mode = 'practice' | 'exam' | 'mixed' | 'wrong';
 
+interface ResumeModalProps {
+  quizId: string;
+  progress: StoredQuizProgress;
+  onContinue: () => void;
+  onRestart: () => void;
+}
+
+function ResumeModal({ quizId, progress, onContinue, onRestart }: ResumeModalProps) {
+  const answeredCount = progress.answerRecords.length;
+  const totalQuestions = progress.questions.length;
+  const lastUpdate = new Date(progress.lastUpdateTime).toLocaleString('zh-CN');
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
+      <div className="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 animate-fadeIn">
+        <div className="text-center mb-6">
+          <div className="text-5xl mb-4">📋</div>
+          <h3 className="text-xl font-bold text-gray-800 mb-2">检测到未完成的答题</h3>
+          <p className="text-gray-500 text-sm">试卷: {quizId.replace('.txt', '')}</p>
+        </div>
+        
+        <div className="bg-gray-50 rounded-xl p-4 mb-6 space-y-2">
+          <div className="flex justify-between text-sm">
+            <span className="text-gray-500">已答题目</span>
+            <span className="font-medium text-gray-800">{answeredCount}/{totalQuestions}</span>
+          </div>
+          <div className="flex justify-between text-sm">
+            <span className="text-gray-500">当前得分</span>
+            <span className="font-medium text-gray-800">{progress.score}分</span>
+          </div>
+          <div className="flex justify-between text-sm">
+            <span className="text-gray-500">上次答题</span>
+            <span className="text-gray-500">{lastUpdate}</span>
+          </div>
+        </div>
+
+        <div className="space-y-3">
+          <button
+            onClick={onContinue}
+            className="w-full py-3 bg-blue-500 text-white rounded-xl hover:bg-blue-600 font-medium transition-colors"
+          >
+            继续答题
+          </button>
+          <button
+            onClick={onRestart}
+            className="w-full py-3 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 font-medium transition-colors"
+          >
+            重新开始
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function QuizPage() {
+  const navigate = useNavigate();
   const [questionGroups, setQuestionGroups] = useState<QuestionGroup[]>([]);
   const [currentGroupIndex, setCurrentGroupIndex] = useState(0);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -38,6 +107,17 @@ export function QuizPage() {
   const [wrongQuestionsCount, setWrongQuestionsCount] = useState(0);
   const [wrongQuestions, setWrongQuestions] = useState<Question[]>([]);
   const [isWrongMode, setIsWrongMode] = useState(false);
+  const [showResumeModal, setShowResumeModal] = useState(false);
+  const [pendingProgress, setPendingProgress] = useState<StoredQuizProgress | null>(null);
+  const [startTime, setStartTime] = useState(Date.now());
+  const [answerRecords, setAnswerRecords] = useState<AnswerRecord[]>([]);
+  const [bookmarkCount, setBookmarkCount] = useState(0);
+
+  useEffect(() => {
+    if (shouldCleanup()) {
+      clearExpiredProgress();
+    }
+  }, []);
 
   useEffect(() => {
     const discoverQuizzes = async () => {
@@ -45,8 +125,29 @@ export function QuizPage() {
         const quizzes = ['第四章.txt', '第五章.txt', '第六章.txt', '第七章.txt', '第八章.txt', '第八章2.txt', '第八章3.txt', '第八章4.txt', '第八章5.txt', '第九章.txt', '第九章1.txt', '第九章2.txt', '第九章3.txt', '第九章4.txt'];
         setAvailableQuizzes(quizzes);
         setSelectedQuizFiles(quizzes);
+        
+        // 先检查是否有未完成的进度
+        let hasProgress = false;
+        let progressData = null;
+        if (hasQuizProgress('第四章.txt')) {
+          const progress = getQuizProgress('第四章.txt');
+          if (progress && !progress.completed) {
+            hasProgress = true;
+            progressData = progress;
+          }
+        }
+        
+        // 始终先正常加载题库
         await loadQuiz('第四章.txt');
         await loadWrongQuestions();
+        updateBookmarkCount();
+        
+        // 然后再显示恢复进度的提示
+        if (hasProgress && progressData) {
+          setPendingProgress(progressData);
+          setShowResumeModal(true);
+        }
+        
         setLoading(false);
       } catch (err) {
         setError('加载题库失败，请检查文件路径');
@@ -59,6 +160,11 @@ export function QuizPage() {
   const updateWrongQuestionsCount = () => {
     const wrongQs = getWrongQuestions();
     setWrongQuestionsCount(wrongQs.length);
+  };
+
+  const updateBookmarkCount = () => {
+    const bookmarks = getBookmarks();
+    setBookmarkCount(bookmarks.length);
   };
 
   useEffect(() => {
@@ -79,11 +185,12 @@ export function QuizPage() {
     };
   }, [examStarted, timeLeft, examCompleted]);
 
-  const loadQuiz = async (quizFile: string) => {
+  const loadQuiz = useCallback(async (quizFile: string) => {
     try {
       setLoading(true);
       const response = await fetch(`/题库/${quizFile}`);
-      if (!response.ok) {;
+      if (!response.ok) {
+        throw new Error('Failed to load quiz');
       }
       const content = await response.text();
       const groups = parseQuestionFile(content);
@@ -97,13 +204,15 @@ export function QuizPage() {
       setShowResult(false);
       setScore(0);
       setCorrectAnswers(new Set());
+      setAnswerRecords([]);
+      setStartTime(Date.now());
       setError('');
       setLoading(false);
     } catch (err) {
       setError('加载题库失败，请检查文件路径');
       setLoading(false);
     }
-  };
+  }, []);
 
   const loadAllQuizzes = async (quizFiles: string[]) => {
     const allQuestions: Question[] = [];
@@ -140,6 +249,8 @@ export function QuizPage() {
     setShowResult(false);
     setScore(0);
     setCorrectAnswers(new Set());
+    setAnswerRecords([]);
+    setStartTime(Date.now());
     setExamStarted(true);
     setExamCompleted(false);
     setTimeLeft(examConfig.duration * 60);
@@ -154,6 +265,8 @@ export function QuizPage() {
     setShowResult(false);
     setScore(0);
     setCorrectAnswers(new Set());
+    setAnswerRecords([]);
+    setStartTime(Date.now());
     setIsMixedMode(true);
   };
 
@@ -179,6 +292,8 @@ export function QuizPage() {
     setShowResult(false);
     setScore(0);
     setCorrectAnswers(new Set());
+    setAnswerRecords([]);
+    setStartTime(Date.now());
     setIsWrongMode(true);
   };
 
@@ -194,10 +309,11 @@ export function QuizPage() {
     if (!isAnswerCorrect && !isWrongMode) {
       saveWrongQuestion(question, userAnswer, currentQuiz);
       updateWrongQuestionsCount();
-    } else if (isAnswerCorrect && isWrongMode) {
-      const wrongQuestionId = `${currentQuiz}_${question.id}`;
-      removeWrongQuestion(wrongQuestionId);
-      updateWrongQuestionsCount();
+    } else if (isAnswerCorrect) {
+      const removed = recordCorrectAnswer(question.id, currentQuiz);
+      if (removed) {
+        updateWrongQuestionsCount();
+      }
     }
   };
 
@@ -208,6 +324,40 @@ export function QuizPage() {
   const handleAnswerChange = (answers: string[]) => {
     if (showResult) return;
     
+    const currentQuestion = questions[currentQuestionIndex];
+    const isCorrect = answers.length === currentQuestion.correctAnswer.length &&
+      answers.every(a => currentQuestion.correctAnswer.includes(a));
+    
+    const newRecord: AnswerRecord = {
+      questionIndex: currentQuestionIndex,
+      questionId: currentQuestion.id,
+      options: answers,
+      isCorrect,
+      timestamp: Date.now()
+    };
+
+    setAnswerRecords(prev => {
+      const existingIndex = prev.findIndex(r => r.questionIndex === currentQuestionIndex);
+      if (existingIndex >= 0) {
+        const newRecords = [...prev];
+        newRecords[existingIndex] = newRecord;
+        return newRecords;
+      }
+      return [...prev, newRecord];
+    });
+
+    if (isCorrect && !correctAnswers.has(currentQuestionIndex)) {
+      setScore(prev => prev + currentQuestion.score);
+      setCorrectAnswers(prev => new Set([...prev, currentQuestionIndex]));
+    } else if (!isCorrect && correctAnswers.has(currentQuestionIndex)) {
+      setScore(prev => prev - currentQuestion.score);
+      setCorrectAnswers(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(currentQuestionIndex);
+        return newSet;
+      });
+    }
+
     setQuestions(prev => {
       const newQuestions = [...prev];
       newQuestions[currentQuestionIndex] = {
@@ -217,6 +367,23 @@ export function QuizPage() {
       return newQuestions;
     });
   };
+
+  useEffect(() => {
+    if (questions.length > 0 && !showResult) {
+      const progress: StoredQuizProgress = {
+        quizId: isExamMode ? 'exam_mode' : isMixedMode ? 'mixed_mode' : isWrongMode ? 'wrong_mode' : currentQuiz,
+        currentQuestionIndex,
+        questions,
+        answerRecords,
+        score,
+        startTime,
+        lastUpdateTime: Date.now(),
+        completed: false,
+        mode: isExamMode ? 'exam' : isMixedMode ? 'mixed' : isWrongMode ? 'wrong' : 'practice'
+      };
+      saveQuizProgress(progress);
+    }
+  }, [currentQuestionIndex, questions, answerRecords, score, startTime]);
 
   const handlePrev = () => {
     if (currentQuestionIndex > 0) {
@@ -244,10 +411,16 @@ export function QuizPage() {
       setShowResult(false);
       setScore(0);
       setCorrectAnswers(new Set());
+      setAnswerRecords([]);
       setCurrentQuestionIndex(0);
       setExamCompleted(false);
       setExamStarted(false);
       setTimeLeft(0);
+      setStartTime(Date.now());
+      
+      const currentQuizId = isExamMode ? 'exam_mode' : isMixedMode ? 'mixed_mode' : isWrongMode ? 'wrong_mode' : currentQuiz;
+      clearQuizProgress(currentQuizId);
+
       if (isExamMode && examQuestions.length > 0) {
         setQuestions(examQuestions);
       }
@@ -260,23 +433,88 @@ export function QuizPage() {
     let totalScore = 0;
     let earnedScore = 0;
     const correct = new Set<number>();
+    const newRecords: AnswerRecord[] = [];
 
     questions.forEach((q, idx) => {
       totalScore += q.score;
-      if (q.userAnswer && 
-          q.userAnswer.length === q.correctAnswer.length &&
-          q.userAnswer.every(a => q.correctAnswer.includes(a))) {
+      const userAnswer = q.userAnswer || [];
+      const isCorrect = userAnswer.length === q.correctAnswer.length &&
+        userAnswer.every(a => q.correctAnswer.includes(a));
+      
+      if (isCorrect) {
         earnedScore += q.score;
         correct.add(idx);
       }
+      
+      newRecords.push({
+        questionIndex: idx,
+        questionId: q.id,
+        options: userAnswer,
+        isCorrect,
+        timestamp: Date.now()
+      });
     });
 
     setScore(earnedScore);
     setCorrectAnswers(correct);
+    setAnswerRecords(newRecords);
     setShowResult(true);
+    
+    const currentQuizId = isExamMode ? 'exam_mode' : isMixedMode ? 'mixed_mode' : isWrongMode ? 'wrong_mode' : currentQuiz;
+    
+    const completedProgress: StoredQuizProgress = {
+      quizId: currentQuizId,
+      currentQuestionIndex,
+      questions,
+      answerRecords: newRecords,
+      score: earnedScore,
+      startTime,
+      lastUpdateTime: Date.now(),
+      completed: true,
+      mode: isExamMode ? 'exam' : isMixedMode ? 'mixed' : isWrongMode ? 'wrong' : 'practice'
+    };
+    saveQuizProgress(completedProgress);
+
     if (isExamMode) {
       setExamCompleted(true);
       setExamStarted(false);
+    }
+  };
+
+  const handleResumeContinue = () => {
+    if (pendingProgress) {
+      // 不覆盖已加载的题目，只恢复进度
+      setCurrentQuestionIndex(pendingProgress.currentQuestionIndex);
+      setScore(pendingProgress.score);
+      setCorrectAnswers(new Set(pendingProgress.answerRecords.filter(r => r.isCorrect).map(r => r.questionIndex)));
+      setAnswerRecords(pendingProgress.answerRecords);
+      setStartTime(pendingProgress.startTime);
+      
+      // 还要根据 answerRecords 恢复题目中的用户选择
+      setQuestions(prevQuestions => {
+        const newQuestions = [...prevQuestions];
+        pendingProgress.answerRecords.forEach(record => {
+          if (newQuestions[record.questionIndex]) {
+            newQuestions[record.questionIndex] = {
+              ...newQuestions[record.questionIndex],
+              userAnswer: record.options
+            };
+          }
+        });
+        return newQuestions;
+      });
+      
+      setShowResumeModal(false);
+      setPendingProgress(null);
+    }
+  };
+
+  const handleResumeRestart = () => {
+    if (pendingProgress) {
+      clearQuizProgress(pendingProgress.quizId);
+      setShowResumeModal(false);
+      setPendingProgress(null);
+      loadQuiz(currentQuiz);
     }
   };
 
@@ -286,6 +524,8 @@ export function QuizPage() {
   };
 
   const exitExam = () => {
+    const currentQuizId = 'exam_mode';
+    clearQuizProgress(currentQuizId);
     setIsExamMode(false);
     setExamStarted(false);
     setExamCompleted(false);
@@ -345,37 +585,80 @@ export function QuizPage() {
   const currentQuestion = questions[currentQuestionIndex];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 pb-36">
+    <div className="min-h-screen bg-transparent pb-36">
+      {showResumeModal && pendingProgress && (
+        <ResumeModal
+          quizId={pendingProgress.quizId}
+          progress={pendingProgress}
+          onContinue={handleResumeContinue}
+          onRestart={handleResumeRestart}
+        />
+      )}
+
       <header className="bg-white shadow-sm sticky top-0 z-40">
-        <div className="max-w-6xl mx-auto px-3 sm:px-4 py-3 sm:py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <h1 className="text-lg sm:text-xl font-bold text-gray-800">
-                📚 {isExamMode ? '模拟考试' : isMixedMode ? '混合题库' : '刷题练习'}
-              </h1>
+        <div className="max-w-6xl mx-auto pl-2 pr-3 sm:pl-2 sm:pr-4 py-2 sm:py-4">
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex-1 min-w-0">
+              <FuzzyText
+                baseIntensity={0.08}
+                hoverIntensity={0.98}
+                enableHover
+                fontSize="clamp(0.9rem, 3.5vw, 1.5rem)"
+                fontWeight={700}
+                color="#1f2937"
+              >
+                {isExamMode ? '模拟考试' : isMixedMode ? '混合题库' : isWrongMode ? '错题练习' : 'Steam刷题管家'}
+              </FuzzyText>
               {isExamMode && examStarted && (
-                <span className={`text-base sm:text-xl font-mono font-bold flex-shrink-0 ${timeLeft <= 300 ? 'text-red-500 animate-pulse' : 'text-blue-600'}`}>
+                <span className={`text-sm sm:text-lg font-mono font-bold flex-shrink-0 ${timeLeft <= 300 ? 'text-red-500 animate-pulse' : 'text-blue-600'}`}>
                   ⏱️ {formatTime(timeLeft)}
                 </span>
               )}
             </div>
             
-            <button
-              onClick={() => setShowMobileMenu(!showMobileMenu)}
-              className="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
-              aria-label="菜单"
-            >
-              <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                {showMobileMenu ? (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                ) : (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
+              {/* 菜单按钮 - 优先显示 */}
+              <button
+                onClick={() => setShowMobileMenu(!showMobileMenu)}
+                className="lg:hidden p-2.5 rounded-lg hover:bg-gray-100 transition-colors relative z-50"
+                aria-label="菜单"
+              >
+                <svg className="w-6 h-6 sm:w-7 sm:h-7 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  {showMobileMenu ? (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  ) : (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                  )}
+                </svg>
+              </button>
+              
+              {/* 收藏夹和错题库按钮 - 在桌面端显示 */}
+              <button
+                onClick={() => navigate('/bookmarks')}
+                className="hidden sm:flex p-2 rounded-lg hover:bg-gray-100 transition-colors items-center gap-1"
+              >
+                <span className="text-xl">⭐</span>
+                {bookmarkCount > 0 && (
+                  <span className="px-1.5 py-0.5 bg-yellow-500 text-white rounded-full text-xs font-bold">
+                    {bookmarkCount}
+                  </span>
                 )}
-              </svg>
-            </button>
+              </button>
+              <button
+                onClick={() => navigate('/wrong-questions')}
+                className="hidden sm:flex p-2 rounded-lg hover:bg-gray-100 transition-colors items-center gap-1"
+              >
+                <span className="text-xl">📋</span>
+                {wrongQuestionsCount > 0 && (
+                  <span className="px-1.5 py-0.5 bg-red-500 text-white rounded-full text-xs font-bold">
+                    {wrongQuestionsCount}
+                  </span>
+                )}
+              </button>
+            </div>
 
             <div className="hidden lg:flex items-center gap-3 sm:gap-4 flex-wrap">
-              {!isExamMode && !isMixedMode && (
+              {!isExamMode && !isMixedMode && !isWrongMode && (
                 <>
                   <div className="flex items-center gap-2">
                     <span className="text-xs sm:text-sm text-gray-600">模式:</span>
@@ -403,9 +686,9 @@ export function QuizPage() {
                         模拟考试
                       </button>
                       <button
-                        onClick={() => setMode('mixed')}
+                        onClick={startMixedMode}
                         className={`px-3 sm:px-4 py-1 sm:py-1.5 rounded-md text-xs sm:text-sm font-medium transition-colors ${
-                          mode === 'mixed' ? 'bg-white shadow text-blue-600' : 'text-gray-600 hover:text-gray-800'
+                          mode === 'mixed' || isMixedMode ? 'bg-white shadow text-blue-600' : 'text-gray-600 hover:text-gray-800'
                         }`}
                       >
                         混合题库
@@ -501,10 +784,11 @@ export function QuizPage() {
                   </button>
                 </div>
               )}
-              {!isExamMode && availableQuizzes.length > 0 && (
+              {!isExamMode && !isMixedMode && !isWrongMode && availableQuizzes.length > 0 && (
                 <select
                   value={currentQuiz}
                   onChange={(e) => {
+                    clearQuizProgress(currentQuiz);
                     setCurrentQuiz(e.target.value);
                     loadQuiz(e.target.value);
                   }}
@@ -515,7 +799,7 @@ export function QuizPage() {
                   ))}
                 </select>
               )}
-              {!isExamMode && questionGroups.length > 0 && (
+              {!isExamMode && !isMixedMode && !isWrongMode && questionGroups.length > 0 && (
                 <select
                   value={currentGroupIndex}
                   onChange={(e) => {
@@ -526,6 +810,8 @@ export function QuizPage() {
                     setShowResult(false);
                     setScore(0);
                     setCorrectAnswers(new Set());
+                    setAnswerRecords([]);
+                    setStartTime(Date.now());
                   }}
                   className="px-3 sm:px-4 py-1.5 sm:py-2 border border-gray-300 rounded-lg bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs sm:text-sm"
                 >
@@ -539,58 +825,82 @@ export function QuizPage() {
 
           {showMobileMenu && (
             <div className="lg:hidden mt-4 pb-2 animate-fadeIn border-t border-gray-100 pt-4 space-y-3">
-              {!isExamMode && !isMixedMode && (
-                <>
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm text-gray-600">模式:</span>
-                    <div className="flex bg-gray-100 rounded-lg p-1 flex-wrap gap-1">
-                      <button
-                        onClick={() => {
-                          setMode('practice');
-                          setShowMobileMenu(false);
-                        }}
-                        className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
-                          mode === 'practice' ? 'bg-white shadow text-blue-600' : 'text-gray-600 hover:text-gray-800'
-                        }`}
-                      >
-                        练习模式
-                      </button>
-                      <button
-                        onClick={() => {
-                          setMode('exam');
-                          setShowMobileMenu(false);
-                        }}
-                        className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
-                          mode === 'exam' ? 'bg-white shadow text-blue-600' : 'text-gray-600 hover:text-gray-800'
-                        }`}
-                      >
-                        模拟考试
-                      </button>
-                      <button
-                        onClick={() => {
-                          setMode('mixed');
-                          setShowMobileMenu(false);
-                        }}
-                        className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
-                          mode === 'mixed' ? 'bg-white shadow text-blue-600' : 'text-gray-600 hover:text-gray-800'
-                        }`}
-                      >
-                        混合题库
-                      </button>
-                    </div>
-                  </div>
-                  {(mode === 'practice' || mode === 'mixed') && (
-                    <label className="flex items-center gap-2 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={immediateFeedback}
-                        onChange={(e) => setImmediateFeedback(e.target.checked)}
-                        className="w-4 h-4 rounded text-blue-500 focus:ring-blue-500"
-                      />
-                      <span className="text-sm text-gray-600">即时反馈</span>
-                    </label>
-                  )}
-                </>
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-600">模式:</span>
+                <div className="flex bg-gray-100 rounded-lg p-1 flex-wrap gap-1">
+                  <button
+                    onClick={() => {
+                      setMode('practice');
+                      setIsExamMode(false);
+                      setIsMixedMode(false);
+                      setIsWrongMode(false);
+                      setShowMobileMenu(false);
+                    }}
+                    className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                      mode === 'practice' && !isExamMode && !isMixedMode && !isWrongMode ? 'bg-white shadow text-blue-600' : 'text-gray-600 hover:text-gray-800'
+                    }`}
+                  >
+                    练习模式
+                  </button>
+                  <button
+                    onClick={() => {
+                      setMode('exam');
+                      setIsExamMode(false);
+                      setIsMixedMode(false);
+                      setIsWrongMode(false);
+                      setShowMobileMenu(false);
+                    }}
+                    className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                      mode === 'exam' && !isExamMode && !isMixedMode && !isWrongMode ? 'bg-white shadow text-blue-600' : 'text-gray-600 hover:text-gray-800'
+                    }`}
+                  >
+                    模拟考试
+                  </button>
+                  <button
+                    onClick={() => {
+                      setMode('mixed');
+                      setIsExamMode(false);
+                      setIsMixedMode(false);
+                      setIsWrongMode(false);
+                      setShowMobileMenu(false);
+                    }}
+                    className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                      mode === 'mixed' && !isExamMode && !isMixedMode && !isWrongMode ? 'bg-white shadow text-blue-600' : 'text-gray-600 hover:text-gray-800'
+                    }`}
+                  >
+                    混合题库
+                  </button>
+                  <button
+                    onClick={() => {
+                      setMode('wrong');
+                      setIsExamMode(false);
+                      setIsMixedMode(false);
+                      setIsWrongMode(false);
+                      setShowMobileMenu(false);
+                    }}
+                    className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                      mode === 'wrong' && !isExamMode && !isMixedMode && !isWrongMode ? 'bg-white shadow text-blue-600' : 'text-gray-600 hover:text-gray-800'
+                    }`}
+                  >
+                    错题练习
+                    {wrongQuestionsCount > 0 && (
+                      <span className="ml-1 px-1.5 py-0.5 bg-red-500 text-white rounded-full text-xs">
+                        {wrongQuestionsCount}
+                      </span>
+                    )}
+                  </button>
+                </div>
+              </div>
+              {(mode === 'practice' || mode === 'mixed') && !isExamMode && !isMixedMode && !isWrongMode && (
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={immediateFeedback}
+                    onChange={(e) => setImmediateFeedback(e.target.checked)}
+                    className="w-4 h-4 rounded text-blue-500 focus:ring-blue-500"
+                  />
+                  <span className="text-sm text-gray-600">即时反馈</span>
+                </label>
               )}
               {mode === 'exam' && !isExamMode && (
                 <button
@@ -636,10 +946,11 @@ export function QuizPage() {
                   退出混合题库
                 </button>
               )}
-              {!isExamMode && availableQuizzes.length > 0 && (
+              {!isExamMode && !isMixedMode && !isWrongMode && availableQuizzes.length > 0 && (
                 <select
                   value={currentQuiz}
                   onChange={(e) => {
+                    clearQuizProgress(currentQuiz);
                     setCurrentQuiz(e.target.value);
                     loadQuiz(e.target.value);
                     setShowMobileMenu(false);
@@ -651,7 +962,7 @@ export function QuizPage() {
                   ))}
                 </select>
               )}
-              {!isExamMode && questionGroups.length > 0 && (
+              {!isExamMode && !isMixedMode && !isWrongMode && questionGroups.length > 0 && (
                 <select
                   value={currentGroupIndex}
                   onChange={(e) => {
@@ -777,6 +1088,7 @@ export function QuizPage() {
                 onAnswerChange={handleAnswerChange}
                 immediateFeedback={false}
                 onAnswerConfirmed={handleAnswerConfirmed}
+                quizFile={currentQuiz}
               />
             </div>
             
@@ -811,6 +1123,7 @@ export function QuizPage() {
                   }
                 }}
                 onAnswerConfirmed={handleAnswerConfirmed}
+                quizFile={currentQuiz}
               />
             </div>
             
@@ -852,6 +1165,7 @@ export function QuizPage() {
                   }
                 }}
                 onAnswerConfirmed={handleAnswerConfirmed}
+                quizFile={currentQuiz}
               />
             </div>
             
@@ -886,6 +1200,7 @@ export function QuizPage() {
                   }
                 }}
                 onAnswerConfirmed={handleAnswerConfirmed}
+                quizFile={currentQuiz}
               />
             </div>
             
