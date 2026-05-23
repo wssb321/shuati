@@ -1,58 +1,136 @@
-# React + TypeScript + Vite
+# 📚 Steam刷题管家
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+一个现代化的在线刷题应用，提供流畅的学习体验和精美的视觉效果。
 
-Currently, two official plugins are available:
+## ✨ 功能特性
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **📝 练习模式** - 自由练习题库，支持即时反馈
+- **🎯 模拟考试** - 随机出题，限时答题
+- **🎲 混合题库** - 跨章节综合练习
+- **📋 错题练习** - 智能错题收集与复习
+- **⭐ 收藏功能** - 收藏重要题目便于复习
+- **💾 进度保存** - 自动保存答题进度
+- **🖱️ 交互背景** - 精美的极光动画效果
 
-## Expanding the ESLint configuration
+## 🛠️ 技术栈
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+| 分类 | 技术 | 版本 |
+| :--- | :--- | :--- |
+| 框架 | React | 18.3.1 |
+| 语言 | TypeScript | ~5.8.3 |
+| 构建工具 | Vite | 6.3.5 |
+| 样式 | Tailwind CSS | 3.4.17 |
+| 路由 | React Router DOM | 7.3.0 |
+| 状态管理 | Zustand | 5.0.3 |
+| WebGL | OGL | 1.0.11 |
+| 图标 | Lucide React | 0.511.0 |
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+## 📁 项目结构
+
+```
+src/
+├── components/          # UI组件
+│   ├── SoftAurora.tsx   # 极光动画背景
+│   ├── QuestionCard.tsx # 题目卡片
+│   ├── QuestionList.tsx # 题目导航列表
+│   ├── ProgressPanel.tsx # 进度面板
+│   ├── FuzzyText.tsx    # 模糊文字效果
+│   └── ...
+├── pages/               # 页面组件
+│   ├── QuizPage.tsx     # 主刷题页面
+│   ├── BookmarkPage.tsx # 收藏页面
+│   └── WrongQuestionPage.tsx # 错题页面
+├── hooks/               # 自定义Hooks
+│   ├── useSwipeGesture.ts # 滑动手势
+│   ├── useTheme.ts      # 主题管理
+│   └── ...
+├── utils/               # 工具函数
+│   ├── questionParser.ts # 题目解析
+│   ├── progressManager.ts # 进度管理
+│   ├── wrongQuestionManager.ts # 错题管理
+│   └── bookmarkManager.ts # 收藏管理
+├── lib/                 # 通用库
+│   └── utils.ts         # 工具函数
+├── App.tsx              # 应用入口
+├── main.tsx             # 主入口文件
+└── index.css            # 全局样式
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 🚀 快速开始
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### 安装依赖
 
-export default tseslint.config({
-  extends: [
-    // other configs...
-    // Enable lint rules for React
-    reactX.configs['recommended-typescript'],
-    // Enable lint rules for React DOM
-    reactDom.configs.recommended,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+```bash
+npm install
 ```
-我是不是我
+
+### 开发模式
+
+```bash
+npm run dev
+```
+
+### 构建生产版本
+
+```bash
+npm run build
+```
+
+### 代码检查
+
+```bash
+npm run lint
+npm run check
+```
+
+## 🎮 功能介绍
+
+### 练习模式
+- 支持单选和多选题
+- 即时反馈答题结果
+- 自动记录错题
+
+### 模拟考试
+- 自定义题库选择
+- 可配置题目数量和时长
+- 倒计时自动提交
+
+### 错题练习
+- 智能收集答错题目
+- 记录错题次数
+- 答对自动移出错题本
+
+### 视觉效果
+- WebGL 极光动画背景
+- 鼠标交互响应
+- 流畅的过渡动画
+
+## 📄 题库格式
+
+题库文件位于 `public/题库/` 目录，支持以下格式：
+
+```
+一、单选题（共20题，66分）
+1. 题目内容
+A. 选项A
+B. 选项B
+C. 选项C
+D. 选项D
+答案：A
+
+二、多选题（共10题，34分）
+1. 题目内容
+A. 选项A
+B. 选项B
+C. 选项C
+D. 选项D
+答案：AB
+```
+
+## 📜 许可证
+
+MIT License
+
+## 🤝 贡献
+
+欢迎提交 Issue 和 Pull Request！

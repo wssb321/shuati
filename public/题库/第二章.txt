@@ -1,0 +1,194 @@
+1. 在微信小程序的目录结构中，用于管理小程序全局配置(如导航栏颜色、页面路径等)的文件是?
+A. app.js
+B. app.json 
+C. app.wxss
+D. project.config.json
+答案：B
+解析： app.json 是小程序的全局配置文件，用于配置页面路径、窗口表现（导航栏颜色、标题等）、tabBar、网络超时等全局设置。
+A. app.js：小程序的入口逻辑文件，用于注册小程序实例和处理全局逻辑。
+C. app.wxss：全局样式文件，定义全局 CSS 样式。
+D. project.config.json：项目配置文件，用于配置开发者工具的项目设置（如编译选项、插件等），不属于小程序运行时的全局配置。
+2. 微信小程序中，相当于传统Web前端开发中HTML文件，用于搭建页面结构的标签文件是?
+A. .wxss
+B. .js
+C. .json
+D. .wxml 
+答案：D
+解析： WXML（WeiXin Markup Language）是微信小程序的标记语言，作用类似于 HTML，用于描述页面的结构。
+A. .wxss：类似于 CSS，用于样式定义。
+B. .js：用于页面逻辑和数据处理。
+C. .json：用于页面或全局的配置。
+3. 如果想在全局配置文件中指定小程序导航栏的标题文字、背景色等样式，应该在 app.json 的哪个属性中进行设置?
+A. pages
+B. window 
+C. tabBar
+D. style
+答案：B
+解析： app.json 中的 window 属性用于设置小程序的状态栏、导航栏、标题、窗口背景色等全局默认的窗口样式。
+A. pages：用于注册小程序页面路径列表。
+C. tabBar：用于配置底部或顶部 tab 栏。
+D. style：用于启用自定义组件样式等高级设置，不是设置导航栏样式的主要属性。
+4. 当一个单独页面的 page.json 配置项与全局的 app.json 配置项发生冲突时(例如都设置了导航栏背景色)，最终会如何显示?
+A. 报错无法渲染页面
+B. 优先以 app.json 的配置为准
+C. 优先以 page.json 的配置为准，覆盖全局配置 
+D. 随机显示其中一种配置
+答案：C
+解析： 微信小程序的配置遵循"就近原则"，页面级配置（page.json）会覆盖全局配置（app.json）。这是为了方便不同页面有独立的样式需求，同时保持全局统一性。
+5. 在微信小程序的基础组件中，如果想要实现图片的等比缩放，且保证图片的短边能完全显示出来(长边可能被裁剪)，应将 image 组件的 mode 属性设置为什么?
+A. scaleToFill
+B. aspectFit
+C. aspectFill 
+D. widthFix
+答案：C
+解析：
+A. scaleToFill：不保持纵横比，拉伸填满整个容器，图片可能变形。
+B. aspectFit：保持纵横比缩放，使图片的长边能完全显示，短边可能有空白（完整显示图片，容器可能有留白）。
+C. aspectFill：保持纵横比缩放，只保证图片的短边能完全显示，长边可能被裁剪（填满容器，图片可能被裁切）。✅
+D. widthFix：宽度不变，高度自动变化，保持原图宽高比。
+6. 在Flex布局中，想要实现主轴上的项目均匀分布，且每个项目两侧的间隔相等，应该将 justify-content 属性设置为什么?
+A. center
+B. space-between
+C. space-around 
+D. flex-start
+答案：C
+解析：
+A. center：项目在主轴上居中对齐。
+B. space-between：项目均匀分布，首尾项目紧贴容器边缘，中间项目间距相等。
+C. space-around：项目均匀分布，每个项目两侧的间隔相等（包括首尾项目与容器边缘的间隔），所以项目之间的间隔是项目与边缘间隔的两倍。✅
+D. flex-start：项目在主轴起点对齐。
+7. 微信小程序提供了一个独有的解决屏幕自适应的像素单位，不论什么机型，官方规定屏幕的默认宽度总是多少?
+A. 320
+B. 375
+C. 750 
+D. 1080
+答案：C
+解析： 微信小程序使用 rpx（responsive pixel）作为自适应单位，官方规定屏幕宽度恒定为 750 rpx。无论设备实际物理像素是多少，都会被映射到 750 rpx 的虚拟宽度上，开发者只需按 750 宽度进行设计即可实现自适应。
+8. 在实际开发中，微信官方建议设计师在出视觉设计稿时，以哪一款手机的屏幕尺寸作为标准度量进行设计?
+A. iPhone 5
+B. iPhone 6 
+C. iPhone X
+D. iPhone 12
+答案：B
+解析： 微信官方建议以 iPhone 6 的屏幕尺寸（375px × 667px，物理像素 750×1334）作为设计标准。因为 750 rpx 正好对应 iPhone 6 的物理像素宽度（750px），换算关系简单直接（1px = 1rpx），便于设计和开发对接。
+9. 使用 navigator 组件进行页面跳转时，哪种 open-type 会导致"当前页面出栈，新页面入栈"，且左上角没有返回按钮?
+A. navigate
+B. redirect 
+C. switchTab
+D. reLaunch
+答案：B
+解析：
+A. navigate：保留当前页面，新页面入栈（可返回）。
+B. redirect：关闭当前页面（当前页面出栈），新页面入栈，无法返回到原页面，左上角没有返回按钮。✅
+C. switchTab：跳转到 tabBar 页面，会关闭其他所有非 tabBar 页面。
+D. reLaunch：关闭所有页面，打开到应用内的某个页面（相当于重启）。
+10. 小程序的页面栈管理遵循的是什么数据结构原则?
+A. 先进先出
+B. 随机出入
+C. 后进先出 
+D. 树状结构
+答案：C
+解析： 小程序的页面栈遵循"后进先出"（LIFO，Last In First Out）原则，即栈结构。新页面入栈时放在栈顶，返回时从栈顶弹出当前页面。页面栈最多支持 10 层，超过会报错。
+11. 在配置小程序的 tabBar 时，list 属性数组中的选项数量有什么严格的限制要求?
+A. 最少1个，最多3个
+B. 最少2个，最多4个
+C. 最少2个，最多5个 
+D. 没有数量限制
+答案：C
+解析： tabBar 的 list 数组有严格的数量限制：最少 2 个，最多 5 个 tab 项。这是微信官方规定的，少于 2 个或多于 5 个都会导致配置报错。
+12. 当把 tabBar 的 position 属性设置为 top(顶部)时，tabBar 的显示效果会发生什么变化?
+A. 只显示图标，不显示文字
+B. 只显示文字，不显示图标 
+C. 图标和文字都正常显示
+D. tabBar会直接隐藏
+答案：B
+解析： 当 tabBar 的 position 设置为 "top"（顶部）时，tabBar 只显示文字，不显示图标。只有 position 为 "bottom"（底部，默认值）时，才会同时显示图标和文字。
+13. 在普通页面的js文件中，如果想要获取定义在 app.js 里的 globalData 全局数据，首先需要调用哪个官方提供的方法?
+A. require()
+B. wx.getGlobal()
+C. this.data()
+D. getApp() 
+答案：D
+解析： getApp() 是微信官方提供的全局方法，用于获取小程序的 App 实例，从而可以访问 app.js 中定义的 globalData 全局数据。使用方式为：const app = getApp(); console.log(app.globalData.xxx);
+A. require()：用于引入模块，不是获取 App 实例的方法。
+B. wx.getGlobal()：不存在此方法。
+C. this.data：用于获取当前页面的 data 数据，不是全局数据。
+14. 如果想在全局样式文件 app.wxss 或某个页面的 wxss 中引入一个第三方的通用外部样式文件，应该使用以下哪种语法?
+A. @import 
+B. <import src="...">
+C. require(...)
+D. import "..."
+答案：A
+解析： WXSS 支持使用 @import 语法引入外部样式文件，例如：@import "common.wxss";。路径可以是相对路径或绝对路径。
+B. <import src="...">：是 WXML 中引入模板或组件的语法，不是样式引入。
+C. require(...)：是 JavaScript 的模块引入语法。
+D. import "..."：是 ES6 的模块导入语法，WXSS 不支持。
+二、多选题（共6题，30分）
+15. 在微信小程序的目录结构中，一个标准的页面文件夹通常包含哪几种后缀的文件?
+A. .js 
+B. .json 
+C. .wxml 
+D. .wxss 
+答案：A、B、C、D
+解析： 一个标准的微信小程序页面文件夹通常包含四个文件：
+.js：页面逻辑文件
+.json：页面配置文件（可选，非必须但常见）
+.wxml：页面结构文件
+.wxss：页面样式文件（可选，非必须但常见）
+其中 .js 和 .wxml 是必须的，.json 和 .wxss 是可选的。
+16. 下列属于微信小程序中"视图容器类组件"(主要用于页面布局和视图展示)的有?
+A. view 
+B. scroll-view 
+C. swiper 
+D. text
+答案：A、B、C
+解析：
+A. view：视图容器，类似于 HTML 的 div，是最基础的布局组件。
+B. scroll-view：可滚动视图容器，用于实现滚动区域。
+C. swiper：滑块视图容器，用于实现轮播图等滑动效果。
+D. text：文本组件，属于"基础内容"组件，不是视图容器类。
+17. 在使用 navigator 组件实现页面跳转时，open-type 属性支持以下哪些跳转方式?
+A. navigate 
+B. redirect 
+C. switchTab 
+D. reLaunch 
+答案：A、B、C、D
+解析： navigator 组件的 open-type 支持多种跳转方式：
+navigate：保留当前页面，跳转到应用内的某个页面（可返回）。
+redirect：关闭当前页面，跳转到应用内的某个页面（不可返回）。
+switchTab：跳转到 tabBar 页面，并关闭其他所有非 tabBar 页面。
+reLaunch：关闭所有页面，打开到应用内的某个页面。
+此外还有 navigateBack（返回上一页面）等。
+18. 在配置原生的 tabBar 时，list 数组里的每一项(item)都可以设置哪些关键属性?
+A. pagePath 
+B. text 
+C. iconPath 
+D. selectedIconPath 
+答案：A、B、C、D
+解析： tabBar 的 list 数组中每一项可以配置：
+pagePath：页面路径，必须在 pages 中先定义。
+text：tab 上显示的按钮文字。
+iconPath：图片路径，icon 大小限制为 40kb，建议尺寸为 81px × 81px，当 position 为 top 时不显示 icon。
+selectedIconPath：选中时的图片路径。
+19. 关于微信小程序中数据的管理和获取，下列说法正确的有?
+A. 页面内部定义的数据存放在js文件的 data 对象中，通过 this.data 获取 
+B. 全局共享的数据存放在 app.js 的 globalData 中，通过 getApp().globalData 获取 
+C. 外部工具类js文件中定义的方法，可以通过 module.exports 暴露出去 
+D. 页面的工具类 js 文件通过 @import 语法进行加载引入
+答案：A、B、C
+解析：
+A 正确：页面内部数据存储在 data 对象中，通过 this.data 获取，通过 this.setData() 修改。
+B 正确：全局数据放在 app.js 的 globalData 中，通过 getApp().globalData 访问。
+C 正确：外部 JS 文件使用 module.exports 或 exports 暴露接口，其他文件通过 require() 引入。
+D 错误：@import 是 WXSS 中引入外部样式文件的语法，JS 文件的引入应该使用 require()。
+20. 新增一个小程序页面的方式有以下哪几种?
+A. 直接在 app.json 的 pages 数组中增加新页面的路径，开发者工具会自动生成对应文件 
+B. 直接在 pages 文件夹下新建一个文件夹，并在里面新建对应的 wxml 等页面文件 
+C. 必须通过向微信官方提交页面增加申请才能创建
+D. 只能通过在 project.config.json 中配置来增加页面
+答案：A、B
+解析：
+A 正确：在 app.json 的 pages 数组中添加新页面路径后，微信开发者工具会自动生成对应的 .js、.json、.wxml、.wxss 四个文件。
+B 正确：也可以手动在 pages 目录下新建文件夹，并手动创建所需的页面文件，然后在 app.json 中注册路径。
+C 错误：新增页面不需要向微信官方提交申请，这是开发阶段的本地操作。
+D 错误：project.config.json 是项目配置文件，不用于注册页面，页面注册在 app.json 中完成。

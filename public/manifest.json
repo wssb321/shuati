@@ -1,0 +1,22 @@
+{
+  "name": "Steam刷题管家",
+  "short_name": "刷题管家",
+  "description": "高效的刷题学习工具，帮助你掌握知识点",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f1f5f9",
+  "theme_color": "#3b82f6",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "steam.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "steam.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

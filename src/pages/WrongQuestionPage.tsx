@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getWrongQuestions, removeWrongQuestion, WrongQuestion } from '../utils/wrongQuestionManager';
-import { Question, shuffleArray } from '../utils/questionParser';
+import { Question } from '../utils/questionParser';
 import { Empty } from '../components/Empty';
 
 type SortType = 'time' | 'wrongCount';
@@ -37,7 +37,7 @@ export function WrongQuestionPage() {
       month: 'short',
       day: 'numeric',
       hour: '2-digit',
-      minute: '2-digit'
+      minute: '2-digit',
     });
   };
 
@@ -54,8 +54,8 @@ export function WrongQuestionPage() {
       wrongInfo: {
         wrongCount: wq.wrongCount,
         lastWrongTime: wq.lastWrongTime,
-        previousUserAnswer: wq.userAnswer
-      }
+        previousUserAnswer: wq.userAnswer,
+      },
     }));
     
     if (questions.length > 0) {
@@ -72,7 +72,7 @@ export function WrongQuestionPage() {
       const searchLower = searchTerm.toLowerCase();
       return (
         question.question.toLowerCase().includes(searchLower) ||
-        question.id.includes(searchTerm)
+        question.id.includes(searchLower)
       );
     }
     
@@ -86,101 +86,114 @@ export function WrongQuestionPage() {
   });
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 pb-36">
-      <header className="bg-white shadow-sm sticky top-0 z-40">
+    <div className="min-h-screen bg-[#f1f5f9] pb-36">
+      {/* 顶部导航 */}
+      <header className="bg-white shadow-card sticky top-0 z-40">
         <div className="max-w-6xl mx-auto px-3 sm:px-4 py-3 sm:py-4">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-3">
               <button
                 onClick={() => navigate('/')}
-                className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+                className="p-2 rounded-card hover:bg-gray-100 transition-fast active:scale-[0.98]"
               >
-                <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-6 h-6 text-[#6b7280]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                 </svg>
               </button>
-              <h1 className="text-lg sm:text-xl font-bold text-gray-800">📋 错题库</h1>
-              <span className="px-2 py-1 bg-red-100 text-red-700 rounded-full text-sm font-medium">
+              <h1 className="text-lg sm:text-xl font-bold text-[#1f2937]">
+                📋 错题库
+              </h1>
+              <span className="px-2.5 py-1 bg-[#ef4444] text-white rounded-full text-sm font-bold shadow-card">
                 {wrongQuestions.length}
               </span>
             </div>
           </div>
 
+          {/* 搜索/筛选区 */}
           <div className="flex flex-col gap-3">
             <div className="flex flex-col sm:flex-row gap-3">
-              <div className="flex-1">
+              <div className="flex-1 relative">
+                <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#9ca3af]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
                 <input
                   type="text"
                   placeholder="搜索题目..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full pl-10 pr-4 py-2.5 bg-white border-2 border-[#e5e7eb] rounded-card text-[#1f2937] placeholder-[#9ca3af] focus:outline-none focus:ring-2 focus:ring-[#3b82f6] focus:border-[#3b82f6] transition-fast"
                 />
               </div>
               <select
                 value={selectedQuiz}
                 onChange={(e) => setSelectedQuiz(e.target.value)}
-                className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="px-4 py-2.5 bg-[#3b82f6] bg-opacity-10 border-2 border-[#3b82f6] border-opacity-30 text-[#3b82f6] rounded-card focus:outline-none focus:ring-2 focus:ring-[#3b82f6] transition-fast font-medium"
               >
-                <option value="all">全部题库</option>
+                <option value="all">📚 全部题库</option>
                 {availableQuizzes.map((quiz, idx) => (
                   <option key={idx} value={quiz}>{quiz.replace('.txt', '')}</option>
                 ))}
               </select>
             </div>
             
-            <div className="flex bg-gray-100 rounded-lg p-1">
+            {/* 排序切换 */}
+            <div className="flex bg-gray-100 rounded-card p-1.5">
               <button
                 onClick={() => setSortType('time')}
-                className={`flex-1 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                  sortType === 'time' ? 'bg-white shadow text-blue-600' : 'text-gray-600 hover:text-gray-800'
+                className={`flex-1 px-4 py-2.5 rounded-btn-sm text-sm font-bold transition-fast ${
+                  sortType === 'time' 
+                    ? 'bg-white shadow-card text-[#3b82f6] scale-[1.02]' 
+                    : 'text-[#6b7280] hover:text-[#1f2937] hover:bg-white/50'
                 }`}
               >
-                按时间排序
+                ⏰ 按时间排序
               </button>
               <button
                 onClick={() => setSortType('wrongCount')}
-                className={`flex-1 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                  sortType === 'wrongCount' ? 'bg-white shadow text-blue-600' : 'text-gray-600 hover:text-gray-800'
+                className={`flex-1 px-4 py-2.5 rounded-btn-sm text-sm font-bold transition-fast ${
+                  sortType === 'wrongCount' 
+                    ? 'bg-white shadow-card text-[#ef4444] scale-[1.02]' 
+                    : 'text-[#6b7280] hover:text-[#1f2937] hover:bg-white/50'
                 }`}
               >
-                按错误次数
+                📊 按错误次数
               </button>
             </div>
           </div>
         </div>
       </header>
 
+      {/* 错题列表 */}
       <main className="max-w-4xl mx-auto px-3 sm:px-4 py-4 sm:py-6">
         {filteredWrongQuestions.length === 0 ? (
-          <Empty
-            icon="🎉"
-            title="太棒了，还没有错题"
-            description="继续保持，你做得很好！"
-          />
+          <Empty type="no-wrong-questions" />
         ) : (
           <div className="space-y-3 sm:space-y-4">
-            {filteredWrongQuestions.map((question) => (
-              <div key={question.id} className="bg-white rounded-xl shadow-lg p-4 sm:p-5 border-l-4 border-red-400">
+            {filteredWrongQuestions.map((question, index) => (
+              <div
+                key={question.id}
+                className="group bg-white rounded-card shadow-card hover:shadow-hover p-4 sm:p-5 border-l-4 border-[#ef4444] hover:border-[#dc2626] transition-fast hover:-translate-y-0.5"
+              >
                 <div className="flex items-start justify-between mb-3">
+                  {/* 标签 */}
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                    <span className={`px-3 py-1 rounded-full text-xs font-bold shadow-card ${
                       question.type === 'single' 
-                        ? 'bg-blue-100 text-blue-700' 
-                        : 'bg-purple-100 text-purple-700'
+                        ? 'bg-[#3b82f6] text-white' 
+                        : 'bg-[#8b5cf6] text-white'
                     }`}>
                       {question.type === 'single' ? '单选题' : '多选题'}
                     </span>
-                    <span className="px-2 py-1 bg-red-100 text-red-700 rounded-full text-xs font-medium">
+                    <span className="px-3 py-1 bg-[#ef4444] text-white rounded-full text-xs font-bold shadow-card">
                       错误 {question.wrongCount} 次
                     </span>
-                    <span className="text-sm text-gray-400">
+                    <span className="px-3 py-1 bg-[#3b82f6] bg-opacity-20 text-[#3b82f6] rounded-full text-xs font-bold">
                       {question.sourceQuiz.replace('.txt', '')}
                     </span>
                   </div>
                   <button
                     onClick={() => handleRemoveWrongQuestion(question.id)}
-                    className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                    className="p-2 text-[#9ca3af] hover:text-[#ef4444] hover:bg-red-50 rounded-card transition-fast hover:scale-110"
                     title="移除错题"
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -189,23 +202,35 @@ export function WrongQuestionPage() {
                   </button>
                 </div>
                 
-                <p className="text-gray-800 mb-3 leading-relaxed text-sm sm:text-base">
-                  {question.question.length > 100 ? `${question.question.substring(0, 100)}...` : question.question}
+                {/* 题目内容 */}
+                <p className="text-question text-[#1f2937] mb-4">
+                  {question.question.length > 150 ? `${question.question.substring(0, 150)}...` : question.question}
                 </p>
                 
-                <div className="space-y-2 mb-3 p-3 bg-gray-50 rounded-lg">
+                {/* 答案对比 */}
+                <div className="space-y-3 mb-4 p-4 bg-gray-50 rounded-card border border-[#e5e7eb]">
                   <div className="flex items-center gap-2">
-                    <span className="text-xs font-medium text-red-600">上次答案:</span>
-                    <span className="text-xs sm:text-sm text-red-700">{question.userAnswer.join('、')}</span>
+                    <span className="text-tag font-bold text-[#ef4444] bg-red-100 px-2 py-1 rounded-btn-sm">
+                      ❌ 上次答案
+                    </span>
+                    <span className="text-option text-[#ef4444] font-medium">{question.userAnswer.join('、')}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="text-xs font-medium text-green-600">正确答案:</span>
-                    <span className="text-xs sm:text-sm text-green-700">{question.correctAnswer.join('、')}</span>
+                    <span className="text-tag font-bold text-[#22c55e] bg-green-100 px-2 py-1 rounded-btn-sm">
+                      ✅ 正确答案
+                    </span>
+                    <span className="text-option text-[#22c55e] font-medium">{question.correctAnswer.join('、')}</span>
                   </div>
                 </div>
                 
-                <div className="flex items-center justify-between text-xs text-gray-400">
-                  <span>最近错误于 {formatDate(question.lastWrongTime)}</span>
+                {/* 底部信息 */}
+                <div className="flex items-center justify-between text-tag text-[#6b7280]">
+                  <span className="flex items-center gap-1">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    最近错误于 {formatDate(question.lastWrongTime)}
+                  </span>
                   <button
                     onClick={() => {
                       const questionsToPractice: Question[] = [{
@@ -220,16 +245,16 @@ export function WrongQuestionPage() {
                         wrongInfo: {
                           wrongCount: question.wrongCount,
                           lastWrongTime: question.lastWrongTime,
-                          previousUserAnswer: question.userAnswer
-                        }
+                          previousUserAnswer: question.userAnswer,
+                        },
                       }];
                       sessionStorage.setItem('practiceQuestions', JSON.stringify(questionsToPractice));
                       sessionStorage.setItem('practiceMode', 'wrong');
                       navigate('/');
                     }}
-                    className="text-blue-500 hover:text-blue-600 font-medium"
+                    className="inline-flex items-center gap-1 px-4 py-2 bg-[#3b82f6] text-white rounded-card hover:bg-[#2563eb] font-bold shadow-card hover:shadow-hover transition-fast hover:scale-105 active:scale-[0.98] btn-ripple"
                   >
-                    重新练习 →
+                    🎯 重新练习 →
                   </button>
                 </div>
               </div>
@@ -238,12 +263,13 @@ export function WrongQuestionPage() {
         )}
       </main>
 
+      {/* 底部操作栏 */}
       {filteredWrongQuestions.length > 0 && (
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg p-4">
+        <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-lg border-t shadow-hover p-4">
           <div className="max-w-4xl mx-auto">
             <button
               onClick={startPractice}
-              className="w-full py-3 bg-red-500 text-white rounded-lg hover:bg-red-600 font-medium transition-colors"
+              className="w-full py-4 bg-[#ef4444] text-white rounded-card hover:bg-[#dc2626] font-bold shadow-hover transition-all duration-100 ease-out hover:scale-[1.02] active:scale-[0.98] btn-ripple"
             >
               🚀 开始练习 ({filteredWrongQuestions.length} 题)
             </button>

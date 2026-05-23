@@ -3,6 +3,8 @@ import { QuizPage } from '@/pages/QuizPage';
 import { BookmarkPage } from '@/pages/BookmarkPage';
 import { WrongQuestionPage } from '@/pages/WrongQuestionPage';
 import SoftAurora from './components/SoftAurora';
+import { ToastProvider } from './components/Toast';
+import { ConfirmDialogProvider } from './components/ConfirmDialog';
 
 export default function App() {
   return (
@@ -25,13 +27,17 @@ export default function App() {
         mouseInfluence={0.25}
       />
       <div className="relative z-10">
-        <Router>
-          <Routes>
-            <Route path="/" element={<QuizPage />} />
-            <Route path="/bookmarks" element={<BookmarkPage />} />
-            <Route path="/wrong-questions" element={<WrongQuestionPage />} />
-          </Routes>
-        </Router>
+        <ToastProvider>
+          <ConfirmDialogProvider>
+            <Router>
+              <Routes>
+                <Route path="/" element={<QuizPage />} />
+                <Route path="/bookmarks" element={<BookmarkPage />} />
+                <Route path="/wrong-questions" element={<WrongQuestionPage />} />
+              </Routes>
+            </Router>
+          </ConfirmDialogProvider>
+        </ToastProvider>
       </div>
     </div>
   );

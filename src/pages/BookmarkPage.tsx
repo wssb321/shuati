@@ -159,11 +159,7 @@ export function BookmarkPage() {
 
       <main className="max-w-4xl mx-auto px-3 sm:px-4 py-4 sm:py-6">
         {filteredBookmarks.length === 0 ? (
-          <Empty
-            icon="⭐"
-            title="暂无收藏题目"
-            description="去练习页面收藏你喜欢的题目吧"
-          />
+          <Empty type="no-bookmarks" />
         ) : (
           <div className="space-y-3 sm:space-y-4">
             {filteredBookmarks.map((bookmark, idx) => {

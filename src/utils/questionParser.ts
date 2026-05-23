@@ -2,12 +2,14 @@ export interface Question {
   id: number;
   type: 'single' | 'multiple';
   question: string;
+  text?: string;
   options: { key: string; value: string }[];
   correctAnswer: string[];
   userAnswer?: string[];
   score: number;
   explanation: string;
   knowledgePoints: string[];
+  chapter?: string;
   wrongInfo?: {
     wrongCount: number;
     lastWrongTime: number;

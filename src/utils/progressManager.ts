@@ -27,7 +27,7 @@ const CLEANUP_TIMESTAMP_KEY = 'quiz_cleanup_timestamp';
 const COMPLETED_EXPIRE_DAYS = 7;
 const INCOMPLETED_EXPIRE_DAYS = 30;
 
-function getProgressKey(quizId: string): string {
+export function getProgressKey(quizId: string): string {
   return `${PROGRESS_KEY_PREFIX}${quizId}`;
 }
 
