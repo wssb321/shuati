@@ -6,7 +6,7 @@ import path from 'path';
 import fs from 'fs';
 
 export default defineConfig({
-  base: '/shuati/',
+  base: './',
   build: {
     sourcemap: 'hidden',
   },
