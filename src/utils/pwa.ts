@@ -77,7 +77,7 @@ export const cacheQuizData = async (quizFiles: string[]) => {
     for (const file of quizFiles) {
       const cached = localStorage.getItem(`quiz_cache_${file}`);
       if (!cached) {
-        const response = await fetch(`/tiku/${file}`);
+        const response = await fetch(`/shuati/tiku/${file}`);
         if (response.ok) {
           const content = await response.text();
           localStorage.setItem(`quiz_cache_${file}`, content);
