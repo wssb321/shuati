@@ -1,0 +1,29 @@
+.dither-container {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.dither-wave {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    #f8fafc 0%,
+    #f1f5f9 25%,
+    #e2e8f0 50%,
+    #f1f5f9 75%,
+    #f8fafc 100%
+  );
+  opacity: 0.8;
+}
+
+.dither-pattern {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    radial-gradient(circle at 25% 25%, rgba(59, 130, 246, 0.03) 0%, transparent 50%),
+    radial-gradient(circle at 75% 75%, rgba(139, 92, 246, 0.03) 0%, transparent 50%);
+  will-change: opacity;
+}

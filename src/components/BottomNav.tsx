@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, memo } from 'react';
 
 interface QuestionStatus {
   index: number;
@@ -17,7 +17,7 @@ interface BottomNavProps {
   onAnswerSheetToggle: () => void;
 }
 
-export function BottomNav({
+export const BottomNav = memo(function BottomNav({
   questions,
   currentIndex,
   onQuestionClick,
@@ -96,4 +96,4 @@ export function BottomNav({
       </div>
     </div>
   );
-}
+});

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, memo } from 'react';
 import { Question } from '../utils/questionParser';
 
 interface QuestionCardProps {
@@ -12,7 +12,7 @@ interface QuestionCardProps {
   isNightMode?: boolean;
 }
 
-export function QuestionCard({
+export const QuestionCard = memo(function QuestionCard({
   question,
   showResult,
   onAnswerChange,
@@ -117,14 +117,21 @@ export function QuestionCard({
 
   return (
     <div className={`rounded-2xl p-6 mb-6 ${isNightMode ? 'bg-slate-800' : 'bg-white'}`} style={{ paddingTop: '24px' }}>
-      {/* 多选题提示 */}
-      {question.type === 'multiple' && !displayResult && (
-        <div className={`mb-4 p-3 rounded-lg ${isNightMode ? 'bg-yellow-900/30 border border-yellow-700' : 'bg-yellow-50 border border-yellow-200'}`}>
-          <p className={`text-sm ${isNightMode ? 'text-yellow-300' : 'text-yellow-800'}`}>
-            本题有多个正确答案，请选择所有符合的选项
-          </p>
-        </div>
-      )}
+      {/* 题目类型标签 */}
+      <div className="mb-4 flex items-center gap-2">
+        <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+          question.type === 'single' 
+            ? `${isNightMode ? 'bg-blue-900/50 text-blue-300' : 'bg-blue-100 text-blue-700'}`
+            : `${isNightMode ? 'bg-purple-900/50 text-purple-300' : 'bg-purple-100 text-purple-700'}`
+        }`}>
+          {question.type === 'single' ? '单选题' : '多选题'}
+        </span>
+        {question.type === 'multiple' && !displayResult && (
+          <span className={`text-xs ${isNightMode ? 'text-yellow-400' : 'text-yellow-600'}`}>
+            请选择所有符合的选项
+          </span>
+        )}
+      </div>
 
       {/* 题目 */}
       <h3 className={`text-lg leading-relaxed mb-8 ${isNightMode ? 'text-slate-200' : 'text-gray-800'}`} style={{ fontSize: '18px', fontWeight: 400 }}>
@@ -253,8 +260,21 @@ export function QuestionCard({
         })}
       </div>
 
+      {/* 答案解析 */}
+      {displayResult && question.explanation && question.explanation.trim() !== '' && (
+        <div className={`mt-6 p-4 rounded-xl ${isNightMode ? 'bg-slate-700/50' : 'bg-blue-50'}`}>
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-blue-500">💡</span>
+            <span className={`font-semibold ${isNightMode ? 'text-blue-300' : 'text-blue-700'}`}>答案解析</span>
+          </div>
+          <p className={`text-sm leading-relaxed ${isNightMode ? 'text-slate-300' : 'text-gray-600'}`}>
+            {renderTextWithCode(question.explanation)}
+          </p>
+        </div>
+      )}
+
       {/* 确认按钮 */}
-      {!displayResult && !immediateFeedback && (
+      {!displayResult && (!immediateFeedback || question.type === 'multiple') && (
         <button
           onClick={handleConfirm}
           disabled={selected.length === 0}
@@ -273,4 +293,4 @@ export function QuestionCard({
       )}
     </div>
   );
-}
+});

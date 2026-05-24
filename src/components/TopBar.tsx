@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, memo } from 'react';
 import { isBookmarked, toggleBookmark } from '../utils/bookmarkManager';
 
 interface TopBarProps {
@@ -17,7 +17,7 @@ interface TopBarProps {
   onMarkToggle: () => void;
 }
 
-export function TopBar({ 
+export const TopBar = memo(function TopBar({ 
   mode, 
   currentIndex, 
   totalQuestions, 
@@ -182,4 +182,4 @@ export function TopBar({
       )}
     </div>
   );
-}
+});

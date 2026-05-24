@@ -157,7 +157,7 @@ export function BookmarkPage() {
         </div>
       </header>
 
-      <main className="max-w-4xl mx-auto px-3 sm:px-4 py-4 sm:py-6">
+      <main className="max-w-4xl mx-auto px-3 sm:px-4 py-4 sm:py-6 pt-24 sm:pt-28">
         {filteredBookmarks.length === 0 ? (
           <Empty type="no-bookmarks" />
         ) : (

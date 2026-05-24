@@ -1,3 +1,5 @@
+import { memo } from 'react';
+
 interface ProgressPanelProps {
   currentIndex: number;
   totalQuestions: number;
@@ -12,7 +14,7 @@ interface ProgressPanelProps {
   timeElapsed?: number;
 }
 
-export function ProgressPanel({
+export const ProgressPanel = memo(function ProgressPanel({
   currentIndex,
   totalQuestions,
   answeredCount,
@@ -147,4 +149,4 @@ export function ProgressPanel({
       </div>
     </div>
   );
-}
+});

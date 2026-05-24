@@ -164,7 +164,7 @@ export function WrongQuestionPage() {
       </header>
 
       {/* 错题列表 */}
-      <main className="max-w-4xl mx-auto px-3 sm:px-4 py-4 sm:py-6">
+      <main className="max-w-4xl mx-auto px-3 sm:px-4 py-4 sm:py-6 pt-24 sm:pt-28">
         {filteredWrongQuestions.length === 0 ? (
           <Empty type="no-wrong-questions" />
         ) : (

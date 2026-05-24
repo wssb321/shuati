@@ -1,103 +1,62 @@
-export interface Question {
-  id: number;
-  type: 'single' | 'multiple';
-  question: string;
-  text?: string;
-  options: { key: string; value: string }[];
-  correctAnswer: string[];
-  userAnswer?: string[];
-  score: number;
-  explanation: string;
-  knowledgePoints: string[];
-  chapter?: string;
-  wrongInfo?: {
-    wrongCount: number;
-    lastWrongTime: number;
-    previousUserAnswer: string[];
-  };
-}
+const fs = require('fs');
 
-export interface QuestionGroup {
-  title: string;
-  questions: Question[];
-}
-
-export function parseQuestionFile(content: string): QuestionGroup[] {
-  const groups: QuestionGroup[] = [];
+function parseQuestionFile(content) {
+  const groups = [];
   const lines = content.split('\n').map(line => line.trim()).filter(line => line);
   
-  console.log(`解析题库: ${lines.length} 行`);
-  
-  let currentGroup: QuestionGroup | null = null;
-  let currentQuestion: Partial<Question> | null = null;
+  let currentGroup = null;
+  let currentQuestion = null;
   let inOptions = false;
   let inExplanation = false;
   let currentExplanation = '';
   
-  // 尝试从标题中提取总分
   let totalScore = 0;
   let totalQuestions = 0;
   
-  // 检测文件格式类型
-  let formatType: 'standard' | 'simple' = 'standard';
+  let formatType = 'standard';
   
-  // 检查第一行是否是章节标题（如"一、单选题"）
   const firstLine = lines[0] || '';
   const hasChapterTitle = firstLine.match(/^(一|二|三|四|五|六|七|八|九|十|十一|十二)[、.．](.*)$/);
   const hasTypeMarker = firstLine.match(/\(单选题\)|\(多选题\)/);
   
-  // 如果第一行既不是章节标题，也没有题目类型标识，认为是简化格式
   if (!hasChapterTitle && !hasTypeMarker) {
     formatType = 'simple';
   }
   
-  console.log(`检测到格式类型: ${formatType}`);
+  console.log('Format:', formatType);
   
-  // 如果是简化格式，创建一个默认组
   if (formatType === 'simple') {
-    currentGroup = { title: '全部题目', questions: [] };
+    currentGroup = { title: 'All', questions: [] };
   }
   
   for (const line of lines) {
-    // 匹配章节标题（支持多种格式）
-    const chapterMatch = line.match(/^(一|二|三|四|五|六|七|八|九|十)[、.．](.*)$/);
+    const chapterMatch = line.match(/^(一|二|三|四|五|六|七|八|九|十|十一|十二)[、.．](.*)$/);
     if (chapterMatch) {
       if (currentGroup) {
         groups.push(currentGroup);
       }
-      
       const title = chapterMatch[2];
       currentGroup = { title, questions: [] };
       
-      // 从标题中提取分数和题目数量
       const scoreMatch = title.match(/共(\d+)题.*?(\d+\.?\d*)分/);
       if (scoreMatch) {
         totalQuestions = parseInt(scoreMatch[1]);
         totalScore = parseFloat(scoreMatch[2]);
       }
-      
       continue;
     }
     
     if (!currentGroup) continue;
     
-    // 匹配题目（支持多种格式）
-    // 格式1: 1. (单选题) 问题内容?
-    // 格式2: 1.(单选题)问题内容
-    // 格式3: 1. 问题内容? (简化格式，默认单选题)
     let questionMatch = line.match(/^(\d+)\.\s*\((单选题|多选题)\)\s*(.+)/);
     
-    // 如果没有匹配到带类型的格式，尝试简化格式
     if (!questionMatch && formatType === 'simple') {
       questionMatch = line.match(/^(\d+)\.\s*(.+)/);
       if (questionMatch) {
-        // 简化格式默认是单选题
         if (currentQuestion) {
-          currentGroup.questions.push(currentQuestion as Question);
+          currentGroup.questions.push(currentQuestion);
         }
-        
         const avgScore = totalQuestions > 0 ? totalScore / totalQuestions : 0;
-        
         currentQuestion = {
           id: parseInt(questionMatch[1]),
           type: 'single',
@@ -117,11 +76,9 @@ export function parseQuestionFile(content: string): QuestionGroup[] {
     
     if (questionMatch) {
       if (currentQuestion) {
-        currentGroup.questions.push(currentQuestion as Question);
+        currentGroup.questions.push(currentQuestion);
       }
-      
       const avgScore = totalQuestions > 0 ? totalScore / totalQuestions : 0;
-      
       currentQuestion = {
         id: parseInt(questionMatch[1]),
         type: questionMatch[2] === '单选题' ? 'single' : 'multiple',
@@ -138,11 +95,7 @@ export function parseQuestionFile(content: string): QuestionGroup[] {
       continue;
     }
     
-    // 匹配选项（支持多种格式）
     if (currentQuestion && inOptions) {
-      // 格式1: A. 选项内容
-      // 格式2: A、选项内容
-      // 格式3: A 选项内容
       const optionMatch = line.match(/^([A-D])[．.、\s]\s*(.+)/);
       if (optionMatch) {
         currentQuestion.options.push({
@@ -152,13 +105,10 @@ export function parseQuestionFile(content: string): QuestionGroup[] {
         continue;
       }
       
-      // 如果不是选项，检查是否是答案行
       const answerMatch = line.match(/^答案[：:]?\s*([A-D,，]+)/);
       if (answerMatch) {
         const answerStr = answerMatch[1];
-        // 支持逗号分隔的多个答案（多选题）
         currentQuestion.correctAnswer = answerStr.replace(/[，,]/g, '').split('');
-        // 判断是否是多选题（多个答案）
         if (currentQuestion.correctAnswer.length > 1) {
           currentQuestion.type = 'multiple';
         }
@@ -167,13 +117,10 @@ export function parseQuestionFile(content: string): QuestionGroup[] {
         continue;
       }
       
-      // 旧格式的答案（我的答案:A:选项内容;正确答案:ABD:选项内容;）
       const oldAnswerMatch = line.match(/正确答案[：:]\s*([A-D,，]+)/);
       if (oldAnswerMatch) {
         const answerStr = oldAnswerMatch[1];
-        // 提取纯字母答案，去掉后面的内容（如 ":选项内容"）
-        const pureAnswer = answerStr.match(/^[A-D,，]+/)?.[0] || answerStr;
-        currentQuestion.correctAnswer = pureAnswer.replace(/[，,]/g, '').split('');
+        currentQuestion.correctAnswer = answerStr.replace(/[，,]/g, '').split('');
         if (currentQuestion.correctAnswer.length > 1) {
           currentQuestion.type = 'multiple';
         }
@@ -183,24 +130,19 @@ export function parseQuestionFile(content: string): QuestionGroup[] {
       }
     }
     
-    // 处理解析部分
     if (currentQuestion && inExplanation) {
-      // 检查是否是新题开始（必须包含题号和类型标识）
-      const newQuestionMatch = line.match(/^(\d+)\.\s*\((单选题|多选题)\)/);
+      const newQuestionMatch = line.match(/^(\d+)\.\s*/);
       if (newQuestionMatch) {
-        // 将当前题目添加到组
+        const typeMatch = line.match(/\((单选题|多选题)\)/);
         currentQuestion.explanation = currentExplanation.trim();
-        currentGroup.questions.push(currentQuestion as Question);
+        currentGroup.questions.push(currentQuestion);
         
-        // 开始新题目
         const avgScore = totalQuestions > 0 ? totalScore / totalQuestions : 0;
-        
-        // 提取问题内容（去掉题号和类型标识）
         let questionContent = line.replace(/^\d+\.\s*/, '').replace(/\(单选题\)|\(多选题\)/g, '').trim();
         
         currentQuestion = {
           id: parseInt(newQuestionMatch[1]),
-          type: newQuestionMatch[2] === '单选题' ? 'single' : 'multiple',
+          type: typeMatch ? (typeMatch[1] === '单选题' ? 'single' : 'multiple') : 'single',
           question: questionContent,
           options: [],
           correctAnswer: [],
@@ -214,7 +156,6 @@ export function parseQuestionFile(content: string): QuestionGroup[] {
         continue;
       }
       
-      // 检查是否是答案行（在解析中间出现）
       const answerMatch = line.match(/^答案[：:]?\s*([A-D,，]+)/);
       if (answerMatch) {
         const answerStr = answerMatch[1];
@@ -225,42 +166,40 @@ export function parseQuestionFile(content: string): QuestionGroup[] {
         continue;
       }
       
-      // 检查是否是分数行
       const scoreMatch = line.match(/^(\d+\.?\d*)分$/);
       if (scoreMatch) {
         currentQuestion.score = parseFloat(scoreMatch[1]);
         continue;
       }
       
-      // 累积解析内容
       currentExplanation += (currentExplanation ? '\n' : '') + line;
     }
   }
   
-  // 添加最后一个题目
   if (currentQuestion && currentGroup) {
     currentQuestion.explanation = currentExplanation.trim();
-    currentGroup.questions.push(currentQuestion as Question);
+    currentGroup.questions.push(currentQuestion);
   }
   
-  // 添加最后一个组
   if (currentGroup) {
-    groups.push(currentGroup);
-  }
-  
-  // 如果没有找到任何组（简化格式），创建一个默认组
-  if (groups.length === 0 && currentGroup) {
     groups.push(currentGroup);
   }
   
   return groups;
 }
 
-export function shuffleArray<T>(array: T[]): T[] {
-  const result = [...array];
-  for (let i = result.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [result[i], result[j]] = [result[j], result[i]];
-  }
-  return result;
+const content = fs.readFileSync('public/题库/第一章.txt', 'utf-8');
+console.log('File length:', content.length);
+
+const groups = parseQuestionFile(content);
+console.log('Groups:', groups.length);
+groups.forEach((g, i) => {
+  console.log('Group ' + (i+1) + ': ' + g.title + ', questions: ' + g.questions.length);
+});
+
+if (groups.length > 0 && groups[0].questions.length > 0) {
+  const q = groups[0].questions[0];
+  console.log('First question:', q.question);
+  console.log('Options:', JSON.stringify(q.options));
+  console.log('Correct answer:', q.correctAnswer);
 }

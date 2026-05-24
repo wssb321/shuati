@@ -1,3 +1,5 @@
+import { memo } from 'react';
+
 interface QuestionListProps {
   totalQuestions: number;
   currentIndex: number;
@@ -7,7 +9,7 @@ interface QuestionListProps {
   onSelect: (index: number) => void;
 }
 
-export function QuestionList({
+export const QuestionList = memo(function QuestionList({
   totalQuestions,
   currentIndex,
   answeredQuestions,
@@ -82,4 +84,4 @@ export function QuestionList({
       </div>
     </div>
   );
-}
+});
