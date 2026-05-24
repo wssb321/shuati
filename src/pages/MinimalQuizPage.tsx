@@ -56,7 +56,7 @@ export const MinimalQuizPage: React.FC = () => {
 
   const loadQuiz = async (quizFile: string) => {
     try {
-      const response = await fetch(`/题库/${quizFile}`);
+      const response = await fetch(`/tiku/${quizFile}`);
       if (!response.ok) {
         throw new Error('Failed to load quiz');
       }

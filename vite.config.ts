@@ -32,7 +32,7 @@ export default defineConfig({
       name: 'copy-quizzes',
       configureServer(server) {
         server.middlewares.use((req, res, next) => {
-          if (req.url?.startsWith('/题库/')) {
+          if (req.url?.startsWith('/tiku/')) {
             const decodedUrl = decodeURIComponent(req.url);
             const filePath = path.join(__dirname, 'public', decodedUrl);
             if (fs.existsSync(filePath)) {
@@ -46,12 +46,12 @@ export default defineConfig({
         });
       },
       writeBundle(options, bundle) {
-        const quizDir = path.join(__dirname, 'public', '题库');  // ← 改这里
+        const quizDir = path.join(__dirname, 'public', 'tiku');
         if (fs.existsSync(quizDir)) {
           const files = fs.readdirSync(quizDir);
           files.forEach(file => {
             const srcPath = path.join(quizDir, file);
-            const destDir = path.join(options.dir || 'dist', '题库');
+            const destDir = path.join(options.dir || 'dist', 'tiku');
             const destPath = path.join(destDir, file);
             if (!fs.existsSync(destDir)) {
               fs.mkdirSync(destDir, { recursive: true });
