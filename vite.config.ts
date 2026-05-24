@@ -33,7 +33,8 @@ export default defineConfig({
       configureServer(server) {
         server.middlewares.use((req, res, next) => {
           if (req.url?.startsWith('/题库/')) {
-            const filePath = path.join(__dirname, 'public', req.url);  // ← 改这里
+            const decodedUrl = decodeURIComponent(req.url);
+            const filePath = path.join(__dirname, 'public', decodedUrl);
             if (fs.existsSync(filePath)) {
               const content = fs.readFileSync(filePath, 'utf-8');
               res.setHeader('Content-Type', 'text/plain; charset=utf-8');
