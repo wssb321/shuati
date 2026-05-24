@@ -12,11 +12,6 @@ export const registerServiceWorker = async () => {
       window.addEventListener('online', updateOnlineStatus);
       window.addEventListener('offline', updateOnlineStatus);
       
-      // 请求通知权限
-      if ('Notification' in window) {
-        const permission = await Notification.requestPermission();
-        console.log('通知权限:', permission);
-      }
     } catch (error) {
       console.error('Service Worker 注册失败:', error);
     }
@@ -32,6 +27,48 @@ const updateOnlineStatus = () => {
     detail: { isOnline } 
   });
   window.dispatchEvent(event);
+};
+
+// 优雅地请求通知权限
+export const requestNotificationPermission = async (): Promise<NotificationPermission | 'unavailable'> => {
+  if (!('Notification' in window)) {
+    console.log('此浏览器不支持通知功能');
+    return 'unavailable';
+  }
+  
+  // 如果已经有权限，直接返回
+  if (Notification.permission === 'granted') {
+    console.log('通知权限已授予');
+    return 'granted';
+  }
+  
+  // 如果用户已经明确拒绝，不再请求
+  if (Notification.permission === 'denied') {
+    console.log('通知权限已被拒绝');
+    return 'denied';
+  }
+  
+  // 只有在权限为 'default'（用户尚未做出选择）时才请求
+  if (Notification.permission === 'default') {
+    try {
+      const permission = await Notification.requestPermission();
+      console.log('通知权限请求结果:', permission);
+      return permission;
+    } catch (error) {
+      console.error('请求通知权限失败:', error);
+      return 'denied';
+    }
+  }
+  
+  return Notification.permission;
+};
+
+// 检查通知权限状态
+export const checkNotificationPermission = (): NotificationPermission | 'unavailable' => {
+  if (!('Notification' in window)) {
+    return 'unavailable';
+  }
+  return Notification.permission;
 };
 
 // 本地缓存题库数据
@@ -71,7 +108,15 @@ export const sendLocalNotification = (title: string, body: string) => {
 };
 
 // 每日刷题提醒
-export const setupDailyReminder = (hour: number = 20, minute: number = 0) => {
+export const setupDailyReminder = async (hour: number = 20, minute: number = 0) => {
+  // 在设置提醒前，先请求通知权限
+  const permission = await requestNotificationPermission();
+  
+  if (permission !== 'granted') {
+    console.log('无法设置每日提醒：通知权限未授予');
+    return;
+  }
+  
   const now = new Date();
   let reminderTime = new Date();
   reminderTime.setHours(hour, minute, 0, 0);
