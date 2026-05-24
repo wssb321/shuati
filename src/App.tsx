@@ -2,6 +2,7 @@ import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 import { QuizPage } from '@/pages/QuizPage';
 import { BookmarkPage } from '@/pages/BookmarkPage';
 import { WrongQuestionPage } from '@/pages/WrongQuestionPage';
+import { DiagnosticsPage } from '@/pages/DiagnosticsPage';
 import SoftAurora from './components/SoftAurora';
 import { ToastProvider } from './components/Toast';
 import { ConfirmDialogProvider } from './components/ConfirmDialog';
@@ -32,6 +33,7 @@ export default function App() {
             <Router>
               <Routes>
                 <Route path="/" element={<QuizPage />} />
+                <Route path="/diagnostics" element={<DiagnosticsPage />} />
                 <Route path="/bookmarks" element={<BookmarkPage />} />
                 <Route path="/wrong-questions" element={<WrongQuestionPage />} />
               </Routes>
