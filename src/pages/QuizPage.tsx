@@ -161,24 +161,12 @@ export function QuizPage() {
         // 清除过期进度
         clearExpiredProgress();
         
-        const incompleteProgress = getIncompleteProgressList();
         console.log(`=== 初始化检查 ===`);
         console.log(`题库列表长度: ${quizzes.length}`);
-        console.log(`待恢复进度数量: ${incompleteProgress.length}`);
         
-        // 开发模式下跳过待恢复进度（便于测试）
-        const shouldSkipResume = import.meta.env.DEV;
-        
-        if (incompleteProgress.length > 0 && !shouldSkipResume) {
-          console.log(`发现待恢复进度，显示恢复模态框`);
-          const latestProgress = incompleteProgress.reduce((latest, current) => 
-            current.lastUpdateTime > latest.lastUpdateTime ? current : latest
-          );
-          setPendingProgress(latestProgress);
-          setShowResumeModal(true);
-          setLoading(false);
-        } else if (quizzes.length > 0) {
-          console.log(`没有待恢复进度，开始加载第一个题库: ${quizzes[0]}`);
+        // 直接加载第一个题库（跳过进度恢复）
+        if (quizzes.length > 0) {
+          console.log(`加载第一个题库: ${quizzes[0]}`);
           setCurrentQuiz(quizzes[0]);
           await loadQuiz(quizzes[0]);
         } else {
