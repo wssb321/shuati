@@ -563,9 +563,7 @@ export function QuizPage() {
   const handleSelectQuestion = (index: number) => {
     setCurrentQuestionIndex(index);
     setShowMobileMenu(false);
-    if (immediateFeedback && mode === 'practice') {
-      setShowResult(false);
-    }
+    setShowResult(false);
   };
 
   const handleSubmit = () => {

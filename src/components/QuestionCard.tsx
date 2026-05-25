@@ -274,7 +274,7 @@ export const QuestionCard = memo(function QuestionCard({
       )}
 
       {/* 确认按钮 */}
-      {!displayResult && (!immediateFeedback || question.type === 'multiple') && (
+      {!displayResult && (question.type === 'multiple' || !immediateFeedback) && (
         <button
           onClick={handleConfirm}
           disabled={selected.length === 0}
