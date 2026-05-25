@@ -2,7 +2,7 @@
   "name": "Steam刷题管家",
   "short_name": "刷题管家",
   "description": "高效的刷题学习工具，帮助你掌握知识点",
-  "start_url": "/",
+  "start_url": "/shuati/",
   "display": "standalone",
   "background_color": "#f1f5f9",
   "theme_color": "#3b82f6",
