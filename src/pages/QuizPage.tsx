@@ -268,7 +268,7 @@ export function QuizPage() {
       setLoading(true);
       
       console.log(`1. 发起请求: /tiku/${quizFile}`);
-      const response = await fetch(`/shuati/tiku/${quizFile}`);
+      const response = await fetch(`/tiku/${quizFile}`);
       
       if (!response.ok) {
         throw new Error(`HTTP错误: ${response.status}`);
@@ -375,7 +375,7 @@ export function QuizPage() {
     const allQuestions: Question[] = [];
     for (const file of quizFiles) {
       try {
-        const response = await fetch(`/shuati/tiku/${file}`);
+        const response = await fetch(`/tiku/${file}`);
         if (response.ok) {
           const content = await response.text();
           const groups = parseQuestionFile(content);
