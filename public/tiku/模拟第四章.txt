@@ -1,0 +1,212 @@
+一、单选题（共20题）
+1. 在 WXML 中通过 data- 前缀设置自定义属性，在 JS 中获取时使用的属性是？
+A. event.target.data
+B. event.currentTarget.dataset
+C. event.detail.dataset
+D. event.data
+答案：B
+解析： 在 WXML 中设置如 data-id="123"，在事件回调中通过 event.currentTarget.dataset.id 获取。注意区分：event.currentTarget 是绑定事件的当前组件，event.target 是触发事件的源组件（可能是子元素）。event.detail 用于组件自定义事件数据。
+2. 页面 A 通过 URL 传参跳转到页面 B，页面 B 在 onLoad 中获取参数的方式是？
+A. this.data.options
+B. this.properties
+C. onLoad(options) 的参数对象
+D. wx.getStorageSync('options')
+答案：C
+解析： wx.navigateTo({ url: '/pages/b/b?id=123&name=abc' })，在页面 B 的 onLoad(options) 中，options 对象包含 { id: '123', name: 'abc' }。参数值都是字符串类型，数字需要手动转换。this.data 是页面内部数据，this.properties 是组件属性，wx.getStorageSync 是本地缓存 API。
+3. 小程序发起 HTTPS 网络请求使用的 API 是？
+A. wx.httpRequest()
+B. wx.request()
+C. wx.fetch()
+D. wx.ajax()
+答案：B
+解析： 小程序使用 wx.request() 发起网络请求，参数包括 url、method（GET/POST/PUT/DELETE 等）、data、header、success、fail、complete 等。wx.httpRequest()、wx.fetch()、wx.ajax() 都不是小程序的 API。
+4. wx.request 的 method 默认值是？
+A. POST
+B. GET
+C. PUT
+D. DELETE
+答案：B
+解析： wx.request 的 method 默认值为 GET。常用方法包括 GET（获取数据）、POST（提交数据）、PUT（更新数据）、DELETE（删除数据）。请求数据通过 data 参数传递，GET 请求的数据会附加到 URL 后，POST 等请求的数据放在请求体中。
+5. 网络请求中，设置请求头 Content-Type 为 application/json 的正确方式是？
+A. header: { type: 'application/json' }
+B. header: { 'Content-Type': 'application/json' }
+C. headers: { 'Content-Type': 'application/json' }
+D. contentType: 'application/json'
+答案：B
+解析： wx.request 通过 header 对象设置请求头，键为 'Content-Type'，值为 'application/json'。注意属性名是 header（单数，不是 headers），且 HTTP 头字段名需要准确书写（区分大小写，但小程序内部会处理）。
+6. 动态设置当前页面标题的 API 是？
+A. wx.setNavigationBarTitle()
+B. wx.setTitle()
+C. wx.setNavigationTitle()
+D. wx.updateTitle()
+答案：A
+解析： wx.setNavigationBarTitle({ title: '新标题' }) 用于动态设置当前页面导航栏标题。需要在页面加载完成后调用（通常在 onReady 或 onShow 中）。wx.setTitle()、wx.setNavigationTitle()、wx.updateTitle() 都不是合法 API。
+7. 显示 loading 提示框，并且需要用户主动才能关闭的 API 是？
+A. wx.showToast({ title: '加载中' })
+B. wx.showLoading({ title: '加载中' })
+C. wx.showModal({ title: '加载中' })
+D. wx.showActionSheet({ title: '加载中' })
+答案：B
+解析： wx.showLoading({ title: '加载中', mask: true }) 显示 loading 提示框，必须通过 wx.hideLoading() 主动关闭，适合网络请求等异步操作。wx.showToast 会自动关闭（可设置 duration），wx.showModal 是确认对话框，wx.showActionSheet 是操作菜单。
+8. 页面传参时，传递对象类型的正确方式是？
+A. 直接拼接在 URL 中：?obj={a:1}
+B. 使用 JSON.stringify 转换后传递
+C. 使用 wx.setStorageSync 存储后跳转
+D. 对象类型无法传递
+答案：B
+解析： URL 参数只能传递字符串，对象需要通过 JSON.stringify(obj) 转换为字符串传递，在目标页面用 JSON.parse(options.obj) 还原。也可以先用 wx.setStorageSync 存储对象，跳转后再读取（适合传递大量数据）。直接拼接对象会导致 [object Object]。
+9. 事件处理函数中，阻止事件冒泡的正确方式是？
+A. 使用 bindtap 并 return false
+B. 使用 catchtap
+C. 使用 stopPropagation()
+D. 事件无法阻止冒泡
+答案：B
+解析： catchtap 绑定的事件会自动阻止冒泡，事件不会传递到父组件。bindtap 会冒泡。小程序中没有 event.stopPropagation() 方法（这是 DOM 事件的方法）。return false 在小程序事件中不能阻止冒泡。
+10. 网络请求返回的状态码 200 表示？
+A. 请求被重定向
+B. 请求成功
+C. 服务器内部错误
+D. 请求未授权
+答案：B
+解析： HTTP 状态码 200 表示请求成功。常见状态码：301/302（重定向）、400（请求参数错误）、401（未授权）、403（禁止访问）、404（资源不存在）、500（服务器内部错误）、502（网关错误）、503（服务不可用）。
+11. 动态设置导航栏背景色的 API 是？
+A. wx.setNavigationBarColor()
+B. wx.setNavBarColor()
+C. wx.setBackgroundColor()
+D. wx.setHeaderColor()
+答案：A
+解析： wx.setNavigationBarColor({ frontColor: '#ffffff', backgroundColor: '#ff0000' }) 动态设置导航栏颜色。frontColor 仅支持 #ffffff（白色）和 #000000（黑色）两种值。wx.setBackgroundColor() 设置的是窗口背景色（下拉刷新时露出的背景）。
+12. 自定义属性 data-user-id="123" 在 dataset 中获取时的键名是？
+A. user-id
+B. userId
+C. user_id
+D. userId 或 user-id
+答案：B
+解析： 小程序会自动将 data- 后面的带连字符属性名转换为 驼峰命名。data-user-id 会转换为 dataset.userId，data-id 转换为 dataset.id。这是小程序框架的自动转换规则，需要注意命名规范。
+13. wx.request 的 success 回调中，判断请求业务逻辑是否成功应该检查？
+A. res.statusCode === 200
+B. res.data.code === 200
+C. res.errMsg 包含 'ok'
+D. res.success === true
+答案：B
+解析： res.statusCode === 200 只表示 HTTP 请求成功到达服务器，不代表业务逻辑成功。通常后端会返回自定义的业务状态码（如 res.data.code === 200 或 res.data.status === 'success'），需要根据接口文档判断。res.errMsg 和 res.success 不是标准的响应结构。
+14. 页面返回时携带数据给上一页，推荐的方式是？
+A. wx.navigateBack({ data: {...} })
+B. 通过 getCurrentPages() 获取页面栈修改数据
+C. 使用 wx.setStorageSync 存储，上一页 onShow 读取
+D. 使用 eventChannel 双向通信
+答案：C
+解析： wx.navigateBack() 不支持直接传参。常用方案：① 使用本地缓存 wx.setStorageSync / wx.getStorageSync；② 使用全局数据 getApp().globalData；③ 通过 getCurrentPages() 获取页面栈直接修改上一页数据（不推荐，耦合度高）；④ wx.navigateTo 时可用 eventChannel 但 navigateBack 不支持。最稳妥的是方案 C。
+15. 显示 loading 时设置 mask: true 的作用是？
+A. 显示半透明蒙层，防止用户操作
+B. 隐藏 loading 后自动关闭蒙层
+C. 让 loading 显示在页面最顶层
+D. 没有实际作用
+答案：A
+解析： mask: true 在显示 loading 或 toast 时，会显示一个透明的蒙层，阻止用户的触摸操作，防止用户在请求过程中重复点击或进行其他操作。这是提升用户体验和防止重复提交的重要手段。
+16. 事件对象中 event.detail 通常用于获取？
+A. 自定义属性的值
+B. 组件自定义事件携带的数据
+C. 当前点击坐标
+D. 事件类型
+答案：B
+解析： event.detail 用于获取组件自定义事件携带的数据，如 <input bindinput="handleInput"> 中 event.detail.value 获取输入值，<swiper bindchange="onChange"> 中 event.detail.current 获取当前索引。自定义属性用 dataset，点击坐标用 touches，事件类型用 type。
+17. 网络请求中，设置超时时间的参数是？
+A. timeout
+B. timeOut
+C. maxDuration
+D. requestTimeout
+答案：A
+解析： wx.request 通过 timeout 参数设置超时时间（单位毫秒），默认超时时间和最大超时时间由微信客户端和系统控制。如 wx.request({ url: '...', timeout: 10000 }) 设置 10 秒超时。超时后会触发 fail 回调。
+18. 页面 A 通过 wx.navigateTo 跳转到页面 B，页面 B 返回时页面 A 会触发的生命周期是？
+A. onLoad
+B. onShow
+C. onReady
+D. onUnload
+答案：B
+解析： 从页面 B 返回页面 A 时，页面 A 从隐藏状态变为显示状态，触发 onShow。onLoad 和 onReady 只在页面首次加载时触发一次，onUnload 在页面关闭时触发。利用 onShow 可以在返回时刷新数据。
+19. 自定义属性 data-index="{{index}}" 中的 {{index}} 是？
+A. 字符串 "index"
+B. 列表渲染的当前索引值
+C. 变量名 index 本身
+D. 语法错误
+答案：B
+解析： 在 wx:for 列表渲染中，index 是默认的当前项索引变量。data-index="{{index}}" 会将当前索引值绑定到自定义属性上，在事件处理中通过 event.currentTarget.dataset.index 获取具体的数字索引。这是列表项点击时获取索引的常用方式。
+20. 网络请求失败时，回调函数走的是？
+A. success
+B. fail
+C. complete
+D. error
+答案：B
+解析： wx.request 的参数中，success 在请求成功时回调（HTTP 状态码 200-299），fail 在请求失败时回调（如网络断开、域名不在白名单、超时等），complete 无论成功失败都会回调。没有 error 回调参数。
+二、多选题（共10题，每题4个选项）
+1. 页面传参的方式包括？（多选）
+A. URL 查询参数
+B. 全局数据 globalData
+C. 本地缓存 Storage
+D. 事件通道 eventChannel
+答案：A、B、C、D
+解析： 四种都是常用传参方式：① URL 参数（适合简单数据）；② getApp().globalData（适合跨页面共享状态）；③ wx.setStorageSync（适合大量数据或持久化）；④ eventChannel（wx.navigateTo 的页面间事件通信，适合双向交互）。根据场景选择合适方式。
+2. wx.request 请求参数中必须包含的字段包括？（多选）
+A. url
+B. method
+C. data
+D. success
+答案：A
+解析： wx.request 只有 url 是必填参数。method 默认为 GET，data 默认为空，success/fail/complete 都是可选回调。题目问"必须包含"，只有 A 正确。但如果是问"常用字段"则多个都可选。
+3. 动态设置导航栏相关 API 包括？（多选）
+A. wx.setNavigationBarTitle
+B. wx.setNavigationBarColor
+C. wx.showNavigationBarLoading
+D. wx.hideNavigationBarLoading
+答案：A、B、C、D
+解析： 四个都是合法的导航栏操作 API：setNavigationBarTitle（设置标题）、setNavigationBarColor（设置颜色）、showNavigationBarLoading（显示导航栏加载动画）、hideNavigationBarLoading（隐藏加载动画）。常用于网络请求时给用户反馈。
+4. 事件处理函数中 event 对象包含的属性包括？（多选）
+A. type
+B. timeStamp
+C. target
+D. detail
+答案：A、B、C、D
+解析： event 对象包含：type（事件类型）、timeStamp（时间戳）、target（触发源组件）、currentTarget（绑定事件组件）、detail（自定义数据）、touches（触摸点数组）、changedTouches（变化的触摸点）等。四个选项都是常用属性。
+5. 网络请求中常见的 HTTP 状态码包括？（多选）
+A. 200（成功）
+B. 404（未找到）
+C. 500（服务器错误）
+D. 302（重定向）
+答案：A、B、C、D
+解析： 四个都是常见状态码：200（请求成功）、404（资源不存在）、500（服务器内部错误）、302（临时重定向）。此外还有 400（请求参数错误）、401（未授权）、403（禁止访问）、503（服务不可用）等。
+6. 自定义属性 data- 的命名规范包括？（多选）
+A. 必须以 data- 开头
+B. 可以包含大写字母
+C. 多个单词用连字符连接
+D. 在 dataset 中自动转为驼峰命名
+答案：A、C、D
+解析： 自定义属性必须以 data- 开头（如 data-id），多个单词建议用连字符（如 data-user-id），在 dataset 中自动转为驼峰（userId）。B 错误：data- 后面的属性名中，大写字母会自动转为小写，因此不建议使用大写。
+7. wx.showLoading 和 wx.showToast 的区别包括？（多选）
+A. showLoading 必须手动关闭
+B. showToast 可以自动关闭
+C. showLoading 默认带透明蒙层
+D. showToast 可以显示成功/失败图标
+答案：A、B、D
+解析： showLoading 必须通过 hideLoading 关闭，showToast 可通过 duration 自动关闭（默认 1500ms）；showToast 支持 icon: 'success'/'error'/'loading'/'none'。C 错误：showLoading 的蒙层需要通过 mask: true 显式开启，默认不带蒙层。
+8. 页面跳转 API 中支持携带参数的方式包括？（多选）
+A. wx.navigateTo({ url: '/pages/b/b?id=1' })
+B. wx.redirectTo({ url: '/pages/b/b?id=1' })
+C. wx.reLaunch({ url: '/pages/b/b?id=1' })
+D. wx.switchTab({ url: '/pages/index/index?id=1' })
+答案：A、B、C
+解析： navigateTo、redirectTo、reLaunch 都支持 URL 传参。switchTab 不支持 URL 传参，跳转到 tabBar 页面时参数会被忽略。需要给 tabBar 页面传参时，通常使用全局数据或本地缓存。
+9. 网络请求实战中的最佳实践包括？（多选）
+A. 封装统一的请求拦截器
+B. 请求前显示 loading，请求后隐藏
+C. 统一处理错误码和提示
+D. 所有请求都使用 POST 方法
+答案：A、B、C
+解析： 网络请求最佳实践：① 封装请求工具类（统一处理 baseURL、header、拦截器）；② 请求前后控制 loading 状态提升体验；③ 统一处理错误（如 401 跳转登录、500 提示服务端错误）。D 错误：应根据 RESTful 规范使用合适的 HTTP 方法（GET 获取、POST 创建、PUT 更新、DELETE 删除）。
+10. 事件处理中 bind 和 catch 的区别包括？（多选）
+A. bind 允许事件冒泡
+B. catch 阻止事件冒泡
+C. bind 只能用于点击事件
+D. catch 性能比 bind 更好
+答案：A、B
+解析： bind 事件绑定允许事件冒泡到父组件，catch 阻止事件冒泡。C 错误：bind 和 catch 都可以用于所有冒泡事件（tap、touchstart 等），不限于点击。D 错误：两者性能差异极小，选择依据是是否需要冒泡，而非性能。

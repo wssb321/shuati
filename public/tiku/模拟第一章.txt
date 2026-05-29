@@ -1,0 +1,209 @@
+一、单选题（共20题）
+1. 微信小程序中，用于定义页面样式的主要文件扩展名是？
+A. .html
+B. .js
+C. .json
+D. .wxss
+答案：D
+解析： 微信小程序使用四种文件类型：.wxml（页面结构，类似HTML）、.wxss（页面样式，类似CSS）、.js（页面逻辑）、.json（页面配置）。.wxss 是微信小程序特有的样式文件扩展名，支持大部分 CSS 语法，并增加了 rpx 响应式像素单位。
+2. 下列哪个选项不属于微信小程序的页面生命周期函数？
+A. onLoad
+B. onShow
+C. onError
+D. onUnload
+答案：C
+解析： 微信小程序页面生命周期函数包括：onLoad（页面加载）、onShow（页面显示）、onReady（页面初次渲染完成）、onHide（页面隐藏）、onUnload（页面卸载）。onError 是 App 级别的全局错误监听函数，不是页面生命周期函数，定义在 app.js 中。
+3. 微信小程序中使用 wx.request 发起网络请求时，用于接收服务器响应数据的回调参数是？
+A. data
+B. header
+C. url
+D. success
+答案：D
+解析： wx.request 的参数中，url 是请求地址，data 是发送给服务器的数据，header 是请求头，success 是请求成功后的回调函数，在回调中通过 res.data 获取服务器返回的数据。success 回调的参数 res 包含 data、statusCode、header 等属性。
+4. 云开发（CloudBase）中，数据库集合的权限设置默认是什么？
+A. 仅创建者可读写
+B. 所有人可读，仅创建者可写
+C. 所有人可读写
+D. 仅管理员可读写
+答案：C
+解析： 云开发数据库集合创建时，默认权限为 "所有人可读写"。这在开发阶段方便调试，但生产环境建议根据业务需求修改为更严格的权限（如"仅创建者可读写"或自定义安全规则），防止数据被恶意篡改。
+5. 在云函数中，获取当前调用用户的 OpenID 应该使用哪个 API？
+A. wx.getUserInfo()
+B. cloud.getWXContext()
+C. wx.login()
+D. cloud.callFunction()
+答案：B
+解析： 在云函数中，wx.getUserInfo() 和 wx.login() 是小程序端 API，不能在云函数中直接使用。cloud.callFunction() 是调用云函数的 API。正确方式是使用 cloud.getWXContext()，它返回包含 OPENID、APPID、UNIONID 等上下文信息的对象。
+6. 小程序云存储中，上传文件的 API 是？
+A. wx.uploadFile()
+B. cloud.uploadFile()
+C. wx.cloud.uploadFile()
+D. cloud.storage.uploadFile()
+答案：C
+解析： 小程序端上传文件到云存储使用 wx.cloud.uploadFile()，参数包括 cloudPath（云存储路径）和 filePath（本地临时文件路径）。wx.uploadFile() 是上传到普通服务器的 API。cloud.uploadFile() 是服务端（云函数/Node.js）使用的 API。
+7. 下列关于 rpx 单位的说法，正确的是？
+A. rpx 是固定像素单位，1rpx = 1px
+B. rpx 根据屏幕宽度进行自适应，规定屏幕宽为 750rpx
+C. rpx 只能在 iOS 设备上使用
+D. rpx 和 px 的换算比例是固定的 1:2
+答案：B
+解析： rpx（responsive pixel）是微信小程序的响应式像素单位，规定屏幕宽度恒定为 750rpx。在不同设备上，1rpx 会根据实际屏幕宽度自动换算为不同的物理像素值，实现自适应布局。例如 iPhone6 屏幕宽 375px，则 1rpx = 0.5px。
+8. 小程序 app.json 中，tabBar 的 list 数组最多可以配置多少个 tab？
+A. 2个
+B. 3个
+C. 5个
+D. 无限制
+答案：C
+解析： 微信小程序 tabBar 的 list 数组 最少配置 2 个，最多配置 5 个 tab 项。每个 tab 项需配置 pagePath、text，以及 iconPath 和 selectedIconPath（图标路径）。超过 5 个会导致编译报错。
+9. 云开发数据库中，查询年龄大于 18 岁的记录，正确的查询条件是？
+A. db.collection('users').where({ age: > 18 })
+B. db.collection('users').where({ age: { $gt: 18 } })
+C. db.collection('users').where({ age: 18 }).gt()
+D. db.collection('users').where({ age: { gt: 18 } })
+答案：B
+解析： 云开发数据库使用 MongoDB 风格的查询语法。比较操作符以 $ 开头：$gt（大于）、$gte（大于等于）、$lt（小于）、$lte（小于等于）、$eq（等于）、$ne（不等于）。因此正确写法是 { age: { $gt: 18 } }。
+10. 小程序页面跳转并保留当前页面的 API 是？
+A. wx.redirectTo()
+B. wx.navigateTo()
+C. wx.reLaunch()
+D. wx.switchTab()
+答案：B
+解析： wx.navigateTo() 保留当前页面，跳转到应用内的某个页面，页面栈最多 10 层。wx.redirectTo() 关闭当前页面后跳转（不保留）。wx.reLaunch() 关闭所有页面后跳转。wx.switchTab() 跳转到 tabBar 页面，并关闭其他所有非 tabBar 页面。
+11. 云函数执行时，默认的超时时间是？
+A. 3秒
+B. 5秒
+C. 20秒
+D. 60秒
+答案：C
+解析： 云函数默认超时时间为 20秒，最大可配置为 60秒（部分场景）。如果云函数执行超过超时时间，会被强制终止并返回超时错误。对于耗时较长的任务，建议拆分逻辑或使用异步处理。
+12. 小程序中，<image> 组件的默认宽高是？
+A. 自适应图片原始尺寸
+B. 宽度 100%，高度自适应
+C. 宽度 320px，高度 240px
+D. 宽度 0，高度 0
+答案：C
+解析： 微信小程序 <image> 组件有默认尺寸 320px × 240px。如果不设置宽高，图片会按此默认尺寸显示。建议始终显式设置 width 和 height 或使用 mode 属性（如 widthFix）来控制图片显示方式。
+13. 下列哪个不是云开发提供的基础能力？
+A. 云数据库
+B. 云存储
+C. 云服务器 ECS
+D. 云函数
+答案：C
+解析： 云开发（CloudBase/TCB）提供三大基础能力：云数据库（NoSQL 文档型数据库）、云存储（文件存储）、云函数（Serverless 运行环境）。云服务器 ECS 是腾讯云的 IaaS 产品，不属于云开发体系，需要单独购买和配置。
+14. 小程序中，全局数据存储推荐使用？
+A. window.globalData
+B. getApp().globalData
+C. localStorage
+D. wx.setStorageSync()
+答案：B
+解析： 小程序没有 window 对象，不能使用 localStorage。wx.setStorageSync() 是本地缓存 API，适合持久化存储。全局状态管理推荐使用 getApp().globalData，在 app.js 中定义 globalData 对象，各页面通过 getApp() 获取应用实例来读写全局数据。
+15. 云开发数据库中，更新数据使用的方法是？
+A. update()
+B. set()
+C. modify()
+D. edit()
+答案：A
+解析： 云开发数据库更新数据使用 doc(id).update({ data: {...} })，局部更新指定字段。set() 用于替换整个文档内容（会删除未指定的字段）。没有 modify() 和 edit() 方法。
+16. 小程序 wx:for 列表渲染中，用于指定当前项索引的变量名是？
+A. wx:key
+B. wx:index
+C. wx:item
+D. 默认 index
+答案：D
+解析： wx:for 默认使用 item 表示当前项，index 表示当前索引。可以通过 wx:for-item 和 wx:for-index 自定义变量名。wx:key 用于指定列表中项目的唯一标识符，提升渲染性能，不是索引变量。
+17. 云开发中，云函数本地调试使用的命令是？
+A. npm run dev
+B. cloud functions:invoke
+C. wx.cloud.callFunction()
+D. 微信开发者工具右键云函数选择"本地调试"
+答案：D
+解析： 微信开发者工具提供云函数本地调试功能：在云函数目录上右键 → 选择"本地调试" → 创建调试配置。也可以在云函数代码中右键选择"创建并部署：云端安装依赖"或"上传并部署：不上传 node_modules"。npm run dev 是普通 Node.js 项目的调试命令。
+18. 小程序获取用户授权登录，最新推荐的方式是？
+A. wx.getUserInfo()
+B. wx.login() 获取 code 后服务端换取 OpenID
+C. wx.getUserProfile()
+D. 直接使用 button 组件的 open-type="getUserInfo"
+答案：C
+解析： 微信官方已调整用户授权策略，wx.getUserInfo 和 open-type="getUserInfo" 不再弹出授权弹窗，默认返回匿名数据。获取用户信息推荐使用 wx.getUserProfile()，每次调用都会弹出授权框，用户同意后才能获取头像、昵称等信息。wx.login() 仅用于获取登录凭证 code，用于换取 OpenID 和 session_key。
+19. 云开发数据库中，聚合查询使用的 API 是？
+A. aggregate()
+B. group()
+C. collection().aggregate()
+D. query().aggregate()
+答案：C
+解析： 云开发数据库聚合查询通过 db.collection('集合名').aggregate() 发起，支持 $match（筛选）、$group（分组）、$sort（排序）、$limit（限制）、$lookup（联表查询）等阶段操作。聚合查询可以实现复杂的数据统计和分析需求。
+20. 小程序发布前，代码包总大小不能超过？
+A. 1MB
+B. 2MB
+C. 4MB
+D. 8MB
+答案：B
+解析： 微信小程序代码包（含所有页面、组件、资源）总大小不能超过 2MB。单个分包不超过 2MB，整个小程序所有分包总计不超过 20MB。超过限制需要进行代码压缩、图片资源使用云存储、或启用分包加载。
+二、多选题（共10题，每题4个选项）
+1. 微信小程序页面文件组成包括？（多选）
+A. .wxml
+B. .wxss
+C. .js
+D. .html
+答案：A、B、C
+解析： 微信小程序每个页面由 .wxml（结构）、.wxss（样式）、.js（逻辑）、.json（配置）四个文件组成。.html 不是小程序使用的文件格式，小程序使用自有的 WXML 标签体系（如 <view>、<text>）。
+2. 云开发数据库支持的数据类型包括？（多选）
+A. String
+B. Number
+C. Boolean
+D. Function
+答案：A、B、C
+解析： 云开发数据库支持 String、Number、Boolean、Date、Array、Object、GeoPoint、Null 等类型。Function 不支持，数据库不能存储函数类型数据。
+3. 下列属于微信小程序页面生命周期函数的有？（多选）
+A. onLoad
+B. onShow
+C. onReady
+D. onError
+答案：A、B、C
+解析： onLoad（加载）、onShow（显示）、onReady（渲染完成）是页面生命周期函数。onError 是 App 级别的全局错误监听，定义在 app.js 中，不属于页面生命周期。
+4. 云函数的优势包括？（多选）
+A. 无需搭建服务器
+B. 自动弹性伸缩
+C. 支持定时触发器
+D. 只能前端调用
+答案：A、B、C
+解析： 云函数无需购买服务器（Serverless）、自动弹性伸缩、支持定时触发器（Cron）。D 错误：云函数可通过 HTTP 触发、定时触发、SDK 等多种方式调用，不限于前端。
+5. 小程序中合法的页面跳转 API 包括？（多选）
+A. wx.navigateTo()
+B. wx.redirectTo()
+C. wx.reLaunch()
+D. wx.jumpTo()
+答案：A、B、C
+解析： wx.navigateTo()（保留当前页跳转）、wx.redirectTo()（关闭当前页跳转）、wx.reLaunch()（关闭所有页跳转）都是合法 API。D 错误：不存在 wx.jumpTo() 这个 API。
+6. 云开发数据库查询支持的操作符包括？（多选）
+A. eq（等于）
+B.gt（大于）
+C. in（在数组中）
+D.like（模糊匹配）
+答案：A、B、C
+解析： 云开发数据库支持 $eq、$gt、$gte、$lt、$lte、$ne、$in、$nin 等操作符。D 错误：没有 $like 操作符，模糊匹配应使用 $regex（正则表达式）。
+7. 小程序云存储的典型应用场景包括？（多选）
+A. 用户上传头像
+B. 存储音频视频
+C. 存放小程序代码包
+D. 用户生成文档
+答案：A、B、D
+解析： 云存储适用于用户上传的图片、音视频、文档等媒体文件。C 错误：小程序代码包通过开发者工具上传发布，不经过云存储。
+8. 下列关于 app.json 的说法，正确的有？（多选）
+A. pages 数组第一项为首页
+B. window 配置全局窗口样式
+C. tabBar 配置底部导航栏
+D. debug 开启生产环境
+答案：A、B、C
+解析： pages 第一项是首页，window 配置全局窗口表现，tabBar 配置底部导航。D 错误：debug 开启的是 调试模式，不是生产环境，生产环境应关闭 debug。
+9. 小程序云开发的安全机制包括？（多选）
+A. 数据库权限控制
+B. 云函数鉴权验证
+C. 强制 HTTPS 传输
+D. 前端代码完全加密
+答案：A、B、C
+解析： 云开发提供数据库权限控制、云函数身份鉴权、HTTPS 强制加密等安全措施。D 错误：前端代码无法完全加密，可通过代码混淆保护，但关键业务逻辑应放在云函数中。
+10. 属于小程序表单组件的有？（多选）
+A. <input><textarea><checkbox><div>
+答案：A、B、C
+解析： <input>（输入框）、<textarea>（多行输入）、<checkbox>（多选框）都是小程序表单组件。D 错误：<div> 是 HTML 标签，小程序中对应的容器组件是 <view>。

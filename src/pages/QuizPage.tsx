@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { QuestionCard } from '../components/QuestionCard';
 import { ProgressPanel } from '../components/ProgressPanel';
 import { QuestionList } from '../components/QuestionList';
+import { ExplanationPanel } from '../components/ExplanationPanel';
 import FuzzyText from '../components/FuzzyText';
 import Dither from '../components/Dither';
 import { QuizPageSkeleton } from '../components/Skeleton';
@@ -25,7 +26,6 @@ import {
 
 const TopBar = lazy(() => import('../components/TopBar').then(module => ({ default: module.TopBar })));
 const BottomNav = lazy(() => import('../components/BottomNav').then(module => ({ default: module.BottomNav })));
-const ExplanationPanel = lazy(() => import('../components/ExplanationPanel').then(module => ({ default: module.ExplanationPanel })));
 const SubmitConfirmDialog = lazy(() => import('../components/SubmitConfirmDialog').then(module => ({ default: module.SubmitConfirmDialog })));
 
 type Mode = 'practice' | 'exam' | 'mixed' | 'wrong';
@@ -151,7 +151,7 @@ export function QuizPage() {
   useEffect(() => {
     const discoverQuizzes = async () => {
       try {
-        const quizzes = ['第一章.txt', '第三章.txt', '第四章.txt', '第五章.txt', '第六章.txt', '第七章.txt', '第八章.txt', '第八章2.txt', '第八章3.txt', '第八章4.txt', '第八章5.txt', '第九章.txt', '第九章1.txt', '第九章2.txt', '第九章3.txt', '第九章4.txt'];
+        const quizzes = ['模拟第一章.txt', '模拟第二章.txt', '模拟第三章.txt', '模拟第四章.txt', '模拟第五章.txt', '模拟第六章.txt', '模拟第七章.txt', '模拟第八章.txt', '第一章.txt', '第三章.txt', '第四章.txt', '第五章.txt', '第六章.txt', '第七章.txt', '第八章.txt', '第八章2.txt', '第八章3.txt', '第八章4.txt', '第八章5.txt', '第九章.txt', '第九章1.txt', '第九章2.txt', '第九章3.txt', '第九章4.txt'];
         setAvailableQuizzes(quizzes);
         setSelectedQuizFiles(quizzes);
         
@@ -482,6 +482,7 @@ export function QuizPage() {
 
   const handleAnswerConfirmed = (answers: string[]) => {
     checkAndSaveWrongQuestion(currentQuestion, answers);
+    setShowResult(true);
   };
 
   const handleAnswerChange = (answers: string[]) => {
@@ -1552,6 +1553,10 @@ export function QuizPage() {
             
             <div className="lg:w-64 sm:w-full">
               <div className="lg:sticky lg:top-24">
+                <ExplanationPanel 
+                  question={currentQuestion} 
+                  showResult={showResult} 
+                />
                 <QuestionList
                   totalQuestions={questions.length}
                   currentIndex={currentQuestionIndex}
@@ -1597,6 +1602,10 @@ export function QuizPage() {
             
             <div className="lg:w-64 sm:w-full">
               <div className="lg:sticky lg:top-24">
+                <ExplanationPanel 
+                  question={currentQuestion} 
+                  showResult={showResult} 
+                />
                 <QuestionList
                   totalQuestions={questions.length}
                   currentIndex={currentQuestionIndex}
@@ -1664,6 +1673,10 @@ export function QuizPage() {
             
             <div className="lg:w-64 sm:w-full">
               <div className="lg:sticky lg:top-24">
+                <ExplanationPanel 
+                  question={currentQuestion} 
+                  showResult={showResult} 
+                />
                 <QuestionList
                   totalQuestions={questions.length}
                   currentIndex={currentQuestionIndex}
@@ -1729,6 +1742,10 @@ export function QuizPage() {
             
             <div className="lg:w-64 sm:w-full">
               <div className="lg:sticky lg:top-24">
+                <ExplanationPanel 
+                  question={currentQuestion} 
+                  showResult={showResult} 
+                />
                 <QuestionList
                   totalQuestions={questions.length}
                   currentIndex={currentQuestionIndex}

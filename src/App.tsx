@@ -17,15 +17,6 @@ export default function App() {
         brightness={1.2}
         color1="#818cf8"
         color2="#3b82f6"
-        noiseFrequency={2.5}
-        noiseAmplitude={1}
-        bandHeight={0.5}
-        bandSpread={1}
-        octaveDecay={0.1}
-        layerOffset={0}
-        colorSpeed={1}
-        enableMouseInteraction={true}
-        mouseInfluence={0.25}
       />
       <div className="relative z-10">
         <ToastProvider>

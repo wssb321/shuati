@@ -87,11 +87,18 @@ export function parseQuestionFile(content: string): QuestionGroup[] {
     // 格式3: 1. 问题内容? (简化格式，默认单选题)
     let questionMatch = line.match(/^(\d+)\.\s*\((单选题|多选题)\)\s*(.+)/);
     
-    // 如果没有匹配到带类型的格式，尝试简化格式
-    if (!questionMatch && formatType === 'simple') {
+    // 如果没有匹配到带类型的格式，尝试简化格式（标准格式下也支持）
+    if (!questionMatch) {
       questionMatch = line.match(/^(\d+)\.\s*(.+)/);
       if (questionMatch) {
-        // 简化格式默认是单选题
+        // 从章节标题判断类型，如果没有则默认单选题
+        let questionType: 'single' | 'multiple' = 'single';
+        if (currentGroup?.title.includes('多选题')) {
+          questionType = 'multiple';
+        } else if (currentGroup?.title.includes('单选题')) {
+          questionType = 'single';
+        }
+        
         if (currentQuestion) {
           currentGroup.questions.push(currentQuestion as Question);
         }
@@ -100,7 +107,7 @@ export function parseQuestionFile(content: string): QuestionGroup[] {
         
         currentQuestion = {
           id: parseInt(questionMatch[1]),
-          type: 'single',
+          type: questionType,
           question: questionMatch[2],
           options: [],
           correctAnswer: [],
@@ -153,11 +160,11 @@ export function parseQuestionFile(content: string): QuestionGroup[] {
       }
       
       // 如果不是选项，检查是否是答案行
-      const answerMatch = line.match(/^答案[：:]?\s*([A-D,，]+)/);
+      const answerMatch = line.match(/^答案[：:]?\s*([A-D,，、]+)/);
       if (answerMatch) {
         const answerStr = answerMatch[1];
-        // 支持逗号分隔的多个答案（多选题）
-        currentQuestion.correctAnswer = answerStr.replace(/[，,]/g, '').split('');
+        // 支持逗号和顿号分隔的多个答案（多选题）
+        currentQuestion.correctAnswer = answerStr.replace(/[，,、]/g, '').split('');
         // 判断是否是多选题（多个答案）
         if (currentQuestion.correctAnswer.length > 1) {
           currentQuestion.type = 'multiple';
@@ -168,12 +175,12 @@ export function parseQuestionFile(content: string): QuestionGroup[] {
       }
       
       // 旧格式的答案（我的答案:A:选项内容;正确答案:ABD:选项内容;）
-      const oldAnswerMatch = line.match(/正确答案[：:]\s*([A-D,，]+)/);
+      const oldAnswerMatch = line.match(/正确答案[：:]\s*([A-D,，、]+)/);
       if (oldAnswerMatch) {
         const answerStr = oldAnswerMatch[1];
         // 提取纯字母答案，去掉后面的内容（如 ":选项内容"）
-        const pureAnswer = answerStr.match(/^[A-D,，]+/)?.[0] || answerStr;
-        currentQuestion.correctAnswer = pureAnswer.replace(/[，,]/g, '').split('');
+        const pureAnswer = answerStr.match(/^[A-D,，、]+/)?.[0] || answerStr;
+        currentQuestion.correctAnswer = pureAnswer.replace(/[，,、]/g, '').split('');
         if (currentQuestion.correctAnswer.length > 1) {
           currentQuestion.type = 'multiple';
         }
@@ -185,7 +192,7 @@ export function parseQuestionFile(content: string): QuestionGroup[] {
     
     // 处理解析部分
     if (currentQuestion && inExplanation) {
-      // 检查是否是新题开始（必须包含题号和类型标识）
+      // 检查是否是新题开始（带类型标识）
       const newQuestionMatch = line.match(/^(\d+)\.\s*\((单选题|多选题)\)/);
       if (newQuestionMatch) {
         // 将当前题目添加到组
@@ -214,14 +221,54 @@ export function parseQuestionFile(content: string): QuestionGroup[] {
         continue;
       }
       
+      // 检查是否是简化格式的新题开始（不带类型标识）
+      const simpleQuestionMatch = line.match(/^(\d+)\.\s*(.+)/);
+      if (simpleQuestionMatch) {
+        // 将当前题目添加到组
+        currentQuestion.explanation = currentExplanation.trim();
+        currentGroup.questions.push(currentQuestion as Question);
+        
+        // 开始新题目（从章节标题推断类型）
+        const avgScore = totalQuestions > 0 ? totalScore / totalQuestions : 0;
+        let questionType: 'single' | 'multiple' = 'single';
+        if (currentGroup?.title.includes('多选题')) {
+          questionType = 'multiple';
+        } else if (currentGroup?.title.includes('单选题')) {
+          questionType = 'single';
+        }
+        
+        currentQuestion = {
+          id: parseInt(simpleQuestionMatch[1]),
+          type: questionType,
+          question: simpleQuestionMatch[2],
+          options: [],
+          correctAnswer: [],
+          score: avgScore,
+          explanation: '',
+          knowledgePoints: []
+        };
+        inOptions = true;
+        inExplanation = false;
+        currentExplanation = '';
+        continue;
+      }
+      
       // 检查是否是答案行（在解析中间出现）
-      const answerMatch = line.match(/^答案[：:]?\s*([A-D,，]+)/);
+      const answerMatch = line.match(/^答案[：:]?\s*([A-D,，、]+)/);
       if (answerMatch) {
         const answerStr = answerMatch[1];
-        currentQuestion.correctAnswer = answerStr.replace(/[，,]/g, '').split('');
+        currentQuestion.correctAnswer = answerStr.replace(/[，,、]/g, '').split('');
         if (currentQuestion.correctAnswer.length > 1) {
           currentQuestion.type = 'multiple';
         }
+        continue;
+      }
+      
+      // 检查是否是解析开头行
+      const explanationStartMatch = line.match(/^解析[：:]?\s*(.+)/);
+      if (explanationStartMatch) {
+        // 添加解析内容（去掉"解析："前缀）
+        currentExplanation = explanationStartMatch[1];
         continue;
       }
       

@@ -50,7 +50,6 @@ export const QuestionCard = memo(function QuestionCard({
     setClickedOption(key);
     onAnswerChange(newSelected);
 
-    // 点击动画
     setTimeout(() => setClickedOption(null), 100);
 
     if (immediateFeedback && question.type === 'single') {
@@ -96,7 +95,6 @@ export const QuestionCard = memo(function QuestionCard({
     selected.length === question.correctAnswer.length &&
     selected.every(s => question.correctAnswer.includes(s));
 
-  // 代码高亮处理
   const renderTextWithCode = (text: string) => {
     const parts = text.split(/(`[^`]+`)/g);
     return parts.map((part, idx) => {
@@ -105,7 +103,7 @@ export const QuestionCard = memo(function QuestionCard({
         return (
           <code
             key={idx}
-            className={`font-mono text-sm px-1.5 py-0.5 rounded ${isNightMode ? 'bg-slate-700 text-slate-200' : 'bg-gray-100 text-gray-700'}`}
+            className={`font-mono text-sm px-1.5 py-0.5 rounded bg-gray-100 text-gray-700`}
           >
             {code}
           </code>
@@ -116,81 +114,79 @@ export const QuestionCard = memo(function QuestionCard({
   };
 
   return (
-    <div className={`rounded-2xl p-6 mb-6 ${isNightMode ? 'bg-slate-800' : 'bg-white'}`} style={{ paddingTop: '24px' }}>
+    <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-sm">
       {/* 题目类型标签 */}
-      <div className="mb-4 flex items-center gap-2">
+      <div className="mb-5 flex items-center gap-2">
         <span className={`px-3 py-1 rounded-full text-xs font-medium ${
           question.type === 'single' 
-            ? `${isNightMode ? 'bg-blue-900/50 text-blue-300' : 'bg-blue-100 text-blue-700'}`
-            : `${isNightMode ? 'bg-purple-900/50 text-purple-300' : 'bg-purple-100 text-purple-700'}`
+            ? 'bg-blue-100 text-blue-700'
+            : 'bg-purple-100 text-purple-700'
         }`}>
           {question.type === 'single' ? '单选题' : '多选题'}
         </span>
         {question.type === 'multiple' && !displayResult && (
-          <span className={`text-xs ${isNightMode ? 'text-yellow-400' : 'text-yellow-600'}`}>
-            请选择所有符合的选项
+          <span className="text-xs text-gray-500">
+            多选题
           </span>
         )}
       </div>
 
       {/* 题目 */}
-      <h3 className={`text-lg leading-relaxed mb-8 ${isNightMode ? 'text-slate-200' : 'text-gray-800'}`} style={{ fontSize: '18px', fontWeight: 400 }}>
+      <h3 className="text-lg sm:text-xl leading-relaxed mb-6 text-gray-800 font-normal">
         {renderTextWithCode(question.question)}
       </h3>
 
       {/* 选项 */}
       <div className="space-y-3">
-        {question.options.map((option, idx) => {
+        {question.options.map((option) => {
           const isSelected = selected.includes(option.key);
           const isCorrectOption = question.correctAnswer.includes(option.key);
           const isWrongSelected = isSelected && !isCorrectOption && displayResult;
 
           return (
             <div
-              key={`${option.key}-${idx}`}
+              key={option.key}
               ref={el => optionRefs.current[option.key] = el}
               onClick={() => handleSelect(option.key)}
               className={`
-                relative overflow-hidden cursor-pointer
-                px-5 py-4 rounded-xl border-2
-                transition-all duration-200 ease-out
-                flex items-start gap-3
+                relative cursor-pointer
+                px-4 py-3.5 rounded-xl border-2
+                transition-all duration-150 ease-out
+                flex items-center gap-3
                 ${
                   displayResult
                     ? isCorrectOption
-                      ? `${isNightMode ? 'bg-green-900/20 border-green-500' : 'bg-green-50 border-green-500'}`
+                      ? 'bg-green-50 border-green-500'
                       : isWrongSelected
-                      ? `${isNightMode ? 'bg-red-900/20 border-red-500' : 'bg-red-50 border-red-500'}`
-                      : `${isNightMode ? 'bg-slate-700/50 border-slate-600 opacity-60' : 'bg-gray-50 border-gray-200 opacity-60'}`
+                      ? 'bg-red-50 border-red-500'
+                      : 'bg-gray-50 border-gray-200 opacity-60'
                     : isSelected
-                    ? `${isNightMode ? 'bg-blue-900/20 border-blue-500' : 'bg-blue-50 border-blue-500'}`
-                    : `${isNightMode ? 'bg-slate-800 border-slate-700 hover:bg-slate-700/50 hover:border-blue-500' : 'bg-white border-gray-200 hover:bg-blue-50 hover:border-blue-500'}`
+                    ? 'bg-blue-50 border-blue-500'
+                    : 'bg-white border-gray-200 hover:border-blue-300 hover:bg-blue-50/50'
                 }
-                ${clickedOption === option.key ? 'scale-[0.98]' : ''}
-                ${displayResult ? 'cursor-not-allowed' : ''}
+                ${clickedOption === option.key ? 'scale-[0.99]' : ''}
+                ${displayResult ? 'cursor-default' : 'cursor-pointer'}
               `}
             >
-              {/* 圆形/方形选择器 */}
-              <div className="flex-shrink-0 mt-0.5">
+              {/* 选择器 */}
+              <div className="flex-shrink-0">
                 {question.type === 'single' ? (
                   <div className={`
-                    w-4.5 h-4.5 rounded-full border-2
+                    w-5 h-5 rounded-full border-2
                     flex items-center justify-center
-                    transition-all duration-200
+                    transition-all duration-150
                     ${
                       displayResult
                         ? isCorrectOption
                           ? 'bg-green-500 border-green-500'
                           : isWrongSelected
                           ? 'bg-red-500 border-red-500'
-                          : isSelected
-                          ? 'bg-blue-500 border-blue-500'
-                          : `${isNightMode ? 'border-slate-600' : 'border-gray-300'}`
+                          : 'border-gray-300'
                         : isSelected
                         ? 'bg-blue-500 border-blue-500'
-                        : `${isNightMode ? 'border-slate-600' : 'border-gray-300'}`
+                        : 'border-gray-300'
                     }
-                  `} style={{ width: '18px', height: '18px' }}>
+                  `}>
                     {displayResult && isCorrectOption && (
                       <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
@@ -204,23 +200,21 @@ export const QuestionCard = memo(function QuestionCard({
                   </div>
                 ) : (
                   <div className={`
-                    w-4.5 h-4.5 rounded border-2
+                    w-5 h-5 rounded border-2
                     flex items-center justify-center
-                    transition-all duration-200
+                    transition-all duration-150
                     ${
                       displayResult
                         ? isCorrectOption
                           ? 'bg-green-500 border-green-500'
                           : isWrongSelected
                           ? 'bg-red-500 border-red-500'
-                          : isSelected
-                          ? 'bg-blue-500 border-blue-500'
-                          : `${isNightMode ? 'border-slate-600' : 'border-gray-300'}`
+                          : 'border-gray-300'
                         : isSelected
                         ? 'bg-blue-500 border-blue-500'
-                        : `${isNightMode ? 'border-slate-600' : 'border-gray-300'}`
+                        : 'border-gray-300'
                     }
-                  `} style={{ width: '18px', height: '18px' }}>
+                  `}>
                     {displayResult && isCorrectOption && (
                       <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
@@ -237,10 +231,10 @@ export const QuestionCard = memo(function QuestionCard({
 
               {/* 选项内容 */}
               <div className="flex-1">
-                <span className={`font-semibold mr-3 ${displayResult ? (isCorrectOption ? 'text-green-500' : isWrongSelected ? 'text-red-500' : isNightMode ? 'text-slate-400' : 'text-gray-400') : isNightMode ? 'text-slate-400' : 'text-gray-500'}`} style={{ fontSize: '14px' }}>
+                <span className={`font-medium mr-2 ${displayResult ? (isCorrectOption ? 'text-green-600' : isWrongSelected ? 'text-red-600' : 'text-gray-400') : 'text-gray-500'}`} style={{ fontSize: '14px' }}>
                   {option.key}.
                 </span>
-                <span className={`${displayResult ? (isCorrectOption ? 'font-bold' : isWrongSelected ? 'line-through' : '') : ''} ${isNightMode ? 'text-slate-200' : 'text-gray-700'}`} style={{ fontSize: '15px' }}>
+                <span className={`${displayResult ? (isCorrectOption ? 'font-semibold' : isWrongSelected ? 'line-through text-red-500' : '') : ''} text-gray-700`} style={{ fontSize: '15px' }}>
                   {renderTextWithCode(option.value)}
                 </span>
               </div>
@@ -249,9 +243,9 @@ export const QuestionCard = memo(function QuestionCard({
               {displayResult && (
                 <div className="flex-shrink-0 ml-2">
                   {isCorrectOption ? (
-                    <span className="text-green-500 text-xl">✓</span>
+                    <span className="text-green-500 text-lg">✓</span>
                   ) : isWrongSelected ? (
-                    <span className="text-red-500 text-xl">✗</span>
+                    <span className="text-red-500 text-lg">✗</span>
                   ) : null}
                 </div>
               )}
@@ -262,12 +256,12 @@ export const QuestionCard = memo(function QuestionCard({
 
       {/* 答案解析 */}
       {displayResult && question.explanation && question.explanation.trim() !== '' && (
-        <div className={`mt-6 p-4 rounded-xl ${isNightMode ? 'bg-slate-700/50' : 'bg-blue-50'}`}>
+        <div className="mt-6 p-4 rounded-xl bg-blue-50 border border-blue-100">
           <div className="flex items-center gap-2 mb-2">
             <span className="text-blue-500">💡</span>
-            <span className={`font-semibold ${isNightMode ? 'text-blue-300' : 'text-blue-700'}`}>答案解析</span>
+            <span className="font-semibold text-blue-700">答案解析</span>
           </div>
-          <p className={`text-sm leading-relaxed ${isNightMode ? 'text-slate-300' : 'text-gray-600'}`}>
+          <p className="text-sm leading-relaxed text-gray-600">
             {renderTextWithCode(question.explanation)}
           </p>
         </div>
@@ -279,8 +273,8 @@ export const QuestionCard = memo(function QuestionCard({
           onClick={handleConfirm}
           disabled={selected.length === 0}
           className={`
-            w-full mt-6 py-3 rounded-lg font-medium text-white
-            transition-all duration-200
+            w-full mt-6 py-3 rounded-xl font-medium text-white
+            transition-all duration-150
             ${
               selected.length > 0
                 ? 'bg-blue-500 hover:bg-blue-600'

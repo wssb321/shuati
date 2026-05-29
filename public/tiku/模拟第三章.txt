@@ -1,0 +1,212 @@
+一、单选题（共20题）
+1. 微信小程序的宿主环境是指？
+A. 微信客户端
+B. 手机操作系统
+C. 浏览器环境
+D. Node.js 运行环境
+答案：A
+解析： 微信小程序的宿主环境是 微信客户端。小程序运行在微信 App 内部，由微信客户端提供运行环境（包括 JavaScript 引擎、渲染引擎、原生组件等），不是直接运行在浏览器或操作系统中，也不依赖 Node.js。
+2. 小程序中，应用（App）级别的生命周期函数 onLaunch 在什么时候触发？
+A. 每次页面加载时
+B. 小程序首次启动时
+C. 每次显示小程序时
+D. 小程序切换到后台时
+答案：B
+解析： onLaunch 在 小程序初始化完成时（首次启动） 触发，全局只触发一次。可以获取启动参数（如场景值 scene）。onShow 在小程序启动或从后台进入前台时触发，onHide 在小程序进入后台时触发。
+3. 页面生命周期中，onLoad 和 onShow 的执行顺序是？
+A. onShow → onLoad → onReady
+B. onLoad → onShow → onReady
+C. onLoad → onReady → onShow
+D. onShow → onReady → onLoad
+答案：B
+解析： 页面生命周期执行顺序为：onLoad（加载，获取页面参数）→ onShow（页面显示）→ onReady（初次渲染完成）。当从其他页面返回时，只会触发 onShow，不会重复触发 onLoad 和 onReady。
+4. 小程序数据绑定中，WXML 中引用页面 data 数据的语法是？
+A. {{ data.name }}
+B. { name }
+C. {{ name }}
+D. ${ name }
+答案：C
+解析： 小程序使用 Mustache 语法（双大括号 {{ }}）进行数据绑定，如 {{ name }}。不需要加 data. 前缀，直接写变量名即可。{ name } 是 React/Vue 的语法，${ name } 是 ES6 模板字符串语法。
+5. 在 JS 中修改页面数据并更新视图，正确的方式是？
+A. this.data.name = '张三'
+B. this.setData({ name: '张三' })
+C. this.updateData({ name: '张三' })
+D. this.name = '张三'
+答案：B
+解析： 小程序中必须使用 this.setData() 方法修改数据，它会自动触发视图更新。直接修改 this.data（如 this.data.name = '张三'）不会更新视图。this.updateData() 不存在，this.name 修改的是实例属性而非页面数据。
+6. 数据渲染时，下列哪种写法可以在 WXML 中显示表达式的计算结果？
+A. <text>
+B. <text>
+C. <text>
+D. <text>
+答案：B
+解析： 在 Mustache 语法 {{ }} 中可以写简单的表达式，如 {{ 1 + 1 }} 会显示 2。但不能写复杂语句（如 if、for）。直接写 1 + 1 会原样显示文本，{ } 和 [ ] 不是小程序的数据绑定语法。
+7. 条件渲染中，控制组件显示与隐藏的指令是？
+A. wx:if 和 hidden
+B. v-if 和 v-show
+C. if 和 show
+D. ng-if 和 ng-show
+答案：A
+解析： 小程序使用 wx:if（条件渲染，切换时销毁/重建组件）和 hidden（显示隐藏，通过 display: none 控制，组件始终存在）。v-if/v-show 是 Vue 语法，ng-if/ng-show 是 Angular 语法。
+8. wx:if 和 hidden 的主要区别是？
+A. 没有区别，功能完全相同
+B. wx:if 有更高的初始渲染开销，hidden 有更高的切换开销
+C. wx:if 切换时销毁重建组件，hidden 只是控制显示隐藏
+D. hidden 可以配合 wx:else 使用
+答案：C
+解析： wx:if 是条件渲染，值为 false 时组件被销毁，切换时重新创建，适合不频繁切换的场景。hidden 是显示控制，始终渲染组件，只是通过 CSS 隐藏，适合频繁切换显示状态的场景。wx:if 可以配合 wx:elif 和 wx:else 使用，hidden 不行。
+9. 列表渲染中，用于指定列表项唯一标识符的属性是？
+A. wx:for
+B. wx:key
+C. wx:item
+D. wx:index
+答案：B
+解析： wx:key 用于指定列表中项目的唯一标识符（如 wx:key="id"），帮助框架识别列表项，提升渲染性能和状态保持。wx:for 是列表渲染指令，wx:item 和 wx:index 用于自定义当前项和索引的变量名（默认是 item 和 index）。
+10. 下列关于 wx:for 的说法，正确的是？
+A. 只能遍历数组，不能遍历对象
+B. 默认使用 item 表示当前项，index 表示索引
+C. 必须配合 wx:key 使用，否则报错
+D. 不支持嵌套循环
+答案：B
+解析： wx:for 默认使用 item 表示当前项，index 表示当前索引。它可以遍历对象（但会遍历对象的键值），wx:key 是建议使用但不是必须（没有不会报错），支持嵌套循环（内层循环需用 wx:for-item 和 wx:for-index 自定义变量名避免冲突）。
+11. 事件机制中，bindtap 和 catchtap 的区别是？
+A. bindtap 触发后阻止事件冒泡，catchtap 允许事件冒泡
+B. bindtap 允许事件冒泡，catchtap 阻止事件冒泡
+C. 两者没有任何区别
+D. bindtap 只能用于按钮，catchtap 用于所有组件
+答案：B
+解析： bind 开头的事件绑定（如 bindtap）允许事件冒泡，事件会向上传递到父组件。catch 开头的事件绑定（如 catchtap）阻止事件冒泡，事件不会传递到父组件。两者都可以用于任何支持点击的组件。
+12. 事件对象中，获取当前点击组件自定义数据的方式是？
+A. event.target.value
+B. event.currentTarget.dataset
+C. event.detail.value
+D. event.data
+答案：B
+解析： 在 WXML 中通过 data-xxx 设置自定义数据（如 data-id="123"），在事件回调中通过 event.currentTarget.dataset.id 获取。注意：event.target 是触发事件的源组件（可能是子组件），event.currentTarget 是绑定事件的当前组件。event.detail 用于获取组件自定义事件携带的数据（如表单输入值）。
+13. 小程序中，输入框组件 <input> 绑定输入事件使用的是？
+A. bindchange
+B. bindinput
+C. bindblur
+D. bindfocus
+答案：B
+解析： <input> 组件使用 bindinput 绑定输入事件，每次输入都会触发，通过 event.detail.value 获取当前输入值。bindchange 在值改变并失去焦点时触发，bindblur 在失去焦点时触发，bindfocus 在获得焦点时触发。
+14. 下列关于 this.setData() 的说法，错误的是？
+A. 可以一次性设置多个数据字段
+B. 支持设置对象或数组内部某个路径的数据
+C. 可以直接修改 data 中的值而不触发视图更新
+D. 是同步方法，立即更新视图
+答案：D
+解析： this.setData() 是异步方法，它会将数据变更放入队列，在下一个事件循环中批量更新视图，不是立即同步更新。A、B、C 都是正确的：可以设置多个字段（this.setData({ a: 1, b: 2 })），支持路径设置（this.setData({ 'obj.name': '张三' })），直接修改 this.data 不会触发视图更新。
+15. 在 WXML 中使用三元表达式进行条件渲染，正确的写法是？
+A. <view wx:if="{{ isVip ? '会员' : '普通用户' }}">
+B. <view>
+C. <view wx:if="isVip ? true : false">
+D. <view>
+答案：B
+解析： 三元表达式 {{ isVip ? '会员' : '普通用户' }} 用于数据渲染，在 {{ }} 中直接写表达式。wx:if 只需要布尔值（wx:if="{{ isVip }}"），不需要三元表达式。选项 A 把三元表达式放在了 wx:if 中虽然语法上可能工作但不是正确用法，D 的语法错误。
+16. 页面从后台切换到前台时，会触发的应用生命周期是？
+A. onLaunch
+B. onShow
+C. onHide
+D. onError
+答案：B
+解析： 当小程序从后台进入前台（如用户从微信聊天返回小程序），触发应用级别的 onShow。onLaunch 只在首次启动触发，onHide 在进入后台时触发，onError 在发生脚本错误时触发。
+17. 列表渲染中，遍历数组 [{id: 1, name: 'A'}, {id: 2, name: 'B'}] 并显示 name，正确的写法是？
+A. <view wx:for="{{ list }}" wx:key="id">
+B. <view wx:for="list" wx:key="id">
+C. <view for="{{ list }}">
+D. <view wx:for="{{ list }}">
+答案：A
+解析： 正确写法：<view wx:for="{{ list }}" wx:key="id">{{ item.name }}</view>。wx:for 的值需要 {{ }} 包裹，wx:key 使用数据中的唯一字段，item 是默认的当前项变量名。B 缺少 {{ }}，C 用了 for 而非 wx:for，D 的 list[item] 语法错误。
+18. 事件机制中，冒泡事件包括？
+A. touchstart、touchmove、touchend、tap、longpress
+B. 所有事件都是冒泡事件
+C. 只有 tap 是冒泡事件
+D. 所有事件都不冒泡
+答案：A
+解析： 小程序中 touchstart、touchmove、touchend、touchcancel、tap、longpress、longtap 等是冒泡事件，可以使用 bind 或 catch 绑定。其他事件如 submit、input、scroll 等是非冒泡事件。不是所有事件都冒泡，也不是都不冒泡。
+19. 在 this.setData() 中修改数组中某一项的数据，正确的写法是？
+A. this.setData({ list[0].name: '新值' })
+B. this.setData({ 'list[0].name': '新值' })
+C. this.data.list[0].name = '新值'
+D. this.setData({ list: [{ name: '新值' }] })
+答案：B
+解析： this.setData() 支持使用路径字符串修改对象或数组内部数据，需要用引号包裹路径：this.setData({ 'list[0].name': '新值' })。A 的语法非法（对象键不能带方括号），C 直接修改 this.data 不触发视图更新，D 会替换整个数组而非修改某一项。
+20. 小程序中，表单组件 <form> 提交时触发的事件是？
+A. bindsubmit
+B. bindformsubmit
+C. bindconfirm
+D. bindpost
+答案：A
+解析： <form> 组件使用 bindsubmit 绑定提交事件，通过 event.detail.value 获取表单中所有带有 name 属性的组件值。需要配合 <button formType="submit"> 使用。bindreset 用于重置表单事件。
+二、多选题（共10题，每题4个选项）
+1. 小程序宿主环境提供的能力包括？（多选）
+A. JavaScript 运行环境
+B. 渲染引擎
+C. 原生 API 能力
+D. 浏览器 DOM 操作
+答案：A、B、C
+解析： 微信客户端作为宿主环境，提供：① JavaScript 引擎（执行 JS 代码）；② 渲染引擎（渲染 WXML/WXSS）；③ 原生 API（网络、存储、媒体、位置等能力）。D 错误：小程序没有浏览器 DOM，不能使用 document、window 等 DOM API，使用自有的 Exparser 组件框架。
+2. 页面生命周期函数包括？（多选）
+A. onLoad
+B. onShow
+C. onReady
+D. onError
+答案：A、B、C
+解析： 页面生命周期：onLoad（加载）、onShow（显示）、onReady（初次渲染完成）、onHide（隐藏）、onUnload（卸载）。onError 是 App 级别的全局错误监听，不是页面生命周期函数。
+3. this.setData() 的正确用法包括？（多选）
+A. 修改单个字段：this.setData({ name: '张三' })
+B. 修改多个字段：this.setData({ name: '张三', age: 18 })
+C. 修改路径数据：this.setData({ 'obj.name': '张三' })
+D. 直接赋值：this.data.name = '张三'
+答案：A、B、C
+解析： this.setData() 支持修改单个字段、多个字段、路径数据（对象/数组内部）。D 错误：直接修改 this.data 不会触发视图更新，必须使用 this.setData()。
+4. 条件渲染的指令包括？（多选）
+A. wx:if
+B. wx:elif
+C. wx:else
+D. hidden
+答案：A、B、C、D
+解析： wx:if（条件为真时渲染）、wx:elif（否则如果）、wx:else（否则）构成完整的条件渲染链。hidden 也是条件显示控制（通过 display: none），但逻辑上是显示/隐藏而非条件渲染。四个都是控制组件显示的方式。
+5. 列表渲染 wx:for 中可以自定义的变量名包括？（多选）
+A. wx:for-item
+B. wx:for-index
+C. wx:for-key
+D. wx:for-list
+答案：A、B
+解析： wx:for-item 自定义当前项变量名（默认 item），wx:for-index 自定义索引变量名（默认 index）。wx:key 是用于指定列表项唯一标识的属性，不是 wx:for-key。不存在 wx:for-list。
+6. 事件绑定中，以 bind 开头的事件类型包括？（多选）
+A. bindtap
+B. bindtouchstart
+C. bindinput
+D. bindscroll
+答案：A、B、C、D
+解析： bind 可以绑定多种事件：bindtap（点击）、bindtouchstart（触摸开始）、bindinput（输入）、bindscroll（滚动）、bindchange（值改变）、bindsubmit（表单提交）等。bind 开头的事件会冒泡，catch 开头的事件阻止冒泡。
+7. 数据绑定时，WXML 中 {{ }} 可以使用的表达式包括？（多选）
+A. 简单运算：{{ a + b }}
+B. 三元运算：{{ isVip ? '是' : '否' }}
+C. 逻辑判断：{{ flag && '显示' }}
+D. 函数调用：{{ formatDate(date) }}
+答案：A、B、C
+解析： {{ }} 支持简单运算、三元运算、逻辑运算。D 错误：不支持直接调用函数（如 formatDate(date)），函数需要在 JS 中处理后将结果放入 data，再在 WXML 中绑定。也不能写 if、for 等复杂语句。
+8. 下列关于 wx:if 和 hidden 的使用场景，说法正确的有？（多选）
+A. 频繁切换显示状态用 hidden
+B. 条件复杂且不常切换用 wx:if
+C. wx:if 有更高的切换开销
+D. hidden 始终渲染组件
+答案：A、B、C、D
+解析： 四个选项都正确：hidden 适合频繁切换（只是 CSS 显示/隐藏，组件始终存在）；wx:if 适合不常切换的条件（切换时销毁/重建组件，有更高开销）；hidden 始终渲染组件到 DOM 中，只是不可见。
+9. 事件对象 event 中常用的属性包括？（多选）
+A. event.type
+B. event.timeStamp
+C. event.target
+D. event.detail
+答案：A、B、C、D
+解析： 事件对象包含：type（事件类型，如 tap）、timeStamp（事件生成时的时间戳）、target（触发事件的源组件）、currentTarget（绑定事件的当前组件）、detail（自定义事件携带的数据，如输入框的值）。四个都是常用属性。
+10. 应用（App）级别的生命周期函数包括？（多选）
+A. onLaunch
+B. onShow
+C. onHide
+D. onPageNotFound
+答案：A、B、C、D
+解析： 应用生命周期：onLaunch（初始化完成）、onShow（启动/前台显示）、onHide（进入后台）、onError（脚本错误）、onPageNotFound（页面不存在）。四个选项都是 App 级别的合法生命周期函数。

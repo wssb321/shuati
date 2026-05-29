@@ -1,0 +1,212 @@
+一、单选题（共20题）
+1. 小程序云开发的三大基础能力不包括？
+A. 云数据库
+B. 云存储
+C. 云服务器 ECS
+D. 云函数
+答案：C
+解析： 云开发（CloudBase/TCB）提供三大基础能力：云数据库（NoSQL 文档型数据库）、云存储（文件存储）、云函数（Serverless 运行环境）。云服务器 ECS 是腾讯云的 IaaS 产品，需要单独购买和配置，不属于云开发体系。
+2. 云开发数据库的默认权限设置是？
+A. 仅创建者可读写
+B. 所有人可读，仅创建者可写
+C. 所有人可读写
+D. 仅管理员可读写
+答案：C
+解析： 云开发数据库集合创建时，默认权限为 "所有人可读写"。这在开发阶段方便调试，但生产环境建议修改为更严格的权限（如"仅创建者可读写"或自定义安全规则），防止数据被恶意篡改。
+3. 云开发数据库中，查询年龄大于 18 岁的记录，正确的查询条件是？
+A. db.collection('users').where({ age: > 18 })
+B. db.collection('users').where({ age: { $gt: 18 } })
+C. db.collection('users').where({ age: 18 }).gt()
+D. db.collection('users').where({ age: { gt: 18 } })
+答案：B
+解析： 云开发数据库使用 MongoDB 风格的查询语法。比较操作符以 $ 开头：$gt（大于）、$gte（大于等于）、lt（小于）、$lte（小于等于）、$eq（等于）、$ne（不等于）。因此正确写法是 { age: { $gt: 18 } }。
+4. 在云函数中，获取当前调用用户的 OpenID 应该使用？
+A. wx.getUserInfo()
+B. cloud.getWXContext()
+C. wx.login()
+D. cloud.callFunction()
+答案：B
+解析： 在云函数中，wx.getUserInfo() 和 wx.login() 是小程序端 API，不能在云函数中直接使用。cloud.callFunction() 是调用云函数的 API。正确方式是使用 cloud.getWXContext()，它返回包含 OPENID、APPID、UNIONID 等上下文信息的对象。
+5. 小程序端上传文件到云存储使用的 API 是？
+A. wx.uploadFile()
+B. cloud.uploadFile()
+C. wx.cloud.uploadFile()
+D. cloud.storage.uploadFile()
+答案：C
+解析： 小程序端上传文件到云存储使用 wx.cloud.uploadFile()，参数包括 cloudPath（云存储路径）和 filePath（本地临时文件路径）。wx.uploadFile() 是上传到普通服务器的 API。cloud.uploadFile() 是服务端（云函数/Node.js）使用的 API。
+6. 云函数执行时，默认的超时时间是？
+A. 3秒
+B. 5秒
+C. 20秒
+D. 60秒
+答案：C
+解析： 云函数默认超时时间为 20秒，最大可配置为 60秒（部分场景）。如果云函数执行超过超时时间，会被强制终止并返回超时错误。对于耗时较长的任务，建议拆分逻辑或使用异步处理。
+7. 云函数定时触发器使用的配置格式是？
+A. Linux crontab 格式
+B. Windows 任务计划格式
+C. 毫秒时间戳
+D. JSON 数组
+答案：A
+解析： 云函数定时触发器使用 Linux crontab 格式，如 0 0 2 * * * 表示每天凌晨 2 点执行。格式为 秒 分 时 日 月 周，共 6 个字段。在云函数配置 config.json 的 triggers 数组中定义定时规则。
+8. 云开发中，"云调用"是指？
+A. 云函数调用另一个云函数
+B. 云函数中调用微信开放接口
+C. 小程序端调用云数据库
+D. 云存储调用云函数
+答案：B
+解析： 云调用（Cloud Call）是指在云函数中调用微信开放接口（如发送订阅消息、获取小程序码、微信支付等），基于云函数的特殊权限，无需 access_token，直接通过 cloud.openapi 调用。这是云开发的重要能力，简化了微信接口的调用流程。
+9. 云开发数据库中，更新数据使用的方法是？
+A. update()
+B. set()
+C. modify()
+D. edit()
+答案：A
+解析： 云开发数据库更新数据使用 doc(id).update({ data: {...} })，局部更新指定字段。set() 用于替换整个文档内容（会删除未指定的字段）。没有 modify() 和 edit() 方法。
+10. 云函数中调用云数据库，正确的初始化方式是？
+A. const db = wx.cloud.database()
+B. const db = cloud.database()
+C. const db = wx.database()
+D. const db = require('database')
+答案：B
+解析： 在云函数中，通过 cloud.database() 获取数据库引用，需要先 require('wx-server-sdk') 并初始化 cloud.init()。wx.cloud.database() 是小程序端 API，云函数中不能使用 wx 对象。
+11. 云开发数据库聚合查询使用的 API 是？
+A. aggregate()
+B. group()
+C. collection().aggregate()
+D. query().aggregate()
+答案：C
+解析： 云开发数据库聚合查询通过 db.collection('集合名').aggregate() 发起，支持 $match（筛选）、$group（分组）、$sort（排序）、$limit（限制）、$lookup（联表查询）等阶段操作。聚合查询可以实现复杂的数据统计和分析需求。
+12. 云存储中，文件下载到临时路径使用的 API 是？
+A. wx.cloud.downloadFile()
+B. cloud.downloadFile()
+C. wx.downloadFile()
+D. cloud.storage.downloadFile()
+答案：A
+解析： 小程序端从云存储下载文件使用 wx.cloud.downloadFile()，返回 tempFilePath（临时文件路径）。云函数端使用 cloud.downloadFile()。wx.downloadFile() 是下载普通网络文件的 API。
+13. 云函数中发送订阅消息使用的 API 是？
+A. cloud.openapi.subscribeMessage.send()
+B. wx.requestSubscribeMessage()
+C. cloud.sendMessage()
+D. wx.sendSubscribeMessage()
+答案：A
+解析： 云函数中通过 cloud.openapi.subscribeMessage.send() 发送订阅消息，属于云调用能力。wx.requestSubscribeMessage() 是小程序端请求用户订阅授权的 API。cloud.sendMessage() 和 wx.sendSubscribeMessage() 不存在。
+14. 云开发数据库中，事务操作使用的 API 是？
+A. db.transaction()
+B. db.startTransaction()
+C. db.runTransaction()
+D. db.begin()
+答案：C
+解析： 云开发数据库事务通过 db.runTransaction(async transaction => { ... }) 使用，支持在事务中执行多个操作（如读取、更新、删除），要么全部成功要么全部回滚，保证数据一致性。事务中的操作需要通过 transaction.collection() 而非 db.collection()。
+15. 云函数本地调试使用的命令或方式是？
+A. npm run dev
+B. 微信开发者工具右键云函数选择"本地调试"
+C. cloud functions:invoke
+D. wx.cloud.callFunction()
+答案：B
+解析： 微信开发者工具提供云函数本地调试功能：在云函数目录上右键 → 选择"本地调试" → 创建调试配置。也可以在云函数代码中右键选择"创建并部署：云端安装依赖"或"上传并部署：不上传 node_modules"。npm run dev 是普通 Node.js 项目的调试命令。
+16. 云开发数据库中，添加记录使用的方法是？
+A. insert()
+B. add()
+C. create()
+D. push()
+答案：B
+解析： 云开发数据库添加记录使用 collection.add({ data: {...} })。insert()、create()、push() 不是云开发数据库的 API。添加成功后返回新记录的 _id。
+17. 云函数中，获取云调用实例的正确方式是？
+A. cloud.openapi()
+B. cloud.getOpenAPI()
+C. cloud.callOpenAPI()
+D. cloud.weixin()
+答案：A
+解析： 云函数中通过 cloud.openapi 获取云调用实例，如 cloud.openapi.subscribeMessage（订阅消息）、cloud.openapi.wxacode（小程序码）、cloud.openapi.security（内容安全）等。直接通过 cloud.openapi.服务名.方法名() 调用。
+18. 云开发数据库权限中，"仅创建者可读写"的含义是？
+A. 只有管理员可以读写
+B. 只有数据的创建者可以读写自己的数据
+C. 任何人都可以读，只有创建者可以写
+D. 创建者可以读，任何人可以写
+答案：B
+解析： "仅创建者可读写" 表示每条记录只能被它的创建者（即添加这条记录的用户）读写，其他用户无法访问。这是生产环境常用的安全权限设置，配合云函数可以实现更复杂的权限控制。
+19. 云函数中批量删除多条记录使用的方法是？
+A. doc().remove()
+B. where().remove()
+C. deleteMany()
+D. bulkDelete()
+答案：B
+解析： 云函数中批量删除使用 collection.where({ 条件 }).remove()，删除所有符合条件的记录。doc(id).remove() 只删除单条记录。deleteMany() 和 bulkDelete() 不是云开发数据库的 API。
+20. 云开发中，云函数调用另一个云函数的方式是？
+A. wx.cloud.callFunction()
+B. cloud.callFunction()
+C. cloud.invoke()
+D. cloud.call()
+答案：B
+解析： 云函数中调用另一个云函数使用 cloud.callFunction({ name: '另一个云函数名', data: {} })。wx.cloud.callFunction() 是小程序端调用的方式。cloud.invoke() 和 cloud.call() 不存在。
+二、多选题（共10题，每题4个选项）
+1. 云开发数据库支持的数据类型包括？（多选）
+A. String
+B. Number
+C. Date
+D. GeoPoint
+答案：A、B、C、D
+解析： 云开发数据库支持：String、Number、Boolean、Date（使用 db.serverDate() 或 new Date()）、Array、Object、GeoPoint（地理位置点）、GeoJSON（地理图形）、Null 等类型。GeoPoint 用于地理位置查询，如附近的店。
+2. 云函数的优势包括？（多选）
+A. 无需搭建服务器
+B. 自动弹性伸缩
+C. 支持定时触发器
+D. 只能在小程序端调用
+答案：A、B、C
+解析： 云函数优势：无需购买服务器（Serverless）、根据请求量自动弹性伸缩、支持定时触发器（Cron 表达式）、有免费调用额度。D 错误：云函数不仅可以在小程序端调用，还可以通过 HTTP 触发、定时触发、SDK 调用等方式被触发。
+3. 云开发数据库查询支持的操作符包括？（多选）
+A.eq(等于)
+B.gt（大于）
+C. in（在数组中）
+D.regex（正则匹配）
+答案：A、B、C、D
+解析： 云开发数据库支持丰富的查询操作符：比较操作符（$eq、$ne、$gt、$gte、$lt、$lte）、包含操作符（$in、$nin）、逻辑操作符（$and、$or、$not）、正则匹配（$regex）、地理位置查询（$geoNear、$geoWithin）等。
+4. 云存储的应用场景包括？（多选）
+A. 用户上传头像
+B. 存储音频视频文件
+C. 存放小程序代码包
+D. 用户生成文档
+答案：A、B、D
+解析： 云存储适用于用户上传的媒体文件（图片、音频、视频）、用户生成的文档、以及作为 CDN 加速分发静态资源。C 错误：小程序代码包通过开发者工具上传发布，不经过云存储。
+5. 云调用支持的微信开放接口包括？（多选）
+A. 订阅消息发送
+B. 获取小程序码
+C. 内容安全检测
+D. 微信支付统一下单
+答案：A、B、C
+解析： 云调用支持多种微信开放接口：订阅消息（subscribeMessage.send）、小程序码（wxacode.get）、内容安全（security.imgSecCheck/msgSecCheck）、客服消息、UniformMessage 等。D 错误：微信支付统一下单需要在商户服务端完成，不直接通过云调用。
+6. 云函数定时触发器的应用场景包括？（多选）
+A. 定时备份数据库
+B. 定时发送消息提醒
+C. 定时清理过期数据
+D. 实时响应用户请求
+答案：A、B、C
+解析： 定时触发器适合周期性任务：数据备份、消息推送、数据清理、统计报表生成等。D 错误：实时响应用户请求应使用云函数的事件触发（小程序端调用），而非定时触发器。
+7. 云开发数据库事务的特性包括？（多选）
+A. 原子性：要么全部成功，要么全部回滚
+B. 一致性：数据状态保持一致
+C. 隔离性：事务之间互不干扰
+D. 持久性：事务完成后数据永久保存
+答案：A、B、C、D
+解析： 数据库事务具有 ACID 四大特性：原子性（Atomicity）、一致性（Consistency）、隔离性（Isolation）、持久性（Durability）。云开发数据库事务同样遵循这些特性，适合处理涉及多个操作的复杂业务场景（如转账、订单处理）。
+8. 云函数中操作数据库的正确方式包括？（多选）
+A. 使用 cloud.database() 获取数据库引用
+B. 事务中使用 transaction.collection()
+C. 直接操作 wx.cloud.database()
+D. 通过 db.collection() 获取集合引用
+答案：A、B、D
+解析： 云函数中：① cloud.database() 初始化数据库；② db.collection() 获取集合引用进行增删改查；③ 事务中使用 transaction.collection()。C 错误：wx.cloud.database() 是小程序端 API，云函数中没有 wx 对象。
+9. 云开发权限设置的可选方案包括？（多选）
+A. 所有人可读写
+B. 仅创建者可读写
+C. 仅管理员可读写
+D. 自定义安全规则
+答案：A、B、C、D
+解析： 云开发数据库提供四种权限模板：所有人可读写（默认，开发调试）、所有人可读仅创建者可写、仅创建者可读写、仅管理员可读写。此外还可以通过安全规则（JSON 格式）自定义更细粒度的读写权限控制。
+10. 云函数实战开发中的最佳实践包括？（多选）
+A. 敏感逻辑放在云函数中保护
+B. 使用 try-catch 处理异常
+C. 合理设置超时时间和内存
+D. 所有数据操作都在前端直接进行
+答案：A、B、C
+解析： 云函数最佳实践：① 敏感业务逻辑（如支付、权限校验）放云函数；② 异常处理保证稳定性；③ 根据需求配置资源（超时、内存）。D 错误：前端直接操作数据库安全性低，复杂操作应在云函数中进行，配合权限控制。

@@ -1,0 +1,209 @@
+一、单选题（共20题）
+1. 小程序将数据同步存储到本地缓存使用的 API 是？
+A. wx.setStorage()
+B. wx.setStorageSync()
+C. wx.saveData()
+D. wx.localStorage()
+答案：B
+解析： wx.setStorageSync() 是同步存储 API，会阻塞当前线程直到存储完成，适合存储少量关键数据。wx.setStorage() 是异步版本，不会阻塞。wx.saveData() 和 wx.localStorage() 不是小程序 API。注意：单个 key 允许存储的最大数据长度为 1MB，所有数据存储上限为 10MB。
+2. 获取用户当前地理位置使用的 API 是？
+A. wx.getLocation()
+B. wx.chooseLocation()
+C. wx.openLocation()
+D. wx.getPosition()
+答案：A
+解析： wx.getLocation() 获取用户当前的地理位置（经纬度、速度、准确度等），需要用户授权。wx.chooseLocation() 打开地图选择位置（让用户手动选点），wx.openLocation() 使用微信内置地图查看位置。wx.getPosition() 不存在。
+3. 小程序登录流程中，获取临时登录凭证 code 的 API 是？
+A. wx.getUserInfo()
+B. wx.login()
+C. wx.getCode()
+D. wx.authLogin()
+答案：B
+解析： wx.login() 获取临时登录凭证 code（有效期 5 分钟），开发者需要将 code 发送到后端，后端再用 code 换取 openid 和 session_key。wx.getUserInfo() 获取用户信息（已废弃，现用 wx.getUserProfile）。wx.getCode() 和 wx.authLogin() 不存在。
+4. 本地缓存中，同步读取数据的 API 是？
+A. wx.getStorage()
+B. wx.getStorageSync()
+C. wx.readStorage()
+D. wx.loadStorage()
+答案：B
+解析： wx.getStorageSync('key') 同步读取本地缓存数据，如果 key 不存在会返回空字符串或抛出异常（需要用 try-catch）。wx.getStorage() 是异步版本。wx.readStorage() 和 wx.loadStorage() 不是小程序 API。
+5. 使用微信内置地图查看指定位置的 API 是？
+A. wx.getLocation()
+B. wx.chooseLocation()
+C. wx.openLocation()
+D. wx.viewMap()
+答案：C
+解析： wx.openLocation({ latitude, longitude, name, address }) 打开微信内置地图查看指定位置，可以显示位置名称和地址。wx.getLocation() 是获取当前位置，wx.chooseLocation() 是让用户选择位置。wx.viewMap() 不存在。
+6. 小程序发起微信支付调起客户端支付使用的 API 是？
+A. wx.requestPayment()
+B. wx.pay()
+C. wx.weixinPay()
+D. wx.unifiedOrder()
+答案：A
+解析： wx.requestPayment() 调起微信支付客户端，参数包括 timeStamp、nonceStr、package、signType、paySign 等，这些参数需要由后端调用微信统一下单接口（unifiedOrder）生成后返回给前端。wx.pay()、wx.weixinPay() 不存在，wx.unifiedOrder() 是后端接口不是前端 API。
+7. 获取本地缓存信息（包括当前已用空间大小）使用的 API 是？
+A. wx.getStorageInfo()
+B. wx.getStorageStats()
+C. wx.checkStorage()
+D. wx.storageInfo()
+答案：A
+解析： wx.getStorageInfo() / wx.getStorageInfoSync() 获取当前本地缓存的相关信息，返回 keys（所有 key 数组）、currentSize（当前已用空间，单位 KB）、limitSize（空间限制，单位 KB）。其他选项不是合法 API。
+8. 小程序中，清除所有本地缓存数据使用的 API 是？
+A. wx.removeStorage()
+B. wx.clearStorage()
+C. wx.deleteStorage()
+D. wx.cleanStorage()
+答案：B
+解析： wx.clearStorage() / wx.clearStorageSync() 异步/同步清除所有本地缓存数据。慎用，会清除所有数据。wx.removeStorage('key') 只删除指定 key 的数据。wx.deleteStorage() 和 wx.cleanStorage() 不存在。
+9. 小程序获取用户授权设置信息的 API 是？
+A. wx.getUserAuth()
+B. wx.getSetting()
+C. wx.checkAuth()
+D. wx.authStatus()
+答案：B
+解析： wx.getSetting() 获取用户的当前设置，返回 authSetting 对象，包含各权限的授权状态（如 scope.userInfo、scope.userLocation 等是 true/false）。配合 wx.authorize() 提前向用户发起授权请求。其他选项不是合法 API。
+10. 小程序选择本地文件使用的 API 是？
+A. wx.chooseFile()
+B. wx.selectFile()
+C. wx.pickFile()
+D. wx.openFile()
+答案：A
+解析： wx.chooseFile() 从客户端会话或本地选择文件，支持选择文件类型和数量。wx.selectFile()、wx.pickFile()、wx.openFile() 不存在。注意：基础库 2.10.0 开始支持，低版本需兼容处理。
+11. 小程序保存文件到本地使用的 API 是？
+A. wx.saveFile()
+B. wx.downloadFile()
+C. wx.storeFile()
+D. wx.writeFile()
+答案：A
+解析： wx.saveFile() 保存临时文件到本地，返回保存后的文件路径（本地用户目录）。wx.downloadFile() 下载文件到临时路径，需要再调用 saveFile() 持久化保存。wx.storeFile() 不存在，wx.writeFile() 是文件系统 API（wx.getFileSystemManager）用于写入文件内容。
+12. 小程序 AI 能力中，用于图片内容安全检测（鉴黄、鉴暴等）的接口属于？
+A. wx.cloud.callFunction()
+B. wx.ai.imgSecCheck()
+C. 服务端 imgSecCheck 接口
+D. wx.checkImage()
+答案：C
+解析： 图片内容安全检测 imgSecCheck 是服务端接口，需要开发者后端调用微信服务器的 HTTPS 接口，不能直接从小程序前端调用（防止被恶意绕过）。前端可以配合云函数间接调用。wx.ai.imgSecCheck() 和 wx.checkImage() 不存在。
+13. 小程序打开文档预览使用的 API 是？
+A. wx.previewFile()
+B. wx.openDocument()
+C. wx.viewDocument()
+D. wx.showFile()
+答案：B
+解析： wx.openDocument({ filePath, fileType }) 打开文档预览，支持 doc、xls、ppt、pdf、docx、xlsx、pptx 等格式。filePath 可以是本地文件路径或临时文件路径。wx.previewFile()、wx.viewDocument()、wx.showFile() 不存在。
+14. 小程序获取系统信息（如屏幕宽高、设备型号）使用的 API 是？
+A. wx.getSystemInfo()
+B. wx.getDeviceInfo()
+C. wx.getScreenInfo()
+D. wx.getPhoneInfo()
+答案：A
+解析： wx.getSystemInfo() / wx.getSystemInfoSync() 获取系统信息，返回 screenWidth、screenHeight、windowWidth、windowHeight、model（设备型号）、system（操作系统版本）、platform（客户端平台）等。是最常用的 API 之一。
+15. 小程序中，提前向用户发起授权请求的 API 是？
+A. wx.getSetting()
+B. wx.authorize()
+C. wx.requestAuth()
+D. wx.openSetting()
+答案：B
+解析： wx.authorize({ scope: 'scope.userLocation' }) 提前向用户发起授权请求，不会弹窗但会检查授权状态。如果用户未授权，需要引导用户到设置页用 wx.openSetting() 手动开启。wx.getSetting() 只是获取当前授权状态，wx.requestAuth() 不存在。
+16. 小程序文件下载到临时路径使用的 API 是？
+A. wx.saveFile()
+B. wx.downloadFile()
+C. wx.fetchFile()
+D. wx.getFile()
+答案：B
+解析： wx.downloadFile({ url }) 下载文件资源到本地临时路径，返回 tempFilePath。下载后可通过 wx.saveFile() 持久化保存，或用 wx.openDocument() 打开预览。wx.fetchFile() 和 wx.getFile() 不存在。
+17. 小程序 AI 能力中，OCR 身份证识别需要使用的 API 是？
+A. wx.cloud.callFunction() 调用云函数
+B. wx.ai.ocrIdCard()
+C. wx.scanIdCard()
+D. wx.recognizeIdCard()
+答案：A
+解析： 小程序前端没有直接的 OCR API，通常通过 wx.cloud.callFunction() 调用云函数，云函数中再调用微信 AI 开放能力（如 ocrIdCard）或腾讯云 OCR 服务。wx.ai.ocrIdCard()、wx.scanIdCard()、wx.recognizeIdCard() 不存在。
+18. 小程序获取用户手机号，需要使用的组件和事件是？
+A. <button open-type="getPhoneNumber" bindgetphonenumber="getPhoneNumber"><button bindtap="getPhone">
+答案：A
+解析： 获取用户手机号必须使用 <button> 组件的 open-type="getPhoneNumber"，并绑定 bindgetphonenumber 事件，用户点击后回调中获取加密数据，再发送到后端解密。不能通过普通 API 直接获取，必须用户主动点击触发。
+19. 小程序本地缓存中，移除指定 key 的数据使用的 API 是？
+A. wx.deleteStorage()
+B. wx.removeStorage()
+C. wx.clearStorage()
+D. wx.dropStorage()
+答案：B
+解析： wx.removeStorage({ key }) / wx.removeStorageSync(key) 移除指定 key 的本地缓存数据。wx.clearStorage() 是清除所有数据。wx.deleteStorage() 和 wx.dropStorage() 不存在。
+20. 小程序地理位置 API 中，需要用户授权 scope.userLocation 的包括？
+A. wx.getLocation()
+B. wx.chooseLocation()
+C. wx.openLocation()
+D. wx.getLocation() 和 wx.chooseLocation()
+答案：D
+解析： wx.getLocation()（获取当前位置）和 wx.chooseLocation()（选择位置）都需要 scope.userLocation 授权。wx.openLocation() 只是打开地图查看指定位置，不需要获取用户位置，因此不需要该授权。
+二、多选题（共10题，每题4个选项）
+1. 小程序本地缓存 API 包括？（多选）
+A. wx.setStorageSync()
+B. wx.getStorageSync()
+C. wx.removeStorageSync()
+D. wx.clearStorageSync()
+答案：A、B、C、D
+解析： 四个都是同步版本的本地缓存 API，分别对应：设置、获取、移除、清除。还有对应的异步版本（不带 Sync 后缀）。本地缓存是小程序重要的数据持久化手段，但注意 10MB 总容量限制和敏感数据不宜明文存储。
+2. 小程序地理位置相关 API 包括？（多选）
+A. wx.getLocation()
+B. wx.chooseLocation()
+C. wx.openLocation()
+D. wx.startLocationUpdate()
+答案：A、B、C、D
+解析： 四个都是合法的地理位置 API：getLocation（获取当前位置）、chooseLocation（选择位置）、openLocation（打开地图查看位置）、startLocationUpdate（开启前台/后台位置持续更新，需授权）。还有 wx.stopLocationUpdate 停止更新。
+3. 小程序开放接口（需用户授权）包括？（多选）
+A. wx.login()
+B. wx.getUserProfile()
+C. wx.getPhoneNumber()
+D. wx.requestSubscribeMessage()
+答案：A、B、C、D
+解析： 四个都是开放接口：login（登录获取 code）、getUserProfile（获取用户信息，每次需用户同意）、getPhoneNumber（获取手机号，需按钮触发）、requestSubscribeMessage（订阅消息授权）。都需要用户主动同意或触发，不能静默获取。
+4. 小程序文件相关 API 包括？（多选）
+A. wx.chooseFile()
+B. wx.downloadFile()
+C. wx.saveFile()
+D. wx.openDocument()
+答案：A、B、C、D
+解析： 四个都是文件操作 API：chooseFile（选择文件）、downloadFile（下载文件到临时路径）、saveFile（保存临时文件到本地）、openDocument（打开文档预览）。此外还有 wx.getFileSystemManager() 获取文件系统管理器进行更底层的文件操作。
+5. 微信支付流程中，前端需要的参数包括？（多选）
+A. timeStamp
+B. nonceStr
+C. package
+D. paySign
+答案：A、B、C、D
+解析： wx.requestPayment() 需要五个参数：timeStamp（时间戳）、nonceStr（随机字符串）、package（统一下单接口返回的 prepay_id）、signType（签名算法，如 RSA）、paySign（签名）。这些都需要由后端调用微信统一下单接口生成，前端不能自行生成。
+6. 小程序 AI 能力的应用场景包括？（多选）
+A. OCR 文字识别
+B. 图片内容安全检测
+C. 语音识别
+D. 自然语言处理
+答案：A、B、C、D
+解析： 微信小程序/腾讯云 AI 能力涵盖：OCR（身份证、银行卡、营业执照等识别）、图片内容安全（鉴黄鉴暴）、语音识别（语音转文字）、自然语言处理（智能客服、文本分析）等。通常通过云函数或后端调用腾讯云 API 实现。
+7. 小程序获取系统信息 wx.getSystemInfo() 返回的字段包括？（多选）
+A. screenWidth
+B. windowHeight
+C. model
+D. SDKVersion
+答案：A、B、C、D
+解析： getSystemInfo 返回丰富的系统信息：screenWidth/screenHeight（屏幕宽高）、windowWidth/windowHeight（可用窗口宽高）、model（设备型号）、system（系统版本）、platform（平台 ios/android）、SDKVersion（基础库版本）、statusBarHeight（状态栏高度）等。
+8. 小程序用户授权相关的 API 包括？（多选）
+A. wx.getSetting()
+B. wx.authorize()
+C. wx.openSetting()
+D. wx.getUserProfile()
+答案：A、B、C、D
+解析： 四个都是授权相关 API：getSetting（获取当前授权状态）、authorize（提前发起授权请求）、openSetting（打开设置页引导用户手动授权）、getUserProfile（获取用户信息，属于需要授权的能力）。授权管理是小程序开发的重要环节。
+9. 小程序文件下载和保存的正确流程包括？（多选）
+A. wx.downloadFile() 下载到临时路径
+B. wx.saveFile() 保存到本地持久化
+C. 直接使用临时路径长期保存
+D. 使用 wx.openDocument() 预览
+答案：A、B、D
+解析： 正确流程：① downloadFile 下载到 tempFilePath（临时文件，小程序退出后可能被清理）；② saveFile 保存到本地用户文件目录持久化；③ openDocument 打开预览。C 错误：临时路径不可靠，需要持久化保存才能长期使用。
+10. 小程序本地缓存的使用注意事项包括？（多选）
+A. 总容量上限 10MB
+B. 敏感数据建议加密存储
+C. 同步 API 会阻塞线程
+D. 缓存数据永久有效不会丢失
+答案：A、B、C
+解析： 本地缓存注意事项：① 总上限 10MB，单个 key 最大 1MB；② 敏感信息（如 token）建议加密后存储；③ 同步 API（Sync）会阻塞当前线程，大量操作建议用异步。D 错误：缓存数据在用户清理微信缓存、删除小程序、手机恢复出厂等情况下会丢失，重要数据需要服务端备份。

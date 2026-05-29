@@ -1,0 +1,212 @@
+一、单选题（共20题）
+1. 微信小程序项目创建时，项目配置文件是？
+A. project.config.json
+B. app.json
+C. app.js
+D. package.json
+答案：A
+解析： project.config.json 是微信小程序的项目配置文件，包含项目设置、编译配置、开发者工具个性化设置等。app.json 是全局应用配置，app.js 是应用逻辑入口，package.json 是 Node.js/npm 项目的依赖管理文件（云开发或使用了 npm 包时会出现）。
+2. 微信小程序的标准目录结构中，存放页面文件的文件夹是？
+A. /components
+B. /pages
+C. /utils
+D. /static
+答案：B
+解析： 微信小程序标准目录结构中，/pages 存放所有页面文件（每个页面包含 .wxml、.wxss、.js、.json），/components 存放自定义组件，/utils 存放工具函数，/static 或 /images 通常存放本地静态资源（但生产环境建议放云存储）。
+3. 页面配置文件（如 pages/index/index.json）中，可以覆盖的全局配置项是？
+A. pages
+B. window
+C. tabBar
+D. subpackages
+答案：B
+解析： 页面级别的 .json 配置文件只能覆盖 app.json 中的 window 配置项（如导航栏标题、背景色、是否允许下拉刷新等）。pages、tabBar、subpackages 只能在全局 app.json 中配置，页面配置无法覆盖。
+4. 小程序页面生命周期中，页面初次渲染完成后触发的函数是？
+A. onLoad
+B. onShow
+C. onReady
+D. onHide
+答案：C
+解析： onReady 在页面初次渲染完成后触发，此时页面 DOM 已准备好，可以进行节点查询（如 wx.createSelectorQuery）。onLoad 在页面加载时触发（可获取页面参数），onShow 在页面显示时触发，onHide 在页面隐藏时触发。
+5. 下列哪个不是小程序的基础组件？
+A. view
+B. text
+C. div
+D. image
+答案：C
+解析： div 是 HTML 标签，小程序中不存在。小程序的容器组件是 view，文本组件是 text，图片组件是 image。此外还有 scroll-view、swiper、icon、button、input 等丰富的基础组件。
+6. 小程序中实现弹性盒子布局，应该使用的样式属性是？
+A. display: flex
+B. display: box
+C. layout: flex
+D. flex: true
+答案：A
+解析： 小程序 WXSS 支持大部分 CSS 语法，包括 display: flex 弹性盒子布局。display: box 是旧版 CSS 语法已废弃，layout 和 flex: true 不是合法的 CSS 属性。WXSS 还支持 display: grid 网格布局。
+7. 小程序中，1rpx 在 iPhone6 设备上等于多少物理像素？
+A. 1px
+B. 0.5px
+C. 2px
+D. 根据屏幕动态变化
+答案：B
+解析： 小程序规定屏幕宽度恒为 750rpx。iPhone6 屏幕宽度为 375px，因此 1rpx = 375px / 750 = 0.5px。rpx（responsive pixel）会根据设备屏幕宽度自动换算，实现自适应布局。
+8. 从页面A跳转到页面B并保留页面A在页面栈中，应该使用？
+A. wx.redirectTo()
+B. wx.navigateTo()
+C. wx.reLaunch()
+D. wx.switchTab()
+答案：B
+解析： wx.navigateTo() 保留当前页面，跳转到新页面，页面栈最多 10 层。wx.redirectTo() 关闭当前页面后跳转（不保留），wx.reLaunch() 关闭所有页面后跳转，wx.switchTab() 跳转到 tabBar 页面并关闭其他非 tabBar 页面。
+9. 配置 tabBar 时，list 数组中的每个 item 必须包含的字段是？
+A. pagePath 和 text
+B. iconPath 和 selectedIconPath
+C. pagePath 和 iconPath
+D. text 和 color
+答案：A
+解析： tabBar 的 list 数组中，每个 item 必须 包含 pagePath（页面路径）和 text（tab 文字）。iconPath 和 selectedIconPath（图标路径）是可选的，如果不配置则只显示文字。color 是在 tabBar 根级别配置，不是 item 级别的字段。
+10. 在 app.js 中定义全局数据，页面中正确的获取方式是？
+A. getApp().globalData
+B. this.globalData
+C. app.globalData
+D. wx.getApp().globalData
+答案：A
+解析： 小程序中通过 getApp() 函数获取应用实例，然后访问 globalData 属性，即 getApp().globalData。this.globalData 在页面中指向页面实例而非应用实例。app 需要提前定义，wx.getApp() 不存在这个 API。
+11. 页面 A 通过 wx.navigateTo() 跳转到页面 B，页面 B 返回页面 A 时，页面 A 会触发的生命周期是？
+A. onLoad
+B. onShow
+C. onReady
+D. onUnload
+答案：B
+解析： 从页面 B 返回页面 A 时，页面 A 从隐藏状态变为显示状态，触发 onShow。onLoad 只在页面首次加载时触发一次，onReady 只在首次渲染完成时触发，onUnload 在页面关闭时触发。
+12. 下列哪个组件可以实现纵向滚动？
+A. view
+B. scroll-view
+C. swiper
+D. movable-view
+答案：B
+解析： scroll-view 是可滚动视图区域组件，支持纵向和横向滚动，需设置 scroll-y 或 scroll-x 属性。view 是普通容器不可滚动，swiper 是滑块视图容器（用于轮播），movable-view 是可移动的视图（拖拽而非滚动）。
+13. 在页面 .json 配置中，设置导航栏标题文字的配置项是？
+A. navigationBarTitleText
+B. navigationTitle
+C. navTitle
+D. title
+答案：A
+解析： 页面或全局 window 配置中，使用 navigationBarTitleText 设置导航栏标题文字。其他相关配置：navigationBarBackgroundColor（导航栏背景色）、navigationBarTextStyle（标题颜色，仅支持 black/white）、enablePullDownRefresh（是否开启下拉刷新）。
+14. 小程序中，绑定点击事件的事件名是？
+A. onclick
+B. bindtap
+C. click
+D. ontap
+答案：B
+解析： 小程序使用 bindtap 或 catchtap 绑定点击事件，bindtap 事件会冒泡，catchtap 阻止事件冒泡。onclick 是 HTML 的事件绑定方式，小程序中不使用。click 和 ontap 不是小程序的事件名。
+15. 下列关于 app.json 中 pages 数组的说法，正确的是？
+A. 页面路径需要带文件扩展名
+B. 数组第一项为小程序首页
+C. 页面路径必须以 ./ 开头
+D. 最多只能配置 5 个页面
+答案：B
+解析： pages 数组第一项自动作为小程序首页。页面路径 不需要 带扩展名（如 "pages/index/index"），不需要 以 ./ 开头，且 没有 数量限制（但小程序总代码包不能超过 2MB）。
+16. 小程序页面间传递数据，通过 URL 参数传值时，在目标页面获取参数的方式是？
+A. this.data.options
+B. this.properties
+C. onLoad 函数的参数 options
+D. wx.getStorageSync()
+答案：C
+解析： 页面跳转传参通过 URL 拼接（如 wx.navigateTo({ url: '/pages/detail/detail?id=123' })），在目标页面的 onLoad(options) 回调中通过 options 对象获取参数（options.id）。this.data 是页面内部数据，this.properties 是组件属性，wx.getStorageSync() 是本地缓存 API。
+17. 小程序中，设置页面背景色的正确方式是？
+A. 在 .wxss 中设置 body 的背景色
+B. 在页面 .json 中设置 backgroundColor
+C. 在 app.wxss 中设置 page 选择器的背景色
+D. 在 .wxml 中使用 <body>
+答案：C
+解析： 小程序中没有 body 标签，根节点是 page。设置页面背景色可以在 app.wxss 或页面 .wxss 中使用 page { background-color: #f5f5f5; }。backgroundColor 在 .json 中配置的是 窗口背景色（下拉刷新时露出的背景），不是页面内容背景。
+18. 使用 wx.navigateBack() 返回上一级页面时，可以携带的参数方式是？
+A. 通过 URL 拼接参数
+B. 通过 eventChannel 触发事件
+C. 通过 wx.setStorageSync 存储
+D. 无法携带参数
+答案：C
+解析： wx.navigateBack() 不支持 URL 传参和 eventChannel（eventChannel 仅用于 wx.navigateTo 的页面间通信）。返回时携带数据通常通过 本地缓存（wx.setStorageSync / wx.getStorageSync）或 全局数据（getApp().globalData）实现。也可以在上级页面的 onShow 中通过接口重新获取数据。
+19. tabBar 页面之间的切换，会触发页面的哪个生命周期？
+A. onLoad 和 onUnload
+B. onShow 和 onHide
+C. onReady
+D. 不会触发任何生命周期
+答案：B
+解析： tabBar 页面切换时，当前页面触发 onHide，目标页面触发 onShow。tabBar 页面不会被卸载，因此不会触发 onUnload，也不会重复触发 onLoad 和 onReady（除非小程序被销毁后重新打开）。
+20. 在小程序组件中，用于接收父组件传入数据的属性是？
+A. data
+B. properties
+C. methods
+D. relations
+答案：B
+解析： 自定义组件中，properties 用于定义组件的属性（接收父组件传入的数据），支持类型、默认值和观察者函数。data 是组件内部私有数据，methods 定义组件方法，relations 定义组件间关系（如父子组件）。
+二、多选题（共10题，每题4个选项）
+1. 微信小程序的标准页面文件包括？（多选）
+A. .wxml
+B. .wxss
+C. .js
+D. .vue
+答案：A、B、C
+解析： 小程序每个页面由 .wxml（结构）、.wxss（样式）、.js（逻辑）、.json（配置）四个文件组成。.vue 是 Vue 框架的单文件组件格式，小程序不使用。
+2. 下列属于小程序页面生命周期函数的有？（多选）
+A. onLoad
+B. onShow
+C. onReady
+D. onClick
+答案：A、B、C
+解析： onLoad（加载）、onShow（显示）、onReady（初次渲染完成）、onHide（隐藏）、onUnload（卸载）是页面生命周期函数。onClick 不是生命周期函数，是事件处理函数（且小程序中使用的是 bindtap 而非 onClick）。
+3. 小程序中合法的页面跳转 API 包括？（多选）
+A. wx.navigateTo()
+B. wx.redirectTo()
+C. wx.reLaunch()
+D. wx.jumpTo()
+答案：A、B、C
+解析： wx.navigateTo()（保留当前页跳转）、wx.redirectTo()（关闭当前页跳转）、wx.reLaunch()（关闭所有页跳转）都是合法 API。wx.jumpTo() 不存在，还有 wx.switchTab()（跳转到 tabBar 页）和 wx.navigateBack()（返回）也是合法 API。
+4. 小程序 WXSS 中支持的布局方式包括？（多选）
+A. 盒模型（标准流）
+B. Flex 弹性布局
+C. Grid 网格布局
+D. Table 表格布局
+答案：A、B、C
+解析： 小程序 WXSS 支持标准盒模型（块级/行内元素）、Flex 弹性布局（display: flex）和 Grid 网格布局（display: grid）。Table 布局 虽然 CSS 支持，但小程序中不推荐且很少使用，不是 WXSS 推荐的布局方式。
+5. 配置 tabBar 时，list 数组中每个 item 可以配置的字段包括？（多选）
+A. pagePath
+B. text
+C. iconPath
+D. selectedIconPath
+答案：A、B、C、D
+解析： tabBar 的 list 数组中，每个 item 可以配置：pagePath（页面路径，必填）、text（tab 文字，必填）、iconPath（未选中图标路径，可选）、selectedIconPath（选中图标路径，可选）。四个选项都是合法的配置字段。
+6. 在 app.js 中可以通过 getApp() 获取的应用实例属性包括？（多选）
+A. globalData
+B. onLaunch
+C. onShow
+D. onError
+答案：A、B、C、D
+解析： getApp() 获取的应用实例包含：globalData（全局数据对象）、onLaunch（应用启动生命周期）、onShow（应用显示生命周期）、onHide（应用隐藏生命周期）、onError（全局错误监听）、onPageNotFound（页面不存在监听）等属性和方法。
+7. 小程序中实现页面间数据通信的方式包括？（多选）
+A. URL 参数传递
+B. 全局数据 globalData
+C. 本地缓存 Storage
+D. eventChannel 事件通道
+答案：A、B、C、D
+解析： 小程序页面间通信方式：① URL 参数（wx.navigateTo({ url: '?id=1' })）；② 全局数据（getApp().globalData）；③ 本地缓存（wx.setStorageSync）；④ eventChannel（wx.navigateTo 成功后通过 eventChannel.emit 发送事件）。四种方式都是常用的数据通信手段。
+8. 下列关于 rpx 单位的说法，正确的有？（多选）
+A. 规定屏幕宽度为 750rpx
+B. 在不同设备上自动换算
+C. 1rpx 在所有设备上都等于 1px
+D. 用于实现自适应布局
+答案：A、B、D
+解析： rpx 规定屏幕宽度恒为 750rpx，根据设备实际宽度自动换算物理像素值（如 iPhone6 上 1rpx=0.5px，iPhone6 Plus 上 1rpx≈0.552px），用于实现跨设备自适应布局。C 错误：1rpx 在不同设备上对应的物理像素不同。
+9. 小程序中，scroll-view 组件支持的属性包括？（多选）
+A. scroll-y
+B. scroll-x
+C. scroll-top
+D. scroll-into-view
+答案：A、B、C、D
+解析： scroll-view 组件支持：scroll-y（允许纵向滚动）、scroll-x（允许横向滚动）、scroll-top（设置竖向滚动条位置）、scroll-left（设置横向滚动条位置）、scroll-into-view（滚动到指定子元素，值应为子元素 id）、scroll-with-animation（滚动动画）、bindscroll（滚动事件）等丰富属性。
+10. 在页面 .json 配置中可以覆盖的全局 window 配置项包括？（多选）
+A. navigationBarTitleText
+B. navigationBarBackgroundColor
+C. enablePullDownRefresh
+D. backgroundColor
+答案：A、B、C、D
+解析： 页面级别的 .json 文件可以覆盖 app.json 中 window 的所有配置项，包括：navigationBarTitleText（导航栏标题）、navigationBarBackgroundColor（导航栏背景色）、navigationBarTextStyle（标题颜色）、enablePullDownRefresh（是否开启下拉刷新）、backgroundColor（窗口背景色）、backgroundTextStyle（下拉 loading 样式）等。
