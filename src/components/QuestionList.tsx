@@ -32,12 +32,10 @@ export const QuestionList = memo(function QuestionList({
           let bgClass = 'bg-gray-100 text-gray-600 hover:bg-gray-200';
           if (isCurrent) {
             bgClass = 'bg-blue-500 text-white';
-          } else if (showResult && isAnswered) {
+          } else if (isAnswered) {
             bgClass = isCorrect 
               ? 'bg-green-500 text-white' 
               : 'bg-red-500 text-white';
-          } else if (isAnswered) {
-            bgClass = 'bg-green-100 text-green-700 hover:bg-green-200';
           }
           
           return (
@@ -59,25 +57,17 @@ export const QuestionList = memo(function QuestionList({
             <span className="text-gray-500">未答</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="w-3 h-3 rounded bg-green-100"></span>
-            <span className="text-gray-500">已答</span>
-          </div>
-          <div className="flex items-center gap-1.5">
             <span className="w-3 h-3 rounded bg-blue-500"></span>
             <span className="text-gray-500">当前</span>
           </div>
-          {showResult && (
-            <>
-              <div className="flex items-center gap-1.5">
-                <span className="w-3 h-3 rounded bg-green-500"></span>
-                <span className="text-gray-500">正确</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <span className="w-3 h-3 rounded bg-red-500"></span>
-                <span className="text-gray-500">错误</span>
-              </div>
-            </>
-          )}
+          <div className="flex items-center gap-1.5">
+            <span className="w-3 h-3 rounded bg-green-500"></span>
+            <span className="text-gray-500">正确</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <span className="w-3 h-3 rounded bg-red-500"></span>
+            <span className="text-gray-500">错误</span>
+          </div>
         </div>
       </div>
     </div>

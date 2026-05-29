@@ -192,6 +192,30 @@ export function parseQuestionFile(content: string): QuestionGroup[] {
     
     // 处理解析部分
     if (currentQuestion && inExplanation) {
+      // 检查是否是章节标题
+      const chapterMatch = line.match(/^(一|二|三|四|五|六|七|八|九|十)[、.．](.*)$/);
+      if (chapterMatch) {
+        // 将当前题目添加到组
+        currentQuestion.explanation = currentExplanation.trim();
+        currentGroup.questions.push(currentQuestion as Question);
+        
+        // 开始新章节
+        const title = chapterMatch[2];
+        currentGroup = { title, questions: [] };
+        
+        // 从标题中提取分数和题目数量
+        const scoreMatch = title.match(/共(\d+)题.*?(\d+\.?\d*)分/);
+        if (scoreMatch) {
+          totalQuestions = parseInt(scoreMatch[1]);
+          totalScore = parseFloat(scoreMatch[2]);
+        }
+        
+        currentQuestion = null;
+        inExplanation = false;
+        currentExplanation = '';
+        continue;
+      }
+      
       // 检查是否是新题开始（带类型标识）
       const newQuestionMatch = line.match(/^(\d+)\.\s*\((单选题|多选题)\)/);
       if (newQuestionMatch) {

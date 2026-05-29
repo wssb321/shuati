@@ -1,73 +1,31 @@
 const fs = require('fs');
+const path = require('path');
 
-function parseQuestionFile(content) {
-  const groups = [];
+// 简单的解析测试函数
+function testParse(content) {
   const lines = content.split('\n').map(line => line.trim()).filter(line => line);
   
-  let currentGroup = null;
   let currentQuestion = null;
-  let inOptions = false;
   let inExplanation = false;
   let currentExplanation = '';
-  
-  let totalScore = 0;
-  let totalQuestions = 0;
-  
-  let formatType = 'standard';
-  
-  const firstLine = lines[0] || '';
-  const hasChapterTitle = firstLine.match(/^(一|二|三|四|五|六|七|八|九|十|十一|十二)[、.．](.*)$/);
-  const hasTypeMarker = firstLine.match(/\(单选题\)|\(多选题\)/);
-  
-  if (!hasChapterTitle && !hasTypeMarker) {
-    formatType = 'simple';
-  }
-  
-  console.log('Format:', formatType);
-  
-  if (formatType === 'simple') {
-    currentGroup = { title: 'All', questions: [] };
-  }
+  let questions = [];
   
   for (const line of lines) {
-    const chapterMatch = line.match(/^(一|二|三|四|五|六|七|八|九|十|十一|十二)[、.．](.*)$/);
-    if (chapterMatch) {
-      if (currentGroup) {
-        groups.push(currentGroup);
-      }
-      const title = chapterMatch[2];
-      currentGroup = { title, questions: [] };
-      
-      const scoreMatch = title.match(/共(\d+)题.*?(\d+\.?\d*)分/);
-      if (scoreMatch) {
-        totalQuestions = parseInt(scoreMatch[1]);
-        totalScore = parseFloat(scoreMatch[2]);
-      }
-      continue;
-    }
-    
-    if (!currentGroup) continue;
-    
-    let questionMatch = line.match(/^(\d+)\.\s*\((单选题|多选题)\)\s*(.+)/);
-    
-    if (!questionMatch && formatType === 'simple') {
-      questionMatch = line.match(/^(\d+)\.\s*(.+)/);
-      if (questionMatch) {
+    // 匹配题目
+    const questionMatch = line.match(/^(\d+)\.\s*\((单选题|多选题)\)\s*(.+)/);
+    if (!questionMatch) {
+      const simpleMatch = line.match(/^(\d+)\.\s*(.+)/);
+      if (simpleMatch) {
         if (currentQuestion) {
-          currentGroup.questions.push(currentQuestion);
+          currentQuestion.explanation = currentExplanation.trim();
+          questions.push(currentQuestion);
         }
-        const avgScore = totalQuestions > 0 ? totalScore / totalQuestions : 0;
         currentQuestion = {
-          id: parseInt(questionMatch[1]),
-          type: 'single',
-          question: questionMatch[2],
-          options: [],
-          correctAnswer: [],
-          score: avgScore,
+          id: parseInt(simpleMatch[1]),
+          question: simpleMatch[2],
           explanation: '',
-          knowledgePoints: []
+          correctAnswer: []
         };
-        inOptions = true;
         inExplanation = false;
         currentExplanation = '';
         continue;
@@ -76,130 +34,71 @@ function parseQuestionFile(content) {
     
     if (questionMatch) {
       if (currentQuestion) {
-        currentGroup.questions.push(currentQuestion);
+        currentQuestion.explanation = currentExplanation.trim();
+        questions.push(currentQuestion);
       }
-      const avgScore = totalQuestions > 0 ? totalScore / totalQuestions : 0;
       currentQuestion = {
         id: parseInt(questionMatch[1]),
-        type: questionMatch[2] === '单选题' ? 'single' : 'multiple',
         question: questionMatch[3],
-        options: [],
-        correctAnswer: [],
-        score: avgScore,
         explanation: '',
-        knowledgePoints: []
+        correctAnswer: []
       };
-      inOptions = true;
       inExplanation = false;
       currentExplanation = '';
       continue;
     }
     
-    if (currentQuestion && inOptions) {
-      const optionMatch = line.match(/^([A-D])[．.、\s]\s*(.+)/);
-      if (optionMatch) {
-        currentQuestion.options.push({
-          key: optionMatch[1],
-          value: optionMatch[2]
-        });
-        continue;
-      }
-      
-      const answerMatch = line.match(/^答案[：:]?\s*([A-D,，]+)/);
-      if (answerMatch) {
-        const answerStr = answerMatch[1];
-        currentQuestion.correctAnswer = answerStr.replace(/[，,]/g, '').split('');
-        if (currentQuestion.correctAnswer.length > 1) {
-          currentQuestion.type = 'multiple';
-        }
-        inOptions = false;
-        inExplanation = true;
-        continue;
-      }
-      
-      const oldAnswerMatch = line.match(/正确答案[：:]\s*([A-D,，]+)/);
-      if (oldAnswerMatch) {
-        const answerStr = oldAnswerMatch[1];
-        currentQuestion.correctAnswer = answerStr.replace(/[，,]/g, '').split('');
-        if (currentQuestion.correctAnswer.length > 1) {
-          currentQuestion.type = 'multiple';
-        }
-        inOptions = false;
-        inExplanation = true;
-        continue;
-      }
+    // 匹配答案
+    const answerMatch = line.match(/^答案[：:]?\s*([A-D,，、]+)/);
+    if (answerMatch && currentQuestion) {
+      currentQuestion.correctAnswer = answerMatch[1].replace(/[，,、]/g, '').split('');
+      inExplanation = true;
+      continue;
     }
     
+    // 处理解析
     if (currentQuestion && inExplanation) {
-      const newQuestionMatch = line.match(/^(\d+)\.\s*/);
-      if (newQuestionMatch) {
-        const typeMatch = line.match(/\((单选题|多选题)\)/);
+      const explanationStart = line.match(/^解析[：:]?\s*(.+)/);
+      if (explanationStart) {
+        currentExplanation = explanationStart[1];
+        continue;
+      }
+      
+      // 检查是否是新题开始
+      const newQMatch = line.match(/^(\d+)\./);
+      if (newQMatch) {
         currentQuestion.explanation = currentExplanation.trim();
-        currentGroup.questions.push(currentQuestion);
-        
-        const avgScore = totalQuestions > 0 ? totalScore / totalQuestions : 0;
-        let questionContent = line.replace(/^\d+\.\s*/, '').replace(/\(单选题\)|\(多选题\)/g, '').trim();
-        
-        currentQuestion = {
-          id: parseInt(newQuestionMatch[1]),
-          type: typeMatch ? (typeMatch[1] === '单选题' ? 'single' : 'multiple') : 'single',
-          question: questionContent,
-          options: [],
-          correctAnswer: [],
-          score: avgScore,
-          explanation: '',
-          knowledgePoints: []
-        };
-        inOptions = true;
+        questions.push(currentQuestion);
+        currentQuestion = null;
         inExplanation = false;
         currentExplanation = '';
         continue;
       }
       
-      const answerMatch = line.match(/^答案[：:]?\s*([A-D,，]+)/);
-      if (answerMatch) {
-        const answerStr = answerMatch[1];
-        currentQuestion.correctAnswer = answerStr.replace(/[，,]/g, '').split('');
-        if (currentQuestion.correctAnswer.length > 1) {
-          currentQuestion.type = 'multiple';
-        }
-        continue;
-      }
-      
-      const scoreMatch = line.match(/^(\d+\.?\d*)分$/);
-      if (scoreMatch) {
-        currentQuestion.score = parseFloat(scoreMatch[1]);
-        continue;
-      }
-      
+      // 累积解析内容
       currentExplanation += (currentExplanation ? '\n' : '') + line;
     }
   }
   
-  if (currentQuestion && currentGroup) {
+  if (currentQuestion) {
     currentQuestion.explanation = currentExplanation.trim();
-    currentGroup.questions.push(currentQuestion);
+    questions.push(currentQuestion);
   }
   
-  if (currentGroup) {
-    groups.push(currentGroup);
-  }
-  
-  return groups;
+  return questions;
 }
 
-const content = fs.readFileSync('public/题库/第一章.txt', 'utf-8');
-console.log('File length:', content.length);
+// 读取并测试
+const filePath = path.join(__dirname, 'public', 'tiku', '第一章.txt');
+const content = fs.readFileSync(filePath, 'utf-8');
 
-const groups = parseQuestionFile(content);
-console.log('Groups:', groups.length);
-groups.forEach((g, i) => {
-  console.log('Group ' + (i+1) + ': ' + g.title + ', questions: ' + g.questions.length);
+const questions = testParse(content);
+
+console.log('=== 解析结果 ===');
+questions.forEach((q, i) => {
+  console.log(`\n题目 ${i + 1}:`);
+  console.log(`  题干: ${q.question.substring(0, 50)}${q.question.length > 50 ? '...' : ''}`);
+  console.log(`  答案: ${q.correctAnswer.join(',')}`);
+  console.log(`  解析长度: ${q.explanation.length} 字符`);
+  console.log(`  解析内容:"${q.explanation.substring(0, 150)}${q.explanation.length > 150 ? '...' : ''}"`);
 });
-
-if (groups.length > 0 && groups[0].questions.length > 0) {
-  const q = groups[0].questions[0];
-  console.log('First question:', q.question);
-  console.log('Options:', JSON.stringify(q.options));
-  console.log('Correct answer:', q.correctAnswer);
-}

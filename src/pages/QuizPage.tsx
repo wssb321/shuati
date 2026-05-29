@@ -481,14 +481,6 @@ export function QuizPage() {
   };
 
   const handleAnswerConfirmed = (answers: string[]) => {
-    checkAndSaveWrongQuestion(currentQuestion, answers);
-    setShowResult(true);
-  };
-
-  const handleAnswerChange = (answers: string[]) => {
-    if (showResult) return;
-    
-    const currentQuestion = questions[currentQuestionIndex];
     const isCorrect = answers.length === currentQuestion.correctAnswer.length &&
       answers.every(a => currentQuestion.correctAnswer.includes(a));
     
@@ -522,6 +514,22 @@ export function QuizPage() {
       });
     }
 
+    setQuestions(prev => {
+      const newQuestions = [...prev];
+      newQuestions[currentQuestionIndex] = {
+        ...newQuestions[currentQuestionIndex],
+        userAnswer: answers
+      };
+      return newQuestions;
+    });
+
+    checkAndSaveWrongQuestion(currentQuestion, answers);
+    setShowResult(true);
+  };
+
+  const handleAnswerChange = (answers: string[]) => {
+    if (showResult) return;
+    
     setQuestions(prev => {
       const newQuestions = [...prev];
       newQuestions[currentQuestionIndex] = {
@@ -564,7 +572,6 @@ export function QuizPage() {
   const handleSelectQuestion = (index: number) => {
     setCurrentQuestionIndex(index);
     setShowMobileMenu(false);
-    setShowResult(false);
   };
 
   const handleSubmit = () => {
