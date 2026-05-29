@@ -164,15 +164,27 @@ export function QuizPage() {
         console.log(`=== 初始化检查 ===`);
         console.log(`题库列表长度: ${quizzes.length}`);
         
-        // 直接加载第一个题库（跳过进度恢复）
-        if (quizzes.length > 0) {
-          console.log(`加载第一个题库: ${quizzes[0]}`);
-          setCurrentQuiz(quizzes[0]);
-          await loadQuiz(quizzes[0]);
+        // 检查是否从收藏页面跳转过来
+        const selectedQuizFromStorage = sessionStorage.getItem('selectedQuiz');
+        const selectedQuestionIdFromStorage = sessionStorage.getItem('selectedQuestionId');
+        
+        // 确定要加载的题库
+        let quizToLoad = quizzes[0];
+        if (selectedQuizFromStorage && quizzes.includes(selectedQuizFromStorage)) {
+          quizToLoad = selectedQuizFromStorage;
+          console.log(`从收藏页面跳转，加载指定题库: ${quizToLoad}`);
         } else {
-          console.log(`没有找到题库`);
-          setLoading(false);
+          console.log(`加载第一个题库: ${quizToLoad}`);
         }
+        
+        setCurrentQuiz(quizToLoad);
+        await loadQuiz(quizToLoad);
+        
+        // 清除 sessionStorage 中的参数（跳转逻辑在 useEffect 中处理）
+        if (selectedQuestionIdFromStorage) {
+          sessionStorage.removeItem('selectedQuestionId');
+        }
+        sessionStorage.removeItem('selectedQuiz');
       } catch (err) {
         setError('加载题库失败，请检查文件路径');
         setLoading(false);
@@ -180,6 +192,18 @@ export function QuizPage() {
     };
     discoverQuizzes();
   }, []);
+
+  useEffect(() => {
+    // 处理从收藏页面跳转过来的题目定位
+    const selectedQuestionId = sessionStorage.getItem('selectedQuestionId');
+    if (selectedQuestionId && questions.length > 0) {
+      const targetIndex = questions.findIndex(q => q.id === parseInt(selectedQuestionId));
+      if (targetIndex !== -1 && targetIndex !== currentQuestionIndex) {
+        console.log(`跳转到指定题目: ${selectedQuestionId} (索引: ${targetIndex})`);
+        setCurrentQuestionIndex(targetIndex);
+      }
+    }
+  }, [questions.length]);
 
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
