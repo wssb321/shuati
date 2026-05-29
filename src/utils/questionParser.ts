@@ -150,12 +150,25 @@ export function parseQuestionFile(content: string): QuestionGroup[] {
       // 格式1: A. 选项内容
       // 格式2: A、选项内容
       // 格式3: A 选项内容
-      const optionMatch = line.match(/^([A-D])[．.、\s]\s*(.+)/);
+      const optionMatch = line.match(/^([A-D])[．.、]\s*(.+)/);
       if (optionMatch) {
         currentQuestion.options.push({
           key: optionMatch[1],
           value: optionMatch[2]
         });
+        continue;
+      }
+      
+      // 检查是否是分数行（如"3.3分"）- 在选项阶段也需要处理
+      const scoreMatch = line.match(/^(\d+\.?\d*)分$/);
+      if (scoreMatch) {
+        currentQuestion.score = parseFloat(scoreMatch[1]);
+        continue;
+      }
+      
+      // 检查是否是知识点行或AI讲解行（跳过）
+      const knowledgeMatch = line.match(/^(知识点|AI讲解)/);
+      if (knowledgeMatch) {
         continue;
       }
       
@@ -174,10 +187,10 @@ export function parseQuestionFile(content: string): QuestionGroup[] {
         continue;
       }
       
-      // 旧格式的答案（我的答案:A:选项内容;正确答案:ABD:选项内容;）
-      const oldAnswerMatch = line.match(/正确答案[：:]\s*([A-D,，、]+)/);
-      if (oldAnswerMatch) {
-        const answerStr = oldAnswerMatch[1];
+      // 新格式的答案行（我的答案:A:wx.getFuzzyLocation;正确答案:A:wx.getFuzzyLocation;）
+      const newAnswerMatch = line.match(/正确答案[：:]\s*([A-D,，、]+)/);
+      if (newAnswerMatch) {
+        const answerStr = newAnswerMatch[1];
         // 提取纯字母答案，去掉后面的内容（如 ":选项内容"）
         const pureAnswer = answerStr.match(/^[A-D,，、]+/)?.[0] || answerStr;
         currentQuestion.correctAnswer = pureAnswer.replace(/[，,、]/g, '').split('');
@@ -188,6 +201,11 @@ export function parseQuestionFile(content: string): QuestionGroup[] {
         inExplanation = true;
         continue;
       }
+      
+      // 如果以上都不匹配，说明这行不属于选项部分，进入解析部分
+      inOptions = false;
+      inExplanation = true;
+      currentExplanation = line;
     }
     
     // 处理解析部分
@@ -213,6 +231,40 @@ export function parseQuestionFile(content: string): QuestionGroup[] {
         currentQuestion = null;
         inExplanation = false;
         currentExplanation = '';
+        continue;
+      }
+      
+      // 先处理特殊行（分数行、知识点、解析等），避免被误识别为新题目
+      
+      // 检查是否是分数行（如"3.3分"）
+      const scoreMatch = line.match(/^(\d+\.?\d*)分$/);
+      if (scoreMatch) {
+        currentQuestion.score = parseFloat(scoreMatch[1]);
+        continue;
+      }
+      
+      // 检查是否是知识点行或AI讲解行（跳过）
+      const knowledgeMatch = line.match(/^(知识点|AI讲解)/);
+      if (knowledgeMatch) {
+        continue;
+      }
+      
+      // 检查是否是解析开头行（支持"解析："和"答案解析："格式）
+      const explanationStartMatch = line.match(/^(答案)?解析[：:]?\s*(.+)/);
+      if (explanationStartMatch) {
+        // 添加解析内容（去掉"解析："或"答案解析："前缀）
+        currentExplanation = explanationStartMatch[2] || '';
+        continue;
+      }
+      
+      // 检查是否是答案行（在解析中间出现）
+      const answerMatch = line.match(/^答案[：:]?\s*([A-D,，、]+)/);
+      if (answerMatch) {
+        const answerStr = answerMatch[1];
+        currentQuestion.correctAnswer = answerStr.replace(/[，,、]/g, '').split('');
+        if (currentQuestion.correctAnswer.length > 1) {
+          currentQuestion.type = 'multiple';
+        }
         continue;
       }
       
@@ -246,8 +298,9 @@ export function parseQuestionFile(content: string): QuestionGroup[] {
       }
       
       // 检查是否是简化格式的新题开始（不带类型标识）
+      // 注意：只有在前面的 newQuestionMatch 没有匹配到时才处理
       const simpleQuestionMatch = line.match(/^(\d+)\.\s*(.+)/);
-      if (simpleQuestionMatch) {
+      if (simpleQuestionMatch && !line.includes('(单选题)') && !line.includes('(多选题)')) {
         // 将当前题目添加到组
         currentQuestion.explanation = currentExplanation.trim();
         currentGroup.questions.push(currentQuestion as Question);
@@ -274,32 +327,6 @@ export function parseQuestionFile(content: string): QuestionGroup[] {
         inOptions = true;
         inExplanation = false;
         currentExplanation = '';
-        continue;
-      }
-      
-      // 检查是否是答案行（在解析中间出现）
-      const answerMatch = line.match(/^答案[：:]?\s*([A-D,，、]+)/);
-      if (answerMatch) {
-        const answerStr = answerMatch[1];
-        currentQuestion.correctAnswer = answerStr.replace(/[，,、]/g, '').split('');
-        if (currentQuestion.correctAnswer.length > 1) {
-          currentQuestion.type = 'multiple';
-        }
-        continue;
-      }
-      
-      // 检查是否是解析开头行
-      const explanationStartMatch = line.match(/^解析[：:]?\s*(.+)/);
-      if (explanationStartMatch) {
-        // 添加解析内容（去掉"解析："前缀）
-        currentExplanation = explanationStartMatch[1];
-        continue;
-      }
-      
-      // 检查是否是分数行
-      const scoreMatch = line.match(/^(\d+\.?\d*)分$/);
-      if (scoreMatch) {
-        currentQuestion.score = parseFloat(scoreMatch[1]);
         continue;
       }
       
