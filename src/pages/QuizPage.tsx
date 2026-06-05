@@ -201,6 +201,7 @@ export function QuizPage() {
       if (targetIndex !== -1 && targetIndex !== currentQuestionIndex) {
         console.log(`跳转到指定题目: ${selectedQuestionId} (索引: ${targetIndex})`);
         setCurrentQuestionIndex(targetIndex);
+        setShowResult(false);
       }
     }
   }, [questions.length]);
@@ -584,17 +585,20 @@ export function QuizPage() {
   const handlePrev = () => {
     if (currentQuestionIndex > 0) {
       setCurrentQuestionIndex(currentQuestionIndex - 1);
+      setShowResult(false);
     }
   };
 
   const handleNext = () => {
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
+      setShowResult(false);
     }
   };
 
   const handleSelectQuestion = (index: number) => {
     setCurrentQuestionIndex(index);
+    setShowResult(false);
     setShowMobileMenu(false);
   };
 
@@ -730,6 +734,7 @@ export function QuizPage() {
         
         // 恢复进度
         setCurrentQuestionIndex(pendingProgress.currentQuestionIndex);
+        setShowResult(false);
         setScore(pendingProgress.score);
         setCorrectAnswers(new Set(pendingProgress.answerRecords.filter(r => r.isCorrect).map(r => r.questionIndex)));
         setAnswerRecords(pendingProgress.answerRecords);
