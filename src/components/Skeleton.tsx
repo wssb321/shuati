@@ -62,7 +62,7 @@ export const QuestionCardSkeleton: React.FC<QuestionCardSkeletonProps> = ({ coun
   return (
     <div className="space-y-4">
       {Array.from({ length: count }).map((_, idx) => (
-        <div key={idx} className="bg-white rounded-2xl p-6 shadow-sm space-y-4">
+        <div key={idx} className="bg-white/90 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-white/50 space-y-4">
           {/* Question title skeleton */}
           <Skeleton variant="text" height={24} className="w-3/4" />
           <Skeleton variant="text" height={24} className="w-1/2" />

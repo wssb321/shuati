@@ -62,6 +62,14 @@ export function parseQuestionFile(content: string): QuestionGroup[] {
     // 匹配章节标题（支持多种格式）
     const chapterMatch = line.match(/^(一|二|三|四|五|六|七|八|九|十)[、.．](.*)$/);
     if (chapterMatch) {
+      // 如果有未完成的题目，先保存
+      if (currentQuestion && currentGroup) {
+        currentQuestion.explanation = currentExplanation.trim();
+        currentGroup.questions.push(currentQuestion as Question);
+        currentQuestion = null;
+        currentExplanation = '';
+      }
+      
       if (currentGroup) {
         groups.push(currentGroup);
       }

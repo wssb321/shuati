@@ -4,8 +4,6 @@ import { QuestionCard } from '../components/QuestionCard';
 import { ProgressPanel } from '../components/ProgressPanel';
 import { QuestionList } from '../components/QuestionList';
 import { ExplanationPanel } from '../components/ExplanationPanel';
-import FuzzyText from '../components/FuzzyText';
-import Dither from '../components/Dither';
 import { QuizPageSkeleton } from '../components/Skeleton';
 import { Empty } from '../components/Empty';
 import { parseQuestionFile, Question, QuestionGroup, shuffleArray } from '../utils/questionParser';
@@ -161,6 +159,29 @@ export function QuizPage() {
         // 清除过期进度
         clearExpiredProgress();
         
+        // 检查是否从收藏页面跳转过来（批量练习模式）
+        const practiceMode = sessionStorage.getItem('practiceMode');
+        const practiceQuestionsJson = sessionStorage.getItem('practiceQuestions');
+        
+        if (practiceMode === 'bookmark' && practiceQuestionsJson) {
+          try {
+            const practiceQuestions: Question[] = JSON.parse(practiceQuestionsJson);
+            console.log(`=== 从收藏页面跳转，加载 ${practiceQuestions.length} 道收藏题目 ===`);
+            
+            // 设置为收藏练习模式
+            setQuestions(practiceQuestions);
+            setCurrentQuestionIndex(0);
+            setLoading(false);
+            
+            // 清空 sessionStorage
+            sessionStorage.removeItem('practiceMode');
+            sessionStorage.removeItem('practiceQuestions');
+            return; // 跳过后续常规加载
+          } catch (err) {
+            console.error('Failed to parse practice questions:', err);
+          }
+        }
+        
         console.log(`=== 初始化检查 ===`);
         console.log(`题库列表长度: ${quizzes.length}`);
         
@@ -267,7 +288,7 @@ export function QuizPage() {
 
   useEffect(() => {
     let timer: number | undefined;
-    if (examStarted && timeLeft > 0 && !examCompleted) {
+    if (examStarted && !examCompleted) {
       timer = window.setInterval(() => {
         setTimeLeft(prev => {
           if (prev <= 1) {
@@ -281,7 +302,7 @@ export function QuizPage() {
     return () => {
       if (timer) clearInterval(timer);
     };
-  }, [examStarted, timeLeft, examCompleted]);
+  }, [examStarted, examCompleted]);
 
   const loadQuiz = useCallback(async (quizFile: string) => {
     // 竞态处理：记录当前请求的题库文件
@@ -481,6 +502,7 @@ export function QuizPage() {
     setAnswerRecords([]);
     setStartTime(Date.now());
     setIsWrongMode(true);
+    setMode('wrong');
     setShowResumeModal(false);
     setPendingProgress(null);
   };
@@ -565,21 +587,27 @@ export function QuizPage() {
     });
   };
 
+  // 自动保存进度（防抖，避免频繁写入 localStorage）
+  const autoSaveRef = useRef<number>(0);
   useEffect(() => {
     if (questions.length > 0 && !showResult) {
-      const progress: StoredQuizProgress = {
-        quizId: isExamMode ? 'exam_mode' : isMixedMode ? 'mixed_mode' : isWrongMode ? 'wrong_mode' : currentQuiz,
-        currentQuestionIndex,
-        questions,
-        answerRecords,
-        score,
-        startTime,
-        lastUpdateTime: Date.now(),
-        completed: false,
-        mode: isExamMode ? 'exam' : isMixedMode ? 'mixed' : isWrongMode ? 'wrong' : 'practice'
-      };
-      saveQuizProgress(progress);
+      clearTimeout(autoSaveRef.current);
+      autoSaveRef.current = window.setTimeout(() => {
+        const progress: StoredQuizProgress = {
+          quizId: isExamMode ? 'exam_mode' : isMixedMode ? 'mixed_mode' : isWrongMode ? 'wrong_mode' : currentQuiz,
+          currentQuestionIndex,
+          questions,
+          answerRecords,
+          score,
+          startTime,
+          lastUpdateTime: Date.now(),
+          completed: false,
+          mode: isExamMode ? 'exam' : isMixedMode ? 'mixed' : isWrongMode ? 'wrong' : 'practice'
+        };
+        saveQuizProgress(progress);
+      }, 500);
     }
+    return () => clearTimeout(autoSaveRef.current);
   }, [currentQuestionIndex, questions, answerRecords, score, startTime]);
 
   const handlePrev = () => {
@@ -877,7 +905,6 @@ export function QuizPage() {
 
   return (
     <div className="min-h-screen relative overflow-hidden">
-      <Dither waveColor="#fafafa" />
       <div className="relative z-10 min-h-screen">
       {showResumeModal && pendingProgress && (
         <ResumeModal
@@ -888,23 +915,16 @@ export function QuizPage() {
         />
       )}
 
-      <header className="bg-white shadow-card sticky top-0 z-40 safe-area-top">
+      <header className="glass-card sticky top-0 z-40 safe-area-top border-b border-white/30">
         <div className="max-w-6xl mx-auto px-3 sm:px-4 py-3 sm:py-4">
           <div className="flex items-center gap-2 sm:gap-3 lg:gap-4 flex-wrap">
             {/* 标题 */}
             <div className="flex items-center gap-2 shrink-0">
-              <FuzzyText
-                baseIntensity={0.08}
-                hoverIntensity={0.98}
-                enableHover
-                fontSize="clamp(0.8rem, 3vw, 1.3rem)"
-                fontWeight={700}
-                color="#1f2937"
-              >
+              <h1 className="text-sm sm:text-lg lg:text-xl font-bold tracking-tight gradient-text">
                 {isExamMode ? '模拟考试' : isMixedMode ? '混合题库' : isWrongMode ? '错题练习' : 'Steam刷题管家'}
-              </FuzzyText>
+              </h1>
               {isExamMode && examStarted && (
-                <span className={`text-xs sm:text-sm font-mono font-bold shrink-0 ${timeLeft <= 300 ? 'text-red-500 animate-pulse' : 'text-blue-600'}`}>
+                <span className={`text-xs sm:text-sm font-mono font-bold shrink-0 ${timeLeft <= 300 ? 'text-red-500 animate-pulse' : 'text-indigo-600'}`}>
                   ⏱️ {formatTime(timeLeft)}
                 </span>
               )}
@@ -948,7 +968,7 @@ export function QuizPage() {
             {!isExamMode && !isMixedMode && !isWrongMode && (
               <div className="flex items-center gap-2 shrink-0">
                 <span className="hidden sm:inline text-xs text-gray-600">模式:</span>
-                <div className="flex bg-gray-100 rounded-lg p-1">
+                <div className="flex bg-gray-100/80 rounded-lg p-1">
                   <button
                     onClick={() => {
                       setMode('practice');
@@ -957,32 +977,33 @@ export function QuizPage() {
                       setIsWrongMode(false);
                       setShowResult(false);
                     }}
-                    className={`px-2 sm:px-3 py-1 rounded-md text-xs font-medium transition-colors ${
-                      mode === 'practice' ? 'bg-white shadow text-blue-600' : 'text-gray-600 hover:text-gray-800'
+                    className={`px-2 sm:px-3 py-1 rounded-md text-xs font-medium transition-all ${
+                      mode === 'practice' ? 'bg-white shadow-sm text-indigo-600' : 'text-gray-500 hover:text-gray-700'
                     }`}
                   >
                     练习
                   </button>
                   <button
                     onClick={() => setMode('exam')}
-                    className={`px-2 sm:px-3 py-1 rounded-md text-xs font-medium transition-colors ${
-                      mode === 'exam' ? 'bg-white shadow text-blue-600' : 'text-gray-600 hover:text-gray-800'
+                    className={`px-2 sm:px-3 py-1 rounded-md text-xs font-medium transition-all ${
+                      mode === 'exam' ? 'bg-white shadow-sm text-indigo-600' : 'text-gray-500 hover:text-gray-700'
                     }`}
                   >
                     考试
                   </button>
                   <button
                     onClick={startMixedMode}
-                    className={`px-2 sm:px-3 py-1 rounded-md text-xs font-medium transition-colors ${
-                      mode === 'mixed' || isMixedMode ? 'bg-white shadow text-blue-600' : 'text-gray-600 hover:text-gray-800'
+                    className={`px-2 sm:px-3 py-1 rounded-md text-xs font-medium transition-all ${
+                      mode === 'mixed' || isMixedMode ? 'bg-white shadow-sm text-indigo-600' : 'text-gray-500 hover:text-gray-700'
                     }`}
                   >
                     混合
                   </button>
                   <button
-                    onClick={() => setMode('wrong')}
-                    className={`px-2 sm:px-3 py-1 rounded-md text-xs font-medium transition-colors ${
-                      mode === 'wrong' ? 'bg-white shadow text-blue-600' : 'text-gray-600 hover:text-gray-800'
+                    onClick={startWrongMode}
+                    disabled={wrongQuestionsCount === 0}
+                    className={`px-2 sm:px-3 py-1 rounded-md text-xs font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
+                      mode === 'wrong' || isWrongMode ? 'bg-white shadow-sm text-indigo-600' : 'text-gray-500 hover:text-gray-700'
                     }`}
                   >
                     错题
@@ -1003,7 +1024,7 @@ export function QuizPage() {
                   type="checkbox"
                   checked={immediateFeedback}
                   onChange={(e) => setImmediateFeedback(e.target.checked)}
-                  className="w-3.5 h-3.5 rounded text-blue-500 focus:ring-blue-500"
+                  className="w-3.5 h-3.5 rounded text-indigo-500 focus:ring-indigo-500"
                 />
                 <span className="text-xs text-gray-600">即时反馈</span>
               </label>
@@ -1081,7 +1102,7 @@ export function QuizPage() {
               <select
                 value={currentQuiz}
                 onChange={(e) => handleQuizChange(e.target.value)}
-                className="px-2 sm:px-3 py-1 border border-gray-300 rounded-lg bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs shrink-0"
+                className="px-2 sm:px-3 py-1 border border-gray-200 rounded-lg bg-white/80 text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-xs shrink-0"
               >
                 {availableQuizzes.map((quiz, idx) => (
                   <option key={idx} value={quiz}>{quiz.replace('.txt', '')}</option>
@@ -1094,7 +1115,7 @@ export function QuizPage() {
               <select
                 value={currentGroupIndex}
                 onChange={(e) => handleQuizGroupChange(parseInt(e.target.value))}
-                className="px-2 sm:px-3 py-1 border border-gray-300 rounded-lg bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs shrink-0"
+                className="px-2 sm:px-3 py-1 border border-gray-200 rounded-lg bg-white/80 text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-xs shrink-0"
               >
                 {questionGroups.map((group, idx) => (
                   <option key={idx} value={idx}>{group.title}</option>
@@ -1119,10 +1140,10 @@ export function QuizPage() {
           </div>
 
           {showMobileMenu && (
-            <div className="lg:hidden mt-4 pb-2 animate-fadeIn border-t border-gray-100 pt-4 space-y-3">
+            <div className="lg:hidden mt-4 pb-2 animate-fadeIn border-t border-gray-100/50 pt-4 space-y-3">
               <div className="flex items-center gap-2">
                 <span className="text-sm text-gray-600">模式:</span>
-                <div className="flex bg-gray-100 rounded-lg p-1 flex-wrap gap-1">
+                <div className="flex bg-gray-100/80 rounded-lg p-1 flex-wrap gap-1">
                   <button
                     onClick={() => {
                       setMode('practice');
@@ -1131,8 +1152,8 @@ export function QuizPage() {
                       setIsWrongMode(false);
                       setShowMobileMenu(false);
                     }}
-                    className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
-                      mode === 'practice' && !isExamMode && !isMixedMode && !isWrongMode ? 'bg-white shadow text-blue-600' : 'text-gray-600 hover:text-gray-800'
+                    className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all ${
+                      mode === 'practice' && !isExamMode && !isMixedMode && !isWrongMode ? 'bg-white shadow-sm text-indigo-600' : 'text-gray-500 hover:text-gray-700'
                     }`}
                   >
                     练习模式
@@ -1145,8 +1166,8 @@ export function QuizPage() {
                       setIsWrongMode(false);
                       setShowMobileMenu(false);
                     }}
-                    className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
-                      mode === 'exam' && !isExamMode && !isMixedMode && !isWrongMode ? 'bg-white shadow text-blue-600' : 'text-gray-600 hover:text-gray-800'
+                    className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all ${
+                      mode === 'exam' && !isExamMode && !isMixedMode && !isWrongMode ? 'bg-white shadow-sm text-indigo-600' : 'text-gray-500 hover:text-gray-700'
                     }`}
                   >
                     模拟考试
@@ -1159,22 +1180,20 @@ export function QuizPage() {
                       setIsWrongMode(false);
                       setShowMobileMenu(false);
                     }}
-                    className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
-                      mode === 'mixed' && !isExamMode && !isMixedMode && !isWrongMode ? 'bg-white shadow text-blue-600' : 'text-gray-600 hover:text-gray-800'
+                    className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all ${
+                      mode === 'mixed' && !isExamMode && !isMixedMode && !isWrongMode ? 'bg-white shadow-sm text-indigo-600' : 'text-gray-500 hover:text-gray-700'
                     }`}
                   >
                     混合题库
                   </button>
                   <button
                     onClick={() => {
-                      setMode('wrong');
-                      setIsExamMode(false);
-                      setIsMixedMode(false);
-                      setIsWrongMode(false);
+                      startWrongMode();
                       setShowMobileMenu(false);
                     }}
-                    className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
-                      mode === 'wrong' && !isExamMode && !isMixedMode && !isWrongMode ? 'bg-white shadow text-blue-600' : 'text-gray-600 hover:text-gray-800'
+                    disabled={wrongQuestionsCount === 0}
+                    className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
+                      mode === 'wrong' || isWrongMode ? 'bg-white shadow-sm text-indigo-600' : 'text-gray-500 hover:text-gray-700'
                     }`}
                   >
                     错题练习
@@ -1311,15 +1330,15 @@ export function QuizPage() {
 
       {mode === 'exam' && !isExamMode && (
         <div className="px-3 sm:px-4 py-4 sm:py-6 pt-24 sm:pt-28">
-          <div className="bg-white rounded-2xl p-5 sm:p-8 mx-auto" style={{ 
+          <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-5 sm:p-8 mx-auto border border-white/50" style={{ 
             maxWidth: '600px', 
             width: '100%',
-            boxShadow: '0 4px 20px rgba(0,0,0,0.08)' 
+            boxShadow: '0 8px 32px rgba(79,70,229,0.08)' 
           }}>
             {/* 顶部标题区 */}
             <div className="text-center mb-7">
-              <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2">📝 模拟考试配置</h2>
-              <p className="text-gray-500 text-sm">自定义你的练习计划</p>
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2">模拟考试配置</h2>
+              <p className="text-gray-400 text-sm">自定义你的练习计划</p>
             </div>
             
             <div className="space-y-6">
@@ -1348,12 +1367,12 @@ export function QuizPage() {
                       key={idx}
                       className={`flex items-center gap-2 px-3 py-3 rounded-lg border cursor-pointer transition-all text-sm relative ${
                         selectedQuizFiles.includes(quiz) 
-                          ? 'border-blue-500 bg-blue-50 text-blue-600' 
-                          : 'border-gray-200 bg-white text-gray-700 hover:border-blue-300'
+                          ? 'border-indigo-500 bg-indigo-50 text-indigo-600' 
+                          : 'border-gray-200 bg-white text-gray-700 hover:border-indigo-300'
                       }`}
                     >
                       {selectedQuizFiles.includes(quiz) && (
-                        <div className="absolute left-0 top-0 bottom-0 w-1 bg-blue-500 rounded-l-lg" />
+                        <div className="absolute left-0 top-0 bottom-0 w-1 bg-indigo-500 rounded-l-lg" />
                       )}
                       <input
                         type="checkbox"
@@ -1395,8 +1414,8 @@ export function QuizPage() {
                     }}
                     onFocus={(e: React.FocusEvent<HTMLInputElement>) => {
                       e.currentTarget.select();
-                      e.currentTarget.style.borderColor = '#3b82f6';
-                      e.currentTarget.style.boxShadow = '0 0 0 3px rgba(59,130,246,0.1)';
+                      e.currentTarget.style.borderColor = '#4f46e5';
+                      e.currentTarget.style.boxShadow = '0 0 0 3px rgba(79,70,229,0.1)';
                     }}
                     onBlur={(e: React.FocusEvent<HTMLInputElement>) => {
                       e.currentTarget.style.borderColor = '#d1d5db';
@@ -1430,8 +1449,8 @@ export function QuizPage() {
                     }}
                     onFocus={(e: React.FocusEvent<HTMLInputElement>) => {
                       e.currentTarget.select();
-                      e.currentTarget.style.borderColor = '#3b82f6';
-                      e.currentTarget.style.boxShadow = '0 0 0 3px rgba(59,130,246,0.1)';
+                      e.currentTarget.style.borderColor = '#4f46e5';
+                      e.currentTarget.style.boxShadow = '0 0 0 3px rgba(79,70,229,0.1)';
                     }}
                     onBlur={(e: React.FocusEvent<HTMLInputElement>) => {
                       e.currentTarget.style.borderColor = '#d1d5db';
@@ -1465,8 +1484,8 @@ export function QuizPage() {
                     }}
                     onFocus={(e: React.FocusEvent<HTMLInputElement>) => {
                       e.currentTarget.select();
-                      e.currentTarget.style.borderColor = '#3b82f6';
-                      e.currentTarget.style.boxShadow = '0 0 0 3px rgba(59,130,246,0.1)';
+                      e.currentTarget.style.borderColor = '#4f46e5';
+                      e.currentTarget.style.boxShadow = '0 0 0 3px rgba(79,70,229,0.1)';
                     }}
                     onBlur={(e: React.FocusEvent<HTMLInputElement>) => {
                       e.currentTarget.style.borderColor = '#d1d5db';
@@ -1483,18 +1502,18 @@ export function QuizPage() {
               </div>
 
               {/* 配置摘要区 */}
-              <div className="p-4 rounded-lg" style={{ backgroundColor: '#f3f4f6' }}>
-                <div className="text-center text-sm text-gray-700">
-                  已选 <span className="font-semibold text-blue-600">{selectedQuizFiles.length}</span> 个章节 · 
-                  共 <span className="font-semibold text-blue-600">{parseInt(examConfig.singleCount || '10') + parseInt(examConfig.multipleCount || '5')}</span> 题 · 
-                  预计用时 <span className="font-semibold text-blue-600">{examConfig.duration || '30'}</span> 分钟
+              <div className="p-4 rounded-xl bg-indigo-50/50 border border-indigo-100/50">
+                <div className="text-center text-sm text-gray-600">
+                  已选 <span className="font-semibold text-indigo-600">{selectedQuizFiles.length}</span> 个章节 · 
+                  共 <span className="font-semibold text-indigo-600">{parseInt(examConfig.singleCount || '10') + parseInt(examConfig.multipleCount || '5')}</span> 题 · 
+                  预计用时 <span className="font-semibold text-indigo-600">{examConfig.duration || '30'}</span> 分钟
                 </div>
               </div>
 
               {/* 考试说明区 */}
               <details open>
-                <summary className="flex items-center justify-between cursor-pointer px-4 py-3 rounded-lg font-medium" style={{ backgroundColor: '#eff6ff', color: '#1e40af' }}>
-                  <span className="text-sm font-semibold" style={{ color: '#3b82f6' }}>考试说明</span>
+                <summary className="flex items-center justify-between cursor-pointer px-4 py-3 rounded-xl font-medium bg-indigo-50/50 text-indigo-600">
+                  <span className="text-sm font-semibold">考试说明</span>
                   <svg 
                     className="w-4 h-4 transition-transform" 
                     fill="none" 
@@ -1505,7 +1524,7 @@ export function QuizPage() {
                   </svg>
                 </summary>
                 <div className="pt-3">
-                  <p className="text-sm leading-relaxed" style={{ color: '#3b82f6' }}>
+                  <p className="text-sm leading-relaxed text-indigo-500">
                     考试开始后将从所选题库中随机抽取题目，答题完成后点击提交查看成绩。考试时间结束将自动提交。
                   </p>
                 </div>
@@ -1523,32 +1542,30 @@ export function QuizPage() {
                     startExam();
                   }}
                   disabled={selectedQuizFiles.length === 0}
-                  className="w-full h-12 flex items-center justify-center gap-2 text-white rounded-xl font-semibold transition-all"
+                  className="w-full h-12 flex items-center justify-center gap-2 text-white rounded-xl font-semibold transition-all gradient-primary"
                   style={{ 
-                    backgroundColor: selectedQuizFiles.length === 0 ? '#d1d5db' : '#f59e0b',
-                    transform: selectedQuizFiles.length === 0 ? 'none' : 'translateY(0)'
+                    opacity: selectedQuizFiles.length === 0 ? 0.5 : 1,
+                    cursor: selectedQuizFiles.length === 0 ? 'not-allowed' : 'pointer'
                   }}
                   onMouseEnter={(e) => {
                     if (selectedQuizFiles.length > 0) {
-                      e.currentTarget.style.backgroundColor = '#d97706';
                       e.currentTarget.style.transform = 'translateY(-1px)';
+                      e.currentTarget.style.boxShadow = '0 8px 25px rgba(79,70,229,0.3)';
                     }
                   }}
                   onMouseLeave={(e) => {
                     if (selectedQuizFiles.length > 0) {
-                      e.currentTarget.style.backgroundColor = '#f59e0b';
                       e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.boxShadow = 'none';
                     }
                   }}
                   onMouseDown={(e) => {
                     if (selectedQuizFiles.length > 0) {
-                      e.currentTarget.style.backgroundColor = '#b45309';
                       e.currentTarget.style.transform = 'translateY(1px)';
                     }
                   }}
                   onMouseUp={(e) => {
                     if (selectedQuizFiles.length > 0) {
-                      e.currentTarget.style.backgroundColor = '#d97706';
                       e.currentTarget.style.transform = 'translateY(-1px)';
                     }
                   }}
@@ -1628,6 +1645,7 @@ export function QuizPage() {
                   onCorrectAnswer={() => {
                     if (currentQuestionIndex < questions.length - 1) {
                       setCurrentQuestionIndex(currentQuestionIndex + 1);
+                      setShowResult(false);
                     }
                   }}
                   onAnswerConfirmed={handleAnswerConfirmed}
@@ -1699,6 +1717,7 @@ export function QuizPage() {
                   onCorrectAnswer={() => {
                     if (currentQuestionIndex < questions.length - 1) {
                       setCurrentQuestionIndex(currentQuestionIndex + 1);
+                      setShowResult(false);
                     }
                   }}
                   onAnswerConfirmed={handleAnswerConfirmed}
@@ -1745,7 +1764,7 @@ export function QuizPage() {
                   <button
                     key={quiz}
                     onClick={() => handleQuizChange(quiz)}
-                    className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl hover:border-blue-500 hover:bg-blue-50 transition-colors text-left"
+                    className="w-full px-4 py-3 bg-white/80 backdrop-blur-sm border border-gray-200/50 rounded-xl hover:border-indigo-400 hover:bg-indigo-50/50 transition-all text-left card-hover"
                   >
                     <span className="text-gray-800 font-medium">{quiz.replace('.txt', '')}</span>
                     <span className="text-gray-400 text-sm ml-2">开始练习</span>
@@ -1768,6 +1787,7 @@ export function QuizPage() {
                     onCorrectAnswer={() => {
                       if (currentQuestionIndex < questions.length - 1) {
                         setCurrentQuestionIndex(currentQuestionIndex + 1);
+                        setShowResult(false);
                       }
                     }}
                     onAnswerConfirmed={handleAnswerConfirmed}

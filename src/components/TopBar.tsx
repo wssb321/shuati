@@ -68,7 +68,7 @@ export const TopBar = memo(function TopBar({
   };
 
   return (
-    <div className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-300 ${isNightMode ? 'bg-slate-900 border-b border-slate-700' : 'bg-white border-b border-gray-200'} shadow-md`} style={{ height: '56px' }}>
+    <div className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-300 ${isNightMode ? 'bg-slate-900 border-b border-slate-700' : 'glass-card border-b border-white/30'} shadow-md`} style={{ height: '56px' }}>
       <div className="max-w-6xl mx-auto px-4 h-full flex items-center justify-between">
         {/* 左侧 */}
         <div className="flex items-center gap-3">
@@ -79,7 +79,7 @@ export const TopBar = memo(function TopBar({
           >
             {isPaused ? '▶️' : '⏸️'}
           </button>
-          <span className={`px-2 py-1 rounded-full text-xs font-medium ${isNightMode ? 'bg-blue-900 text-blue-300' : 'bg-blue-100 text-blue-700'}`}>
+          <span className={`px-2 py-1 rounded-full text-xs font-medium ${isNightMode ? 'bg-indigo-900 text-indigo-300' : 'bg-indigo-100 text-indigo-700'}`}>
             {getModeLabel()}
           </span>
         </div>
@@ -109,7 +109,7 @@ export const TopBar = memo(function TopBar({
           <div className="flex items-center gap-1">
             <button
               onClick={handleBookmarkClick}
-              className={`w-8 h-8 flex items-center justify-center transition-all ${isNightMode ? 'hover:bg-slate-800' : 'hover:bg-gray-100'} rounded-lg`}
+              className={`w-8 h-8 flex items-center justify-center transition-all ${isNightMode ? 'hover:bg-slate-800/80' : 'hover:bg-gray-100/80'} rounded-lg`}
               title={bookmarked ? '取消收藏' : '收藏题目'}
             >
               {bookmarked ? (
@@ -124,7 +124,7 @@ export const TopBar = memo(function TopBar({
             </button>
             <button
               onClick={onMarkToggle}
-              className={`w-8 h-8 flex items-center justify-center transition-all ${isNightMode ? 'hover:bg-slate-800' : 'hover:bg-gray-100'} rounded-lg`}
+              className={`w-8 h-8 flex items-center justify-center transition-all ${isNightMode ? 'hover:bg-slate-800/80' : 'hover:bg-gray-100/80'} rounded-lg`}
               title={isMarked ? '取消标记' : '标记题目'}
             >
               {isMarked ? (
@@ -139,7 +139,7 @@ export const TopBar = memo(function TopBar({
             </button>
             <button
               onClick={onNightModeToggle}
-              className={`w-8 h-8 flex items-center justify-center transition-all ${isNightMode ? 'hover:bg-slate-800' : 'hover:bg-gray-100'} rounded-lg`}
+              className={`w-8 h-8 flex items-center justify-center transition-all ${isNightMode ? 'hover:bg-slate-800/80' : 'hover:bg-gray-100/80'} rounded-lg`}
               title={isNightMode ? '日间模式' : '夜间模式'}
             >
               {isNightMode ? (
@@ -161,7 +161,7 @@ export const TopBar = memo(function TopBar({
         <div className={`px-4 py-2 border-t ${isNightMode ? 'bg-slate-800 border-slate-700' : 'bg-gray-50 border-gray-100'}`}>
           <div className="max-w-6xl mx-auto flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <span className={`px-2 py-0.5 rounded text-xs font-medium ${isNightMode ? 'bg-blue-900 text-blue-300' : 'bg-blue-100 text-blue-700'}`}>
+              <span className={`px-2 py-0.5 rounded text-xs font-medium ${isNightMode ? 'bg-indigo-900 text-indigo-300' : 'bg-indigo-100 text-indigo-700'}`}>
                 单选题
               </span>
               <span className={`text-sm ${isNightMode ? 'text-slate-300' : 'text-gray-700'}`}>

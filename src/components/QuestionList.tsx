@@ -18,7 +18,7 @@ export const QuestionList = memo(function QuestionList({
   onSelect
 }: QuestionListProps) {
   return (
-    <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5">
+    <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-sm p-4 sm:p-5 border border-white/50">
       <h3 className="text-base font-semibold text-gray-800 mb-4 flex items-center gap-2">
         <span className="text-lg">📋</span>
         题目导航
@@ -31,7 +31,7 @@ export const QuestionList = memo(function QuestionList({
           
           let bgClass = 'bg-gray-100 text-gray-600 hover:bg-gray-200';
           if (isCurrent) {
-            bgClass = 'bg-blue-500 text-white';
+            bgClass = 'bg-indigo-500 text-white';
           } else if (isAnswered) {
             bgClass = isCorrect 
               ? 'bg-green-500 text-white' 
@@ -57,7 +57,7 @@ export const QuestionList = memo(function QuestionList({
             <span className="text-gray-500">未答</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="w-3 h-3 rounded bg-blue-500"></span>
+            <span className="w-3 h-3 rounded bg-indigo-500"></span>
             <span className="text-gray-500">当前</span>
           </div>
           <div className="flex items-center gap-1.5">

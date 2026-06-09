@@ -44,7 +44,7 @@ export const BottomNav = memo(function BottomNav({
   const visibleQuestions = questions.slice(0, Math.min(questions.length, 30));
 
   return (
-    <div className={`fixed bottom-0 left-0 right-0 z-40 ${isNightMode ? 'bg-slate-900 border-t border-slate-700' : 'bg-white border-t border-gray-200'} safe-area-pb`} style={{ height: 'auto', minHeight: '64px' }}>
+    <div className={`fixed bottom-0 left-0 right-0 z-40 ${isNightMode ? 'bg-slate-900/90 backdrop-blur-sm border-t border-slate-700/50' : 'glass-card border-t border-white/30'} safe-area-pb`} style={{ height: 'auto', minHeight: '64px' }}>
       <div className="max-w-6xl mx-auto px-3 sm:px-4 py-2 sm:py-3">
         <div className="flex items-center justify-between gap-3">
           {/* 左侧 - 题目进度 */}
@@ -98,7 +98,7 @@ export const BottomNav = memo(function BottomNav({
           {/* 右侧 - 答题卡按钮 */}
           <button
             onClick={onAnswerSheetToggle}
-            className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors ${isNightMode ? 'bg-blue-600/20 text-blue-400 hover:bg-blue-600/30' : 'bg-blue-100 text-blue-700 hover:bg-blue-200'}`}
+            className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors ${isNightMode ? 'bg-indigo-600/20 text-indigo-400 hover:bg-indigo-600/30' : 'bg-indigo-100 text-indigo-700 hover:bg-indigo-200'}`}
           >
             答题卡
           </button>

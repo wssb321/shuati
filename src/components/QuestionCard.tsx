@@ -129,13 +129,13 @@ export const QuestionCard = memo(function QuestionCard({
   };
 
   return (
-    <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-sm">
+    <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-6 sm:p-8 shadow-sm border border-white/50">
       {/* 题目类型标签和收藏按钮 */}
       <div className="mb-5 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <span className={`px-3 py-1 rounded-full text-xs font-medium ${
             question.type === 'single' 
-              ? 'bg-blue-100 text-blue-700'
+              ? 'bg-indigo-100 text-indigo-700'
               : 'bg-purple-100 text-purple-700'
           }`}>
             {question.type === 'single' ? '单选题' : '多选题'}
@@ -149,7 +149,7 @@ export const QuestionCard = memo(function QuestionCard({
         {quizFile && (
           <button
             onClick={handleBookmarkClick}
-            className={`p-2 rounded-lg transition-all hover:bg-gray-100 ${
+            className={`p-2 rounded-lg transition-all hover:bg-gray-100/80 ${
               bookmarked ? 'text-yellow-500' : 'text-gray-400 hover:text-gray-600'
             }`}
             title={bookmarked ? '取消收藏' : '收藏题目'}
@@ -191,8 +191,8 @@ export const QuestionCard = memo(function QuestionCard({
                       ? 'bg-red-50 border-red-500'
                       : 'bg-gray-50 border-gray-200 opacity-60'
                     : isSelected
-                    ? 'bg-blue-50 border-blue-500'
-                    : 'bg-white border-gray-200 hover:border-blue-300 hover:bg-blue-50/50'
+                    ? 'bg-indigo-50 border-indigo-500'
+                    : 'bg-white border-gray-200 hover:border-indigo-300 hover:bg-indigo-50/50'
                 }
                 ${clickedOption === option.key ? 'scale-[0.99]' : ''}
                 ${displayResult ? 'cursor-default' : 'cursor-pointer'}
@@ -213,7 +213,7 @@ export const QuestionCard = memo(function QuestionCard({
                           ? 'bg-red-500 border-red-500'
                           : 'border-gray-300'
                         : isSelected
-                        ? 'bg-blue-500 border-blue-500'
+                        ? 'bg-indigo-500 border-indigo-500'
                         : 'border-gray-300'
                     }
                   `}>
@@ -241,7 +241,7 @@ export const QuestionCard = memo(function QuestionCard({
                           ? 'bg-red-500 border-red-500'
                           : 'border-gray-300'
                         : isSelected
-                        ? 'bg-blue-500 border-blue-500'
+                        ? 'bg-indigo-500 border-indigo-500'
                         : 'border-gray-300'
                     }
                   `}>
@@ -286,10 +286,10 @@ export const QuestionCard = memo(function QuestionCard({
 
       {/* 答案解析 */}
       {displayResult && question.explanation && question.explanation.trim() !== '' && (
-        <div className="mt-6 p-4 rounded-xl bg-blue-50 border border-blue-100">
+        <div className="mt-6 p-4 rounded-xl bg-indigo-50/50 border border-indigo-100/50">
           <div className="flex items-center gap-2 mb-2">
-            <span className="text-blue-500">💡</span>
-            <span className="font-semibold text-blue-700">答案解析</span>
+            <span className="text-indigo-500">💡</span>
+            <span className="font-semibold text-indigo-700">答案解析</span>
           </div>
           <p className="text-sm leading-relaxed text-gray-600">
             {renderTextWithCode(question.explanation)}
@@ -307,7 +307,7 @@ export const QuestionCard = memo(function QuestionCard({
             transition-all duration-150
             ${
               selected.length > 0
-                ? 'bg-blue-500 hover:bg-blue-600'
+                ? 'bg-indigo-500 hover:bg-indigo-600'
                 : 'bg-gray-300 cursor-not-allowed'
             }
           `}

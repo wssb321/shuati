@@ -86,9 +86,9 @@ export function WrongQuestionPage() {
   });
 
   return (
-    <div className="min-h-screen bg-[#f1f5f9] pb-36">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-indigo-50/50 pb-36">
       {/* 顶部导航 */}
-      <header className="bg-white shadow-card sticky top-0 z-40">
+      <header className="glass-card border-b border-white/30 sticky top-0 z-40">
         <div className="max-w-6xl mx-auto px-3 sm:px-4 py-3 sm:py-4">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-3">
@@ -100,7 +100,7 @@ export function WrongQuestionPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                 </svg>
               </button>
-              <h1 className="text-lg sm:text-xl font-bold text-[#1f2937]">
+              <h1 className="text-lg sm:text-xl font-bold text-gray-800">
                 📋 错题库
               </h1>
               <span className="px-2.5 py-1 bg-[#ef4444] text-white rounded-full text-sm font-bold shadow-card">
@@ -121,13 +121,13 @@ export function WrongQuestionPage() {
                   placeholder="搜索题目..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 bg-white border-2 border-[#e5e7eb] rounded-card text-[#1f2937] placeholder-[#9ca3af] focus:outline-none focus:ring-2 focus:ring-[#3b82f6] focus:border-[#3b82f6] transition-fast"
+                  className="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-200/50 rounded-xl text-gray-800 placeholder-[#9ca3af] focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-fast"
                 />
               </div>
               <select
                 value={selectedQuiz}
                 onChange={(e) => setSelectedQuiz(e.target.value)}
-                className="px-4 py-2.5 bg-[#3b82f6] bg-opacity-10 border-2 border-[#3b82f6] border-opacity-30 text-[#3b82f6] rounded-card focus:outline-none focus:ring-2 focus:ring-[#3b82f6] transition-fast font-medium"
+                className="px-4 py-2.5 bg-indigo-50 border border-indigo-200 text-indigo-600 rounded-card focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-fast font-medium"
               >
                 <option value="all">📚 全部题库</option>
                 {availableQuizzes.map((quiz, idx) => (
@@ -142,8 +142,8 @@ export function WrongQuestionPage() {
                 onClick={() => setSortType('time')}
                 className={`flex-1 px-4 py-2.5 rounded-btn-sm text-sm font-bold transition-fast ${
                   sortType === 'time' 
-                    ? 'bg-white shadow-card text-[#3b82f6] scale-[1.02]' 
-                    : 'text-[#6b7280] hover:text-[#1f2937] hover:bg-white/50'
+                    ? 'bg-white shadow-card text-indigo-600 scale-[1.02]' 
+                    : 'text-[#6b7280] hover:text-gray-800 hover:bg-white/50'
                 }`}
               >
                 ⏰ 按时间排序
@@ -153,7 +153,7 @@ export function WrongQuestionPage() {
                 className={`flex-1 px-4 py-2.5 rounded-btn-sm text-sm font-bold transition-fast ${
                   sortType === 'wrongCount' 
                     ? 'bg-white shadow-card text-[#ef4444] scale-[1.02]' 
-                    : 'text-[#6b7280] hover:text-[#1f2937] hover:bg-white/50'
+                    : 'text-[#6b7280] hover:text-gray-800 hover:bg-white/50'
                 }`}
               >
                 📊 按错误次数
@@ -172,22 +172,22 @@ export function WrongQuestionPage() {
             {filteredWrongQuestions.map((question, index) => (
               <div
                 key={question.id}
-                className="group bg-white rounded-card shadow-card hover:shadow-hover p-4 sm:p-5 border-l-4 border-[#ef4444] hover:border-[#dc2626] transition-fast hover:-translate-y-0.5"
+                className="group bg-white/90 backdrop-blur-sm rounded-xl shadow-sm border border-white/50 hover:shadow-md p-4 sm:p-5 border-l-4 border-red-400 hover:border-red-500 transition-fast hover:-translate-y-0.5"
               >
                 <div className="flex items-start justify-between mb-3">
                   {/* 标签 */}
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className={`px-3 py-1 rounded-full text-xs font-bold shadow-card ${
                       question.type === 'single' 
-                        ? 'bg-[#3b82f6] text-white' 
-                        : 'bg-[#8b5cf6] text-white'
+                        ? 'bg-indigo-500 text-white' 
+                        : 'bg-violet-500 text-white'
                     }`}>
                       {question.type === 'single' ? '单选题' : '多选题'}
                     </span>
                     <span className="px-3 py-1 bg-[#ef4444] text-white rounded-full text-xs font-bold shadow-card">
                       错误 {question.wrongCount} 次
                     </span>
-                    <span className="px-3 py-1 bg-[#3b82f6] bg-opacity-20 text-[#3b82f6] rounded-full text-xs font-bold">
+                    <span className="px-3 py-1 bg-indigo-50 text-indigo-600 rounded-full text-xs font-bold">
                       {question.sourceQuiz.replace('.txt', '')}
                     </span>
                   </div>
@@ -203,7 +203,7 @@ export function WrongQuestionPage() {
                 </div>
                 
                 {/* 题目内容 */}
-                <p className="text-question text-[#1f2937] mb-4">
+                <p className="text-question text-gray-800 mb-4">
                   {question.question.length > 150 ? `${question.question.substring(0, 150)}...` : question.question}
                 </p>
                 
@@ -252,7 +252,7 @@ export function WrongQuestionPage() {
                       sessionStorage.setItem('practiceMode', 'wrong');
                       navigate('/');
                     }}
-                    className="inline-flex items-center gap-1 px-4 py-2 bg-[#3b82f6] text-white rounded-card hover:bg-[#2563eb] font-bold shadow-card hover:shadow-hover transition-fast hover:scale-105 active:scale-[0.98] btn-ripple"
+                    className="inline-flex items-center gap-1 px-4 py-2 gradient-primary text-white rounded-xl hover:opacity-90 font-bold shadow-card hover:shadow-hover transition-fast hover:scale-105 active:scale-[0.98] btn-ripple"
                   >
                     🎯 重新练习 →
                   </button>
@@ -265,11 +265,11 @@ export function WrongQuestionPage() {
 
       {/* 底部操作栏 */}
       {filteredWrongQuestions.length > 0 && (
-        <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-lg border-t shadow-hover p-4">
+        <div className="fixed bottom-0 left-0 right-0 glass-card border-t border-white/30 p-4">
           <div className="max-w-4xl mx-auto">
             <button
               onClick={startPractice}
-              className="w-full py-4 bg-[#ef4444] text-white rounded-card hover:bg-[#dc2626] font-bold shadow-hover transition-all duration-100 ease-out hover:scale-[1.02] active:scale-[0.98] btn-ripple"
+              className="w-full py-4 bg-red-500 text-white rounded-xl hover:bg-red-600 font-bold shadow-hover transition-all duration-100 ease-out hover:scale-[1.02] active:scale-[0.98] btn-ripple"
             >
               🚀 开始练习 ({filteredWrongQuestions.length} 题)
             </button>

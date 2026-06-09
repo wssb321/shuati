@@ -6,9 +6,17 @@ import path from 'path';
 import fs from 'fs';
 
 export default defineConfig({
-  base: '/',
+  base: '/shuati/',
   build: {
     sourcemap: 'hidden',
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+          'vendor-ui': ['lucide-react', 'clsx', 'tailwind-merge'],
+        }
+      }
+    }
   },
   plugins: [
     react({

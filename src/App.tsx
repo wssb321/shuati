@@ -15,8 +15,8 @@ export default function App() {
         speed={0.6}
         scale={1.5}
         brightness={1.2}
-        color1="#818cf8"
-        color2="#3b82f6"
+        color1="#6366f1"
+        color2="#7c3aed"
       />
       <div className="relative z-10">
         <ToastProvider>

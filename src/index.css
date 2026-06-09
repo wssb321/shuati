@@ -9,26 +9,32 @@
 /* 基础变量 */
 :root {
   /* 主色调 */
-  --color-primary: #3b82f6;
-  --color-primary-hover: #2563eb;
+  --color-primary: #4f46e5;
+  --color-primary-hover: #4338ca;
+  --color-accent: #7c3aed;
   --color-success: #22c55e;
   --color-success-hover: #16a34a;
   --color-danger: #ef4444;
   --color-danger-hover: #dc2626;
-  
+
   /* 背景色 */
-  --color-bg-page: #f1f5f9;
+  --color-bg-page: #f8fafc;
   --color-bg-card: #ffffff;
-  
+
   /* 文字色 */
   --color-text-primary: #1f2937;
   --color-text-secondary: #6b7280;
   --color-text-muted: #9ca3af;
-  
+
   /* 边框色 */
   --color-border: #e5e7eb;
-  --color-border-focus: #3b82f6;
-  
+  --color-border-focus: #4f46e5;
+
+  /* 玻璃效果 */
+  --glass-bg: rgba(255,255,255,0.72);
+  --glass-border: rgba(255,255,255,0.5);
+  --glass-shadow: 0 8px 32px rgba(0,0,0,0.06);
+
   /* 动画 */
   --transition-fast: 100ms ease-out;
   --transition-normal: 200ms ease-in-out;
@@ -45,9 +51,7 @@ html,
 body {
   margin: 0;
   padding: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: var(--color-bg-page);
@@ -236,14 +240,14 @@ html {
 
 /* 选中状态样式 */
 ::selection {
-  background-color: var(--color-primary);
+  background-color: #4f46e5;
   color: white;
 }
 
 /* 滚动条美化 */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -251,12 +255,12 @@ html {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--color-border);
+  background: #a5b4fc;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-text-muted);
+  background: #4f46e5;
 }
 
 /* 禁用状态 */
@@ -269,7 +273,7 @@ html {
 /* 焦点样式 */
 .focus-ring {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
 }
 
 /* 工具类 */
@@ -292,11 +296,11 @@ html {
 
 /* 阴影 */
 .shadow-card {
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
 }
 
 .shadow-hover {
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.08), 0 4px 10px rgba(0,0,0,0.04);
 }
 
 /* 圆角 */
@@ -310,4 +314,52 @@ html {
 
 .rounded-btn-lg {
   border-radius: 12px;
+}
+
+/* 玻璃卡片 */
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+}
+
+/* 渐变主色 */
+.gradient-primary {
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+}
+
+/* 渐变文字 */
+.gradient-text {
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* 卡片悬停效果 */
+.card-hover {
+  transition: all 0.2s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+
+/* 页面进入动画 */
+.page-enter {
+  animation: pageEnter 0.3s ease-out;
+}
+
+@keyframes pageEnter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

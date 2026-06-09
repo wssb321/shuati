@@ -36,12 +36,12 @@ export const ProgressPanel = memo(function ProgressPanel({
   };
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 p-3 sm:p-4 z-50 safe-area-bottom" style={{ height: 'auto' }}>
+    <div className="fixed bottom-0 left-0 right-0 glass-card border-t border-white/30 p-3 sm:p-4 z-50 safe-area-bottom" style={{ height: 'auto' }}>
       <div className="max-w-4xl mx-auto">
         {/* 进度条 */}
         <div className="relative h-1.5 bg-gray-100 rounded-full overflow-hidden mb-3">
           <div 
-            className="absolute inset-y-0 left-0 bg-blue-500 rounded-full transition-all duration-300"
+            className="absolute inset-y-0 left-0 bg-indigo-500 rounded-full transition-all duration-300"
             style={{ width: `${progress}%` }}
           />
         </div>
@@ -50,7 +50,7 @@ export const ProgressPanel = memo(function ProgressPanel({
         <div className="flex items-center justify-between mb-3 text-xs sm:text-sm">
           <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
             <span className="text-gray-600 shrink-0">
-              <span className="font-semibold text-blue-600">{currentIndex + 1}</span> / {totalQuestions}
+              <span className="font-semibold text-indigo-600">{currentIndex + 1}</span> / {totalQuestions}
             </span>
             <span className="hidden sm:inline text-gray-400">|</span>
             <span className="text-gray-600 shrink-0">
@@ -109,7 +109,7 @@ export const ProgressPanel = memo(function ProgressPanel({
           {showResult && (
             <button
               onClick={onSubmit}
-              className="flex items-center justify-center gap-1.5 px-4 sm:px-6 py-2 sm:py-2.5 rounded-lg font-semibold text-white bg-blue-500 hover:bg-blue-600 transition-all text-sm sm:text-base flex-1 sm:flex-none max-w-[140px] sm:max-w-none"
+              className="flex items-center justify-center gap-1.5 px-4 sm:px-6 py-2 sm:py-2.5 rounded-lg font-semibold text-white bg-indigo-500 hover:bg-indigo-600 transition-all text-sm sm:text-base flex-1 sm:flex-none max-w-[140px] sm:max-w-none"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
