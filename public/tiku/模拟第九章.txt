@@ -1,0 +1,352 @@
+一、单选题（共30题）
+1. 微信小程序云开发中，初始化云开发环境的 API 是？
+A. wx.cloud.init()
+B. wx.initCloud()
+C. cloud.init()
+D. wx.cloud.start()
+答案：A
+解析： 小程序端使用 wx.cloud.init({ env: '环境ID' }) 初始化云开发环境，需在 app.js 的 onLaunch 中调用。cloud.init() 是服务端（云函数）使用的 API。
+2. 云开发数据库中，创建一个集合（Collection）相当于关系型数据库中的什么概念？
+A. 创建一条记录
+B. 创建一张表
+C. 创建一个数据库
+D. 创建一个索引
+答案：B
+解析： 云开发数据库是 MongoDB 风格的文档型数据库，集合（Collection）对应关系型数据库中的"表"，文档（Document）对应"记录/行"。
+3. 云开发数据库集合的默认权限"所有人可读写"适用于什么场景？
+A. 生产环境正式业务
+B. 仅开发调试阶段
+C. 金融支付类应用
+D. 用户隐私数据存储
+答案：B
+解析： "所有人可读写"是默认权限，仅适合开发调试。生产环境应根据业务设置为"仅创建者可读写"或自定义安全规则，防止数据被恶意篡改。
+4. 在云函数中获取当前调用用户的 OpenID，正确的方式是？
+A. wx.getWXContext()
+B. cloud.getWXContext().OPENID
+C. wx.cloud.getWXContext()
+D. cloud.getWXContext().openId
+答案：B
+解析： 云函数中使用 cloud.getWXContext() 返回上下文对象，包含 OPENID（大写）、APPID、UNIONID 等属性。注意属性名是大写的 OPENID。
+5. 小程序端上传文件到云存储，应使用哪个 API？
+A. wx.uploadFile()
+B. cloud.uploadFile()
+C. wx.cloud.uploadFile()
+D. wx.cloud.storage.uploadFile()
+答案：C
+解析： 小程序端使用 wx.cloud.uploadFile()，参数包括 cloudPath（云存储路径）和 filePath（本地临时文件路径）。wx.uploadFile() 是上传到普通服务器的 API。
+6. 云函数定时触发器的配置文件中，触发周期使用什么格式？
+A. Unix 时间戳
+B. Cron 表达式
+C. ISO 8601 格式
+D. 毫秒数
+答案：B
+解析： 云函数定时触发器在 config.json 中使用 Cron 表达式配置触发周期，如 "0 0 2 1 * * *" 表示每月1日凌晨2点执行。
+7. 云开发-云调用（Cloud Call）相比传统 HTTPS 调用的主要优势是？
+A. 传输速度更快
+B. 免鉴权调用微信服务端接口
+C. 支持更大文件传输
+D. 可以跨域访问
+答案：B
+解析： 云调用是云开发特有的能力，可以在云函数中直接调用微信服务端接口（如发送模板消息、获取小程序码），无需手动处理 access_token 等鉴权逻辑。
+8. 在 TODO 实战项目中，使用云开发数据库实现数据增删改查时，添加数据使用的方法是？
+A. db.collection('todos').add()
+B. db.collection('todos').insert()
+C. db.collection('todos').create()
+D. db.collection('todos').push()
+答案：A
+解析： 云开发数据库添加记录使用 .add({ data: {...} }) 方法。insert()、create()、push() 都不是云开发数据库的合法 API。
+9. 云函数中操作数据库，需要引入的模块是？
+A. const db = wx.cloud.database()
+B. const cloud = require('wx-server-sdk')
+C. const db = require('mongodb')
+D. const cloud = wx.cloud
+答案：B
+解析： 云函数中通过 require('wx-server-sdk') 引入云开发服务端 SDK，然后初始化 cloud.init()，再通过 cloud.database() 获取数据库实例。不能使用小程序端的 wx.cloud。
+10. 云开发数据库中，查询条件"年龄等于18或等于20"的正确写法是？
+A. { age: { $eq: [18, 20] } }
+B. { age: { $in: [18, 20] } }
+C. { age: { $or: [18, 20] } }
+D. { age: [18, 20] }
+答案：B
+解析： $in 用于匹配字段值在指定数组中的文档。$or 是逻辑操作符，用于组合多个条件，正确写法应为 { $or: [{ age: 18 }, { age: 20 }] }。
+11. 云函数中实现发送订阅消息功能，需要使用云调用的哪个接口？
+A. cloud.openapi.subscribeMessage.send()
+B. cloud.callFunction('sendMessage')
+C. wx.requestSubscribeMessage()
+D. cloud.sendMessage()
+答案：A
+解析： 云函数中通过 cloud.openapi.subscribeMessage.send() 发送订阅消息，属于云调用能力。wx.requestSubscribeMessage() 是小程序端请求用户授权订阅的 API。
+12. 云开发数据库中，删除单条记录的方法是？
+A. doc(id).delete()
+B. doc(id).remove()
+C. where({...}).delete()
+D. doc(id).destroy()
+答案：B
+解析： 云开发数据库删除单条记录使用 doc(id).remove()，删除多条使用 where({...}).remove()。没有 delete() 或 destroy() 方法。
+13. 小程序云存储文件的下载链接获取方式是？
+A. wx.cloud.getTempFileURL()
+B. wx.cloud.downloadFile()
+C. wx.cloud.getFileURL()
+D. cloud.getDownloadURL()
+答案：A
+解析： 通过 wx.cloud.getTempFileURL({ fileList: [...] }) 获取云存储文件的临时下载链接，链接有有效期限制。downloadFile() 是直接下载文件到本地。
+14. 云函数中，获取上传文件临时路径的上下文信息使用？
+A. event.fileID
+B. cloud.getWXContext().fileID
+C. event.userInfo.fileID
+D. context.fileID
+答案：A
+解析： 云函数被调用时，上传文件的相关信息通过 event 参数传递。如果是小程序端上传后触发云函数，fileID 通常在 event 对象中。
+15. 云开发数据库中，对查询结果按创建时间倒序排列，正确的写法是？
+A. .orderBy('createTime', 'desc')
+B. .sort({ createTime: -1 })
+C. .orderBy('createTime', 'descending')
+D. .order({ createTime: 'desc' })
+答案：A
+解析： 云开发数据库使用 .orderBy('字段名', 'asc' | 'desc') 进行排序。'asc' 升序，'desc' 降序。sort() 和 order() 不是云开发数据库的 API。
+16. 在 TODO 项目中，实现列表数据实时同步更新，推荐使用？
+A. 定时轮询 wx.request
+B. 数据库监听 db.collection().watch()
+C. 每次页面 onShow 重新查询
+D. 使用 WebSocket 手动连接
+答案：B
+解析： 云开发数据库提供 .watch() 实时数据推送能力，可在小程序端监听集合变化，数据更新时自动推送，无需轮询。这是云开发相比传统开发的显著优势。
+17. 云函数返回给小程序端的数据结构，正确的是？
+A. 直接 return 任意数据
+B. 必须 return { code: 0, data: ... }
+C. 只能返回字符串
+D. 必须返回 JSON 字符串
+答案：A
+解析： 云函数可以直接 return 任意可序列化的数据（对象、数组、字符串等），云开发 SDK 会自动处理。不需要强制包装成特定格式，但建议统一返回格式便于前端处理。
+18. 云开发数据库中，统计集合中记录总数使用的方法是？
+A. .count()
+B. .total()
+C. .length()
+D. .size()
+答案：A
+解析： 使用 .count() 方法获取查询结果的总记录数，如 db.collection('todos').where({...}).count()。返回结果包含 total 字段。
+19. 小程序云开发环境 ID 在以下哪个文件中配置？
+A. project.config.json
+B. app.json
+C. app.js
+D. sitemap.json
+答案：C
+解析： 云开发环境 ID 在 app.js 的 onLaunch 生命周期中通过 wx.cloud.init({ env: '环境ID' }) 配置。也可以在开发者工具中设置默认环境。
+20. 云函数中，获取前端调用时传入的参数使用？
+A. context.data
+B. event
+C. this.data
+D. arguments
+答案：B
+解析： 云函数主函数接收三个参数 (event, context, callback)，其中 event 包含前端调用时传入的所有数据。context 包含运行时信息，callback 用于返回结果（现推荐直接 return）。
+21. 云开发数据库中，字段值为数组类型，查询包含某个元素的记录使用？
+A. $contains
+B. $in
+C. $elemMatch
+D. $all
+答案：B
+解析： 查询数组字段包含指定值，使用 { tags: { $in: ['value'] } } 或 { tags: 'value' }（简写形式）。$all 用于匹配包含所有指定元素的数组。
+22. 云存储中，文件上传成功后返回的关键字段是？
+A. fileURL
+B. fileID
+C. path
+D. url
+答案：B
+解析： 云存储上传成功后返回 fileID，这是云存储文件的唯一标识，格式为 cloud://环境ID.桶名/路径。后续操作（如下载、删除）都使用 fileID。
+23. 云函数本地调试时，模拟小程序端调用应使用开发者工具的？
+A. "云函数" → "测试"
+B. 右键云函数 → "本地调试"
+C. "工具" → "模拟调用"
+D. "调试器" → "Console"
+答案：B
+解析： 在开发者工具中，右键云函数目录选择"本地调试"，可以配置调试参数并模拟调用。也可以创建本地调试触发器进行测试。
+24. 云开发数据库中，事务操作的起始方法是？
+A. db.startTransaction()
+B. db.transaction()
+C. db.runTransaction()
+D. db.beginTransaction()
+答案：C
+解析： 云开发数据库事务通过 db.runTransaction(async transaction => { ... }) 执行，在事务回调中使用 transaction 对象进行数据库操作，支持提交或回滚。
+25. 小程序端调用云函数，正确的方式是？
+A. cloud.callFunction()
+B. wx.cloud.callFunction()
+C. wx.callFunction()
+D. cloud.invoke()
+答案：B
+解析： 小程序端使用 wx.cloud.callFunction({ name: '云函数名', data: {...} }) 调用云函数。cloud.callFunction() 是服务端（云函数中调用其他云函数）使用的 API。
+26. 云开发数据库中，GeoPoint 类型用于存储？
+A. 文本内容
+B. 地理位置坐标
+C. 二进制数据
+D. 日期时间
+答案：B
+解析： GeoPoint 是云开发数据库支持的地理坐标类型，用于存储经纬度信息，支持地理位置查询（如附近的人）。通过 db.GeoPoint(longitude, latitude) 创建。
+27. 云函数中，使用 npm 安装的依赖包在部署时？
+A. 自动上传 node_modules
+B. 需要选择"云端安装依赖"
+C. 不需要安装依赖
+D. 手动上传到云存储
+答案：B
+解析： 部署云函数时，可以选择"上传并部署：云端安装依赖"（上传 package.json，云端执行 npm install）或"上传并部署：不上传 node_modules"（本地已安装则上传）。推荐云端安装依赖。
+28. 云开发数据库中，聚合查询的 $match 阶段作用是？
+A. 分组统计
+B. 筛选匹配文档
+C. 排序结果
+D. 限制返回数量
+答案：B
+解析： 聚合管道中，$match 用于筛选符合条件的文档（类似 where），$group 用于分组统计，$sort 用于排序，$limit 用于限制数量。
+29. 小程序云开发的计费模式中，免费版资源限制包括？
+A. 数据库读次数 500万/月
+B. 云函数调用次数 5万次/月
+C. 云存储容量 5GB
+D. 以上都是
+答案：D
+解析： 云开发免费版提供：数据库读 500万次/月、写 300万次/月；云函数调用 5万次/月；云存储 5GB 容量；CDN 流量 5GB/月等资源额度。
+30. 云函数中，返回 HTTP 响应给外部系统调用，需要配置？
+A. 定时触发器
+B. HTTP 触发器
+C. 云调用触发器
+D. 消息队列触发器
+答案：B
+解析： 云函数可以通过配置 HTTP 触发器，生成 URL 供外部系统通过 HTTP 请求调用。定时触发器用于定时任务，云调用是调用微信接口的能力。
+二、多选题（共20题）
+1. 微信小程序云开发提供的基础能力包括？（多选）
+A. 云数据库
+B. 云存储
+C. 云函数
+D. 云服务器 ECS
+答案：A、B、C
+解析： 云开发三大核心能力：云数据库（NoSQL 文档型）、云存储（文件存储）、云函数（Serverless）。云服务器 ECS 是腾讯云 IaaS 产品，不属于云开发体系。
+2. 云开发数据库支持的数据类型包括？（多选）
+A. String
+B. Number
+C. Date
+D. GeoPoint
+答案：A、B、C、D
+解析： 云开发数据库支持 String、Number、Boolean、Date、Array、Object、GeoPoint、Null 等类型。GeoPoint 用于存储地理位置坐标。
+3. 云开发数据库集合的权限设置选项包括？（多选）
+A. 仅创建者可读写
+B. 所有人可读写
+C. 所有人可读，仅创建者可写
+D. 自定义安全规则
+答案：A、B、C、D
+解析： 云开发数据库支持四种权限模式：仅创建者可读写、所有人可读写、所有人可读仅创建者可写、以及自定义安全规则（通过 JSON 配置细粒度权限）。
+4. 云函数相比传统后端开发的优势包括？（多选）
+A. 无需搭建和运维服务器
+B. 按调用次数计费，空闲时不产生费用
+C. 自动弹性伸缩，应对流量高峰
+D. 只能被小程序前端调用
+答案：A、B、C
+解析： 云函数是 Serverless 架构，免运维、自动伸缩、按需计费。D 错误：云函数可通过 HTTP 触发、定时触发、云函数间调用等多种方式触发，不限于前端调用。
+5. 小程序端云存储 API 包括？（多选）
+A. wx.cloud.uploadFile()
+B. wx.cloud.downloadFile()
+C. wx.cloud.deleteFile()
+D. wx.cloud.getTempFileURL()
+答案：A、B、C、D
+解析： 小程序端云存储提供完整的文件操作 API：上传、下载、删除、获取临时链接。此外还有 wx.cloud.getFileInfo() 获取文件信息。
+6. 云开发数据库查询操作符包括？（多选）
+A. $eq（等于）
+B. $gt（大于）
+C. $regex（正则匹配）
+D. $like（模糊匹配）
+答案：A、B、C
+解析： 云开发数据库支持 $eq、$gt、$gte、$lt、$lte、$ne、$in、$nin、$regex 等操作符。没有 $like 操作符，模糊匹配使用 $regex。
+7. 在 TODO 实战项目中，可能用到的云开发功能包括？（多选）
+A. 云数据库增删改查
+B. 云存储上传附件
+C. 云函数处理复杂业务
+D. 数据库实时监听 watch
+答案：A、B、C、D
+解析： TODO 项目是典型的云开发实战案例，涵盖数据库 CRUD、文件上传、云函数处理业务逻辑、以及实时数据同步等核心能力。
+8. 云函数定时触发器的应用场景包括？（多选）
+A. 每日定时备份数据库
+B. 定期清理过期数据
+C. 定时发送订阅消息
+D. 实时处理用户请求
+答案：A、B、C
+解析： 定时触发器适合周期性任务：数据备份、清理、定时推送等。D 错误：实时处理用户请求应使用小程序端调用或 HTTP 触发，定时触发器有执行周期限制。
+9. 云调用（Cloud Call）支持的微信服务端接口包括？（多选）
+A. 发送订阅消息
+B. 生成小程序码
+C. 获取用户手机号
+D. 微信支付统一下单
+答案：A、B、C
+解析： 云调用支持众多微信服务端接口，如订阅消息、模板消息、小程序码、内容安全、手机号解密等。微信支付有专门的云调用接口 cloud.openapi.pay.unifiedOrder。
+10. 云开发数据库聚合查询支持的阶段包括？（多选）
+A. $match（筛选）
+B. $group（分组）
+C. $sort（排序）
+D. $lookup（联表查询）
+答案：A、B、C、D
+解析： 云开发数据库聚合管道支持 $match、$group、$sort、$limit、$skip、$lookup（左连接）、$unwind、$project 等阶段操作。
+11. 云函数中可以使用的能力包括？（多选）
+A. 操作云数据库
+B. 调用其他云函数
+C. 使用 npm 第三方包
+D. 直接操作 DOM
+答案：A、B、C
+解析： 云函数是 Node.js 运行环境，可操作数据库、调用其他云函数、使用 npm 包。D 错误：云函数运行在服务端，没有 DOM 环境，不能操作页面元素。
+12. 小程序云开发的安全措施包括？（多选）
+A. 数据库权限控制
+B. 云函数服务端鉴权
+C. 前端代码混淆
+D. 强制 HTTPS 传输
+答案：A、B、D
+解析： 云开发提供数据库权限、云函数鉴权、HTTPS 加密等安全措施。C 错误：前端代码无法完全加密保护，关键业务逻辑应放在云函数中实现。
+13. 云开发数据库实时推送能力 .watch() 的特点包括？（多选）
+A. 监听集合数据变化
+B. 自动重连
+C. 支持多端同时监听
+D. 只能在云函数中使用
+答案：A、B、C
+解析： watch() 在小程序端监听数据库变化，支持自动重连和多端监听。D 错误：watch() 主要在小程序端使用，云函数中通常不需要实时监听。
+14. 云存储文件管理操作包括？（多选）
+A. 上传文件
+B. 下载文件
+C. 删除文件
+D. 复制文件
+答案：A、B、C
+解析： 云存储支持上传、下载、删除、获取临时链接等操作。目前不支持直接的复制文件操作，需要先下载再上传实现复制。
+15. 云函数部署方式包括？（多选）
+A. 开发者工具右键部署
+B. 命令行工具部署
+C. 云端 IDE 直接编辑
+D. 手动 FTP 上传
+答案：A、B、C
+解析： 云函数支持开发者工具部署、CLI 命令行部署、云端控制台 IDE 在线编辑。D 错误：云函数是 Serverless，不需要也不支持 FTP 上传。
+16. 云开发数据库索引的作用包括？（多选）
+A. 加速查询速度
+B. 支持字段唯一性约束
+C. 减少数据存储空间
+D. 自动排序数据
+答案：A、B
+解析： 数据库索引用于加速查询、支持唯一性约束（唯一索引）。C 错误：索引会额外占用存储空间。D 错误：索引不自动排序数据，排序需使用 orderBy。
+17. 小程序云开发适合的应用场景包括？（多选）
+A. 中小型业务应用
+B. 快速原型开发
+C. 高并发大型电商
+D. 个人学习项目
+答案：A、B、D
+解析： 云开发适合中小应用、快速开发、学习项目。C 错误：超大规模高并发场景（如双11级别电商）可能需要更灵活的架构和资源配置，云开发有配额限制。
+18. 云函数中处理异步操作的方式包括？（多选）
+A. async/await
+B. Promise.then()
+C. callback 回调
+D. 同步阻塞
+答案：A、B、C
+解析： 云函数支持 async/await、Promise、callback 等异步处理方式。D 错误：Node.js 中应避免同步阻塞操作，会影响性能和并发能力。
+19. 云开发数据库文档的 _id 字段特点包括？（多选）
+A. 系统自动生成
+B. 全局唯一
+C. 可以自定义
+D. 不可修改
+答案：A、B、C
+解析： _id 是文档唯一标识，默认系统自动生成（类似 ObjectId），也可以在 add() 时自定义。D 错误：_id 一旦创建不可修改，但可以通过删除重建间接"修改"。
+20. 提升云开发数据库查询性能的方法包括？（多选）
+A. 为常用查询字段创建索引
+B. 使用聚合查询代替多次查询
+C. 限制返回字段数量（projection）
+D. 增加数据库集合数量
+答案：A、B、C
+解析： 优化数据库性能：创建索引、合理使用聚合、限制返回字段。D 错误：增加集合数量不会提升性能，反而增加管理复杂度，应合理设计集合结构。

@@ -151,7 +151,7 @@ export function QuizPage() {
   useEffect(() => {
     const discoverQuizzes = async () => {
       try {
-        const quizzes = ['模拟第一章.txt', '模拟第二章.txt', '模拟第三章.txt', '模拟第四章.txt', '模拟第五章.txt', '模拟第六章.txt', '模拟第七章.txt', '模拟第八章.txt', '第一章.txt', '第三章.txt', '第四章.txt', '第五章.txt', '第六章.txt', '第七章.txt', '第八章.txt', '第八章2.txt', '第八章3.txt', '第八章4.txt', '第八章5.txt', '第九章.txt', '第九章1.txt', '第九章2.txt', '第九章3.txt', '第九章4.txt'];
+        const quizzes = ['模拟第一章.txt', '模拟第二章.txt', '模拟第三章.txt', '模拟第四章.txt', '模拟第五章.txt', '模拟第六章.txt', '模拟第七章.txt', '模拟第八章.txt', '模拟第九章.txt', '第一章.txt', '第三章.txt', '第四章.txt', '第五章.txt', '第六章.txt', '第七章.txt', '第八章.txt', '第八章2.txt', '第八章3.txt', '第八章4.txt', '第八章5.txt', '第九章.txt', '第九章1.txt', '第九章2.txt', '第九章3.txt', '第九章4.txt', '案例一.txt', '案例二.txt', '案例三.txt', '小游戏.txt'];
         setAvailableQuizzes(quizzes);
         setSelectedQuizFiles(quizzes);
         
