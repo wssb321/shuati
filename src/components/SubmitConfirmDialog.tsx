@@ -55,7 +55,7 @@ export function SubmitConfirmDialog({
             </button>
             <button
               onClick={onConfirm}
-              className="w-full py-3 gradient-primary text-white rounded-xl font-medium hover:bg-blue-600 transition-colors"
+              className="w-full py-3 bg-blue-500 text-white rounded-xl font-medium hover:bg-blue-600 transition-colors"
             >
               确认交卷
             </button>
