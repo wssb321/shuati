@@ -201,8 +201,10 @@ export function BookmarkPage() {
                     <span>收藏于 {formatDate(bookmark.timestamp)}</span>
                     <button
                       onClick={() => {
-                        sessionStorage.setItem('selectedQuiz', bookmark.quizFile);
-                        sessionStorage.setItem('selectedQuestionId', question.id.toString());
+                        // 使用批量练习模式来练习单个题目
+                        const practiceQuestions = [question];
+                        sessionStorage.setItem('practiceQuestions', JSON.stringify(practiceQuestions));
+                        sessionStorage.setItem('practiceMode', 'bookmark');
                         navigate('/');
                       }}
                       className="text-indigo-500 hover:text-indigo-600 font-medium"
