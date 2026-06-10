@@ -1,0 +1,961 @@
+（一）单选题（60题）
+1. 小程序应用生命周期中，全局只触发一次的生命周期函数是？
+A. onShow
+B. onHide
+C. onLaunch
+D. onError
+答案：C
+解析：onLaunch是小程序初始化完成时触发，全局只触发一次，是小程序的入口。
+
+2. 页面初次渲染完成时触发的生命周期函数是？
+A. onLoad
+B. onShow
+C. onReady
+D. onHide
+答案：C
+解析：onReady是页面初次渲染完成时触发，只会调用一次，此时页面已经渲染完成，可以进行DOM操作。
+
+3. 组件实例进入页面节点树时触发的生命周期函数是？
+A. created
+B. attached
+C. ready
+D. detached
+答案：B
+解析：attached是组件实例进入页面节点树时触发，此时可以调用setData，适合用于请求数据、监听事件等。
+
+4. 首次进入页面的生命周期执行顺序是？
+A. onShow → onLoad → onReady
+B. onLoad → onShow → onReady
+C. onLoad → onReady → onShow
+D. onReady → onLoad → onShow
+答案：B
+解析：首次进入页面的执行顺序是onLoad → onShow → onReady。
+
+5. 从后台返回小程序时，会触发哪个生命周期函数？
+A. onLoad
+B. onShow
+C. onReady
+D. onHide
+答案：B
+解析：从后台返回时，只会触发onShow，不会触发onLoad和onReady。
+
+6. 跳转到新页面时，当前页面会触发哪个生命周期函数？
+A. onLoad
+B. onShow
+C. onHide
+D. onUnload
+答案：C
+解析：跳转到新页面时，当前页面会触发onHide，新页面会触发onLoad → onShow → onReady。
+
+7. 数据绑定的基本语法是？
+A. ${ }
+B. {{ }}
+C. []
+D. { }
+答案：B
+解析：小程序使用双大括号{{ }}进行数据绑定。
+
+8. 条件渲染中，适合频繁切换的场景应使用？
+A. wx:if
+B. wx:elif
+C. wx:else
+D. hidden
+答案：D
+解析：hidden通过display:none控制显示隐藏，组件始终存在，只是不显示，适合频繁切换的场景。
+
+9. 列表渲染中，提高渲染性能的属性是？
+A. wx:for
+B. wx:for-item
+C. wx:key
+D. wx:for-index
+答案：C
+解析：wx:key用于提高渲染性能，唯一标识列表项，建议使用数据中唯一的字段作为key。
+
+10. 更新数据必须使用的方法是？
+A. this.data
+B. setData
+C. updateData
+D. changeData
+答案：B
+解析：必须使用setData更新数据，直接修改this.data不会触发视图更新。
+
+11. 绑定点击事件并阻止冒泡的方式是？
+A. bindtap
+B. catchtap
+C. bindinput
+D. bindsubmit
+答案：B
+解析：catchtap绑定点击事件并阻止冒泡，事件不会向上传递。
+
+12. 事件对象中，触发事件的源头组件是？
+A. target
+B. currentTarget
+C. detail
+D. touches
+答案：A
+解析：target是触发事件的源头组件，currentTarget是绑定事件的当前组件。
+
+13. 事件传参时，自定义属性的前缀是？
+A. data-
+B. param-
+C. value-
+D. attr-
+答案：A
+解析：事件传参时，自定义属性必须以data-开头。
+
+14. 页面导航中，跳转到tabBar页面的方式是？
+A. navigate
+B. redirect
+C. switchTab
+D. reLaunch
+答案：C
+解析：switchTab用于跳转到tabBar页面，并关闭其他所有非tabBar页面。
+
+15. 页面传参时，在哪个生命周期函数中接收参数？
+A. onLoad
+B. onShow
+C. onReady
+D. onHide
+答案：A
+解析：页面传参时，在onLoad(options)中接收参数，options是一个对象，包含所有参数。
+
+16. 网络请求必须使用的协议是？
+A. HTTP
+B. HTTPS
+C. FTP
+D. WebSocket
+答案：B
+解析：小程序网络请求必须使用HTTPS协议，HTTP不支持。
+
+17. 域名配置的位置是？
+A. app.json
+B. project.config.json
+C. 小程序后台→开发→开发设置→服务器域名
+D. 小程序后台→设置→基本设置
+答案：C
+解析：域名配置在小程序后台→开发→开发设置→服务器域名中进行。
+
+18. 本地存储中，同步存储数据的API是？
+A. wx.setStorage
+B. wx.setStorageSync
+C. wx.getStorage
+D. wx.getStorageSync
+答案：B
+解析：wx.setStorageSync是同步存储数据的API，会阻塞其他任务，直到存储完成。
+
+19. 本地存储中，单个key允许存储的最大数据长度是？
+A. 100KB
+B. 500KB
+C. 1MB
+D. 5MB
+答案：C
+解析：单个key允许存储的最大数据长度为1MB，超过会报错。
+
+20. rpx单位中，屏幕宽度被规定为多少rpx？
+A. 375
+B. 750
+C. 1080
+D. 1440
+答案：B
+解析：rpx规定屏幕宽度为750rpx，无论屏幕宽度是多少，都被视为750rpx。
+
+21. swiper组件中，是否自动切换的属性是？
+A. indicator-dots
+B. autoplay
+C. interval
+D. duration
+答案：B
+解析：autoplay属性控制swiper是否自动切换，默认false。
+
+22. 获取登录凭证code的API是？
+A. wx.getUserInfo
+B. wx.login
+C. wx.authorize
+D. wx.getUserProfile
+答案：B
+解析：wx.login用于获取登录凭证code，code有效期5分钟，只能使用一次。
+
+23. 新版获取用户信息的API是？
+A. wx.getUserInfo
+B. wx.login
+C. wx.authorize
+D. wx.getUserProfile
+答案：D
+解析：wx.getUserProfile是新版获取用户信息的API，每次调用都会弹出授权框。
+
+ 24. 页面分享配置的函数是？
+A. onShareAppMessage
+B. onShareTimeline
+C. wx.share
+D. wx.shareAppMessage
+答案：A
+解析：onShareAppMessage用于页面分享配置，需要在Page中定义。
+
+ 25. 自定义组件的构造器是？
+A. Page
+B. Component
+C. App
+D. Behavior
+答案：B
+解析：自定义组件使用Component构造器，而不是Page。
+
+ 26. 组件的对外属性是？
+A. data
+B. properties
+C. methods
+D. observers
+答案：B
+解析：properties是组件的对外属性，用于接收父组件传递的数据。
+
+ 27. 子组件向父组件传递数据的方法是？
+A. setData
+B. triggerEvent
+C. emit
+D. sendMessage
+答案：B
+解析：子组件通过this.triggerEvent触发事件，父组件监听事件来接收数据。
+
+ 28. 云开发的组成部分不包括？
+A. 云函数
+B. 云数据库
+C. 云存储
+D. 云服务器
+答案：D
+解析：云开发由云函数、云数据库、云存储和云调用组成，不包括云服务器。
+
+ 29. 云数据库的类型是？
+A. SQL关系型数据库
+B. NoSQL文档型数据库
+C. 键值对数据库
+D. 图数据库
+答案：B
+解析：云数据库是NoSQL文档型数据库，类似MongoDB，数据以JSON格式存储。
+
+ 30. 云存储中，上传文件的API是？
+A. wx.cloud.uploadFile
+B. wx.cloud.downloadFile
+C. wx.cloud.getTempFileURL
+D. wx.cloud.deleteFile
+答案：A
+解析：wx.cloud.uploadFile用于上传文件到云存储。
+
+ 31. 云函数的运行环境是？
+A. 浏览器
+B. Node.js
+C. 小程序环境
+D. 服务器
+答案：B
+解析：云函数运行在Node.js环境中。
+
+ 32. 云调用的特点是？
+A. 需要获取access_token
+B. 免鉴权调用微信开放接口
+C. 只能在前端调用
+D. 不支持异步操作
+答案：B
+解析：云调用是在云函数中免鉴权调用微信开放接口，无需获取access_token。
+
+ 33. 性能优化中，分包的主包和单个分包大小限制是？
+A. 1M
+B. 2M
+C. 5M
+D. 10M
+答案：B
+解析：主包和单个分包大小不能超过2M，整个小程序所有分包大小不超过20M。
+
+ 34. 图片优化中，推荐使用的图片格式是？
+A. JPG
+B. PNG
+C. WebP
+D. GIF
+答案：C
+解析：WebP格式在相同质量下，比jpg/png体积小30%左右，推荐使用。
+
+ 35. 代码优化中，减少事件触发频率的方法是？
+A. 防抖和节流
+B. 合并setData
+C. 避免深层嵌套
+D. 使用纯数据字段
+答案：A
+解析：防抖和节流可以减少事件触发频率，如搜索输入、滚动事件等。
+
+ 36. npm包使用时，需要在开发者工具中执行的操作是？
+A. 构建npm
+B. 安装npm
+C. 初始化npm
+D. 配置npm
+答案：A
+解析：使用npm包时，安装后需要点击"工具→构建npm"。
+
+ 37. 小程序生命周期中，页面被关闭时触发的函数是？
+A. onLoad
+B. onShow
+C. onHide
+D. onUnload
+答案：D
+解析：onUnload是页面卸载时触发，页面被关闭时触发，适合用于清理资源、取消网络请求等。
+
+ 38. 条件渲染中，条件为false时组件会被销毁的是？
+A. wx:if
+B. hidden
+C. wx:elif
+D. wx:else
+答案：A
+解析：wx:if条件为true时渲染，条件为false时组件会被销毁，切换时有销毁和重建过程。
+
+ 39. 列表渲染中，默认的当前项变量名是？
+A. item
+B. index
+C. value
+D. key
+答案：A
+解析：列表渲染的默认变量是item（当前项）和index（当前索引）。
+
+ 40. setData的特点是？
+A. 同步操作
+B. 异步操作
+C. 阻塞操作
+D. 立即生效
+答案：B
+解析：setData是异步操作，不要在setData后立即使用this.data。
+
+ 41. 事件传播的顺序是？
+A. 冒泡阶段 → 目标阶段 → 捕获阶段
+B. 捕获阶段 → 目标阶段 → 冒泡阶段
+C. 目标阶段 → 捕获阶段 → 冒泡阶段
+D. 捕获阶段 → 冒泡阶段 → 目标阶段
+答案：B
+解析：事件传播顺序是捕获阶段（从外到内）→ 目标阶段 → 冒泡阶段（从内到外）。
+
+ 42. 页面导航中，关闭所有页面并打开到应用内某个页面的方式是？
+A. navigate
+B. redirect
+C. reLaunch
+D. navigateBack
+答案：C
+解析：reLaunch用于关闭所有页面，打开到应用内的某个页面，相当于重启小程序。
+
+ 43. 网络请求中，最多支持的并发请求数是？
+A. 5个
+B. 10个
+C. 15个
+D. 20个
+答案：B
+解析：小程序最多支持10个并发请求，超过会排队。
+
+ 44. 本地存储中，所有数据的存储上限是？
+A. 5MB
+B. 10MB
+C. 15MB
+D. 20MB
+答案：B
+解析：本地存储的所有数据存储上限为10MB，超过无法存储。
+
+ 45. rpx与px的换算公式是？
+A. px = rpx * (屏幕宽度 / 375)
+B. px = rpx * (屏幕宽度 / 750)
+C. rpx = px * (屏幕宽度 / 375)
+D. rpx = px * (屏幕宽度 / 750)
+答案：B
+解析：px = rpx * (屏幕宽度 / 750)，如屏幕宽度375px，100rpx = 100 * (375/750) = 50px。
+
+ 46. swiper组件中，自动切换时间间隔的属性是？
+A. indicator-dots
+B. autoplay
+C. interval
+D. duration
+答案：C
+解析：interval是自动切换时间间隔，单位ms，默认5000ms（5秒）。
+
+ 47. 授权状态不包括？
+A. 已授权
+B. 未授权
+C. 已拒绝
+D. 已过期
+答案：D
+解析：授权状态包括已授权、未授权、已拒绝，不包括已过期。
+
+ 48. 组件生命周期中，组件实例刚刚被创建时触发的函数是？
+A. created
+B. attached
+C. ready
+D. detached
+答案：A
+解析：created是组件实例刚刚被创建时触发，此时还不能调用setData，适合用于初始化组件内部数据。
+
+ 49. 云数据库中，添加文档的方法是？
+A. add
+B. get
+C. update
+D. remove
+答案：A
+解析：collection.add({data: {}})用于添加一条数据。
+
+ 50. 云函数的入口文件是？
+A. main.js
+B. index.js
+C. app.js
+D. function.js
+答案：B
+解析：云函数的入口文件是index.js，必须导出main函数。
+
+ 51. 性能优化中，分包预下载的配置在？
+A. app.json
+B. project.config.json
+C. package.json
+D. sitemap.json
+答案：A
+解析：分包预下载在app.json中配置preloadRule。
+
+ 52. 代码优化中，使用纯数据字段的目的是？
+A. 提高渲染性能
+B. 减少内存使用
+C. 不触发视图更新
+D. 简化代码结构
+答案：C
+解析：纯数据字段使用pureDataPattern定义，不触发视图更新，适合存储不需要在视图中显示的数据。
+
+ 53. 网络请求中，默认的请求方法是？
+A. GET
+B. POST
+C. PUT
+D. DELETE
+答案：A
+解析：wx.request的默认请求方法是GET。
+
+ 54. 本地存储中，适合存储用户偏好设置的API是？
+A. 同步API
+B. 异步API
+C. 两者都可以
+D. 两者都不可以
+答案：A
+解析：同步API适合数据量小、需要立即获取结果的场景，如用户偏好设置。
+
+ 55. 小程序中，边框和字体建议使用的单位是？
+A. rpx
+B. px
+C. em
+D. rem
+答案：B
+解析：边框和字体建议使用px，避免在不同屏幕上显示不一致。
+
+ 56. 客服消息的打开方式是？
+A. wx.openCustomerServiceChat
+B. wx.openServiceChat
+C. wx.openCustomerChat
+D. wx.openChat
+答案：A
+解析：wx.openCustomerServiceChat用于打开客服会话。
+
+ 57. 组件通信中，父组件向子组件传递数据的方式是？
+A. properties
+B. triggerEvent
+C. setData
+D. emit
+答案：A
+解析：父组件通过properties向子组件传递数据。
+
+ 58. 云存储中，获取文件临时访问链接的API是？
+A. wx.cloud.uploadFile
+B. wx.cloud.downloadFile
+C. wx.cloud.getTempFileURL
+D. wx.cloud.deleteFile
+答案：C
+解析：wx.cloud.getTempFileURL用于获取文件的临时访问链接，有效期5分钟。
+
+ 59. 云函数中，定时触发器支持的表达式是？
+A. SQL表达式
+B. Cron表达式
+C. 正则表达式
+D. JSON表达式
+答案：B
+解析：定时触发器支持Cron表达式，灵活设置执行时间。
+
+ 60. 小程序开发中，tabBar页面必须放在？
+A. 主包中
+B. 分包中
+C. 任何位置都可以
+D. 根目录中
+答案：A
+解析：tabBar页面必须在主包中，不能放在分包中，否则无法显示。
+
+（二）多选题（60题）
+ 1. 小程序应用生命周期包括？
+A. onLoad
+B. onLaunch
+C. onShow
+D. onReady
+答案：BC
+解析：应用生命周期包括onLaunch、onShow、onHide、onError，onLoad和onReady是页面生命周期。
+
+ 2. 页面生命周期中，只会调用一次的函数有？
+A. onLoad
+B. onShow
+C. onReady
+D. onHide
+答案：AC
+解析：onLoad和onReady只会调用一次，onShow和onHide会多次触发。
+
+ 3. 组件生命周期包括？
+A. created
+B. attached
+C. onLoad
+D. onShow
+答案：AB
+解析：组件生命周期包括created、attached、ready、moved、detached，onLoad和onShow是页面生命周期。
+
+ 4. 首次进入页面的生命周期执行顺序是？
+A. onLoad
+B. onShow
+C. onReady
+D. onHide
+答案：ABC
+解析：首次进入页面的执行顺序是onLoad → onShow → onReady。
+
+ 5. 数据绑定支持的运算有？
+A. 三元运算
+B. 算术运算
+C. 逻辑运算
+D. 字符串拼接
+答案：ABCD
+解析：数据绑定支持三元运算、算术运算、逻辑运算、字符串拼接等。
+
+ 6. 条件渲染的方式有？
+A. wx:if
+B. wx:for
+C. hidden
+D. wx:key
+答案：AC
+解析：条件渲染的方式有wx:if和hidden，wx:for是列表渲染，wx:key是提高渲染性能的属性。
+
+ 7. 列表渲染的属性有？
+A. wx:for
+B. wx:key
+C. wx:if
+D. hidden
+答案：AB
+解析：列表渲染的属性有wx:for、wx:key、wx:for-item、wx:for-index等。
+
+ 8. setData的使用注意事项有？
+A. 直接修改this.data
+B. setData是异步的
+C. 合并setData调用
+D. 频繁调用setData
+答案：BC
+解析：setData的使用注意事项包括：不要直接修改this.data，setData是异步的，合并setData调用，避免频繁调用setData。
+
+ 9. 事件绑定的方式有？
+A. bindtap
+B. catchtap
+C. wx:for
+D. wx:if
+答案：AB
+解析：事件绑定的方式有bindtap、catchtap、bindinput等，wx:for和wx:if是渲染相关属性。
+
+ 10. 事件对象的属性有？
+A. target
+B. currentTarget
+C. detail
+D. touches
+答案：ABCD
+解析：事件对象的属性有target、currentTarget、detail、touches、timeStamp等。
+
+ 11. 页面导航的方式有？
+A. navigator组件
+B. API跳转
+C. wx:if
+D. hidden
+答案：AB
+解析：页面导航的方式有navigator组件和API跳转，wx:if和hidden是条件渲染方式。
+
+ 12. API跳转的方法有？
+A. wx.navigateTo
+B. wx.redirectTo
+C. wx.switchTab
+D. wx.reLaunch
+答案：ABCD
+解析：API跳转的方法有wx.navigateTo、wx.redirectTo、wx.switchTab、wx.reLaunch、wx.navigateBack等。
+
+ 13. 网络请求的参数有？
+A. url
+B. data
+C. method
+D. header
+答案：ABCD
+解析：网络请求的参数有url、data、method、header、success、fail、complete等。
+
+ 14. 本地存储的API有？
+A. wx.setStorageSync
+B. wx.getStorageSync
+C. wx.setStorage
+D. wx.getStorage
+答案：ABCD
+解析：本地存储的API有同步API（wx.setStorageSync、wx.getStorageSync等）和异步API（wx.setStorage、wx.getStorage等）。
+
+ 15. rpx的特点有？
+A. 响应式像素
+B. 屏幕宽度为750rpx
+C. 自动适配不同屏幕
+D. 与设备无关
+答案：ABC
+解析：rpx是响应式像素，规定屏幕宽度为750rpx，自动适配不同屏幕尺寸。
+
+ 16. swiper组件的属性有？
+A. indicator-dots
+B. autoplay
+C. interval
+D. duration
+答案：ABCD
+解析：swiper组件的属性有indicator-dots、autoplay、interval、duration、circular、current等。
+
+ 17. 开放接口包括？
+A. 登录
+B. 用户信息
+C. 授权
+D. 分享
+答案：ABCD
+解析：开放接口包括登录、用户信息、授权、分享、客服等。
+
+ 18. 自定义组件的文件包括？
+A. .wxml
+B. .wxss
+C. .js
+D. .json
+答案：ABCD
+解析：自定义组件的文件包括.wxml、.wxss、.js、.json。
+
+ 19. 组件通信的方式有？
+A. 父传子
+B. 子传父
+C. 组件插槽
+D. 全局数据
+答案：ABC
+解析：组件通信的方式有父传子（通过properties）、子传父（通过triggerEvent）、组件插槽等。
+
+ 20. 云开发的组成部分有？
+A. 云函数
+B. 云数据库
+C. 云存储
+D. 云调用
+答案：ABCD
+解析：云开发的组成部分有云函数、云数据库、云存储、云调用。
+
+ 21. 云数据库的操作有？
+A. add
+B. get
+C. update
+D. remove
+答案：ABCD
+解析：云数据库的操作有add（添加）、get（获取）、update（更新）、remove（删除）等。
+
+ 22. 云存储的操作有？
+A. uploadFile
+B. downloadFile
+C. getTempFileURL
+D. deleteFile
+答案：ABCD
+解析：云存储的操作有uploadFile（上传）、downloadFile（下载）、getTempFileURL（获取临时链接）、deleteFile（删除）等。
+
+ 23. 云函数的优势有？
+A. 权限控制
+B. 数据验证
+C. 业务逻辑处理
+D. 安全性
+答案：ABCD
+解析：云函数的优势有权限控制、数据验证、业务逻辑处理、安全性等。
+
+ 24. 性能优化的方法有？
+A. 分包
+B. 图片优化
+C. 代码优化
+D. 请求优化
+答案：ABCD
+解析：性能优化的方法有分包、图片优化、代码优化、请求优化等。
+
+ 25. npm包的使用步骤有？
+A. 创建package.json
+B. 安装npm包
+C. 构建npm
+D. 引入使用
+答案：ABCD
+解析：npm包的使用步骤包括创建package.json、安装npm包、构建npm、引入使用。
+
+ 26. 以下关于小程序页面生命周期的描述，正确的有？
+A. onLoad 只在页面首次加载时触发一次  
+B. onReady 只在页面初次渲染完成时触发一次  
+C. onShow 每次页面显示时都会触发  
+D. onUnload 只在页面卸载时触发一次  
+答案：ABCD  
+解析：onLoad 只在页面首次加载时触发一次，onReady 只在页面初次渲染完成时触发一次，onShow 每次页面显示时都会触发，onUnload 只在页面卸载时触发一次。
+
+ 27. 条件渲染中，wx:if与hidden的区别有？
+A. wx:if条件不满足时不渲染
+B. hidden条件不满足时不渲染
+C. wx:if适合不频繁切换
+D. hidden适合频繁切换
+答案：ACD
+解析：wx:if条件不满足时不渲染，适合不频繁切换；hidden始终渲染，只是隐藏，适合频繁切换。
+
+ 28. 列表渲染中，wx:key的作用有？
+A. 提高渲染性能
+B. 唯一标识列表项
+C. 控制列表显示
+D. 控制列表隐藏
+答案：AB
+解析：wx:key用于提高渲染性能，唯一标识列表项，帮助框架识别哪些元素发生了变化。
+
+ 29. 事件冒泡的处理方式有？
+A. bind
+B. catch
+C. capture-bind
+D. capture-catch
+答案：ABCD
+解析：事件冒泡的处理方式有bind（不阻止冒泡）、catch（阻止冒泡）、capture-bind（捕获阶段绑定事件）、capture-catch（捕获阶段绑定事件并阻止冒泡）。
+
+ 30. 页面传参的方式有？
+A. URL传参
+B. 全局数据
+C. 本地存储
+D. EventChannel
+答案：ABCD
+解析：页面传参的方式有URL传参、全局数据、本地存储、EventChannel等。
+
+ 31. 网络请求的注意事项有？
+A. 必须是HTTPS协议
+B. 需要配置合法域名
+C. 最多10个并发请求
+D. 默认超时时间60s
+答案：ABCD
+解析：网络请求的注意事项包括必须是HTTPS协议、需要在小程序后台配置合法域名、最多10个并发请求、默认超时时间和最大超时时间都是60s等。
+
+ 32. 本地存储的限制有？
+A. 单个key最大1MB
+B. 所有数据最大10MB
+C. 只支持原生类型
+D. 不支持函数
+答案：ABCD
+解析：本地存储的限制包括单个key允许存储的最大数据长度为1MB，所有数据存储上限为10MB，只支持原生类型、Date、及能够通过JSON.stringify序列化的对象，不支持函数、Symbol、循环引用对象等。
+
+ 33. rpx与px的换算关系有？
+A. 设计稿宽度750px：1rpx = 1px
+B. 设计稿宽度375px：1rpx = 0.5px
+C. iPhone6：1rpx = 0.5px
+D. 换算公式：px = rpx * (屏幕宽度 / 750)
+答案：ABCD
+解析：设计稿宽度750px时，1rpx = 1px；设计稿宽度375px时，1rpx = 0.5px；iPhone6屏幕宽度375px，1rpx = 0.5px；换算公式：px = rpx * (屏幕宽度 / 750)。
+
+ 34. swiper组件的事件有？
+A. bindchange
+B. bindanimationfinish
+C. bindtap
+D. bindlongpress
+答案：AB
+解析：swiper组件的事件有bindchange（current改变时触发）、bindanimationfinish（动画结束时触发）等。
+
+ 35. 登录流程包括？
+A. 前端wx.login获取code
+B. 后端换取session_key和openid
+C. 后端返回自定义登录态
+D. 前端存储登录态
+答案：ABCD
+解析：登录流程包括前端wx.login获取code → 传给后端 → 后端换取session_key和openid → 返回自定义登录态给前端 → 前端存储登录态。
+
+ 36. 用户信息获取的方式有？
+A. wx.getUserInfo
+B. wx.getUserProfile
+C. button open-type="getUserInfo"
+D. button open-type="chooseAvatar"
+答案：ABD
+解析：用户信息获取的方式有wx.getUserInfo（已废弃）、wx.getUserProfile（新版）、button open-type="chooseAvatar"（获取头像）。
+
+ 37. 授权的方式有？
+A. wx.authorize
+B. wx.openSetting
+C. button open-type="openSetting"
+D. button open-type="getUserInfo"
+答案：AB
+解析：授权的方式有wx.authorize（提前授权）、wx.openSetting（打开设置页面）。
+
+ 38. 分享的配置包括？
+A. 标题
+B. 路径
+C. 图片
+D. 描述
+答案：ABC
+解析：分享的配置包括标题、路径、图片等。
+
+ 39. 组件的属性包括？
+A. properties
+B. data
+C. methods
+D. observers
+答案：AB
+解析：组件的属性包括properties（对外属性）和data（内部数据）。
+
+ 40. 组件的方法包括？
+A. methods
+B. behaviors
+C. lifetimes
+D. pageLifetimes
+答案：AB
+解析：组件的方法包括methods（方法）和behaviors（行为）。
+
+ 41. 云数据库的特点有？
+A. NoSQL文档型
+B. 自动扩展
+C. 实时数据推送
+D. 权限控制
+答案：ABCD
+解析：云数据库的特点包括NoSQL文档型、自动扩展、实时数据推送、权限控制等。
+
+ 42. 云存储的特点有？
+A. 高可用
+B. 高可靠
+C. 低成本
+D. CDN加速
+答案：ABCD
+解析：云存储的特点包括高可用（99.99%可用性）、高可靠（数据持久化存储，多重备份）、低成本、CDN加速等。
+
+ 43. 云函数的创建步骤有？
+A. 创建目录结构
+B. 编写index.js
+C. 配置package.json
+D. 部署云函数
+答案：ABCD
+解析：云函数的创建步骤包括创建目录结构、编写index.js（入口文件）、配置package.json、部署云函数等。
+
+ 44. 云调用的接口包括？
+A. 消息发送
+B. 内容安全
+C. 图像处理
+D. 数据分析
+答案：ABCD
+解析：云调用的接口包括消息发送、内容安全、图像处理、数据分析等。
+
+ 45. 性能优化中，代码优化的方法有？
+A. 减少setData调用
+B. 避免频繁setData
+C. 使用防抖节流
+D. 避免深层嵌套
+答案：ABCD
+解析：代码优化的方法包括减少setData调用、避免频繁setData、使用防抖节流、避免深层嵌套、使用纯数据字段等。
+
+ 46. 性能优化中，请求优化的方法有？
+A. 请求缓存
+B. 请求合并
+C. 请求预加载
+D. 使用HTTP/2
+答案：ABCD
+解析：请求优化的方法包括请求缓存、请求合并、请求预加载、使用HTTP/2等。
+
+ 47. npm包的注意事项有？
+A. 需要小程序兼容的npm包
+B. 构建后生成miniprogram_npm
+C. 某些npm包可能不兼容
+D. 不需要构建npm
+答案：ABC
+解析：npm包的注意事项包括需要小程序兼容的npm包、构建后生成miniprogram_npm、某些npm包可能不兼容小程序环境等。
+
+ 48. 小程序生命周期中，跳转到新页面时的执行顺序是？
+A. 当前页面onHide
+B. 新页面onLoad
+C. 新页面onShow
+D. 新页面onReady
+答案：ABCD
+解析：跳转到新页面时的执行顺序是当前页面onHide → 新页面onLoad → 新页面onShow → 新页面onReady。
+
+ 49. 小程序生命周期中，返回上一页时的执行顺序是？
+A. 当前页面onUnload
+B. 上一页面onShow
+C. 当前页面onHide
+D. 上一页面onLoad
+答案：AB
+解析：返回上一页时的执行顺序是当前页面onUnload → 上一页面onShow。
+
+ 50. 数据绑定中，属性渲染的语法是？
+A. id="{{id}}"
+B. class="{{className}}"
+C. style="{{style}}"
+D. src="{{src}}"
+答案：ABCD
+解析：数据绑定中，属性渲染的语法包括id="{{id}}"、class="{{className}}"、style="{{style}}"、src="{{src}}"等。
+
+ 51. 事件传参中，获取参数的方式是？
+A. event.currentTarget.dataset
+B. event.target.dataset
+C. event.detail
+D. event.touches
+答案：AB
+解析：事件传参中，通过event.currentTarget.dataset或event.target.dataset获取参数。
+
+ 52. 页面导航中，navigateTo的特点是？
+A. 保留当前页面
+B. 页面栈最多5层
+C. 可以传参
+D. 可以返回
+答案：ACD
+解析：wx.navigateTo的特点是保留当前页面，页面栈最多10层，可以传参，可以返回。
+
+ 53. 网络请求中，success回调的参数包括？
+A. res.data
+B. res.statusCode
+C. res.header
+D. res.cookies
+答案：ABCD
+解析：网络请求中，success回调的参数包括res.data（服务器返回的数据）、res.statusCode（HTTP状态码）、res.header（响应头）、res.cookies（响应 cookies）等。
+
+ 54. 本地存储中，异步API的特点是？
+A. 不阻塞
+B. 通过回调获取结果
+C. 适合大数据量
+D. 适合小数据量
+答案：ABC
+解析：本地存储中，异步API的特点是不阻塞，通过success、fail、complete回调获取结果，适合数据量大、不需要立即获取结果的场景。
+
+ 55. rpx的使用建议有？
+A. 布局使用rpx
+B. 边框使用px
+C. 字体使用px
+D. 所有元素使用rpx
+答案：ABC
+解析：rpx的使用建议包括布局、宽度、高度、间距等使用rpx，边框和字体建议使用px。
+
+ 56. swiper组件的使用场景有？
+A. 轮播图
+B. 图片画廊
+C. 步骤指示器
+D. 卡片切换
+答案：ABCD
+解析：swiper组件的使用场景包括轮播图、图片画廊、步骤指示器、卡片切换等。
+
+ 57. 开放接口中，分享的使用场景有？
+A. 页面分享
+B. 小程序分享
+C. 商品分享
+D. 活动分享
+答案：ABCD
+解析：开放接口中，分享的使用场景包括页面分享、小程序分享、商品分享、活动分享等。
+
+ 58. 组件化开发的优势有？
+A. 代码复用
+B. 维护性高
+C. 开发效率高
+D. 易于测试
+答案：ABCD
+解析：组件化开发的优势包括代码复用、维护性高、开发效率高、易于测试等。
+
+ 59. 云开发的优势有？
+A. 无需运维
+B. 自动扩容
+C. 安全可靠
+D. 开发效率高
+答案：ABCD
+解析：云开发的优势包括无需运维、自动扩容、安全可靠、开发效率高等。
+
+ 60. 性能优化的意义有？
+A. 提高用户体验
+B. 减少资源消耗
+C. 提升小程序排名
+D. 降低运营成本
+答案：ABCD
+解析：性能优化的意义包括提高用户体验、减少资源消耗、提升小程序排名、降低运营成本等。

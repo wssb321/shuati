@@ -314,7 +314,7 @@ export function QuizPage() {
       setLoading(true);
       
       console.log(`1. 发起请求: /tiku/${quizFile}`);
-      const response = await fetch(`/shuati/tiku/${quizFile}`);
+      const response = await fetch(`/shuati/tiku/${encodeURIComponent(quizFile)}`);
       
       if (!response.ok) {
         throw new Error(`HTTP错误: ${response.status}`);

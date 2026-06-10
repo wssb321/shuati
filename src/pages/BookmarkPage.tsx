@@ -28,7 +28,7 @@ export function BookmarkPage() {
       const data: { [key: string]: Question[] } = {};
       for (const quizFile of quizFiles) {
         try {
-          const response = await fetch(`/shuati/tiku/${quizFile}`);
+          const response = await fetch(`/shuati/tiku/${encodeURIComponent(quizFile)}`);
           if (response.ok) {
             const content = await response.text();
             const groups = parseQuestionFile(content);
