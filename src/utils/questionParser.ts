@@ -41,9 +41,10 @@ export function parseQuestionFile(content: string): QuestionGroup[] {
   // 检测文件格式类型
   let formatType: 'standard' | 'simple' = 'standard';
   
-  // 检查第一行是否是章节标题（如"一、单选题"）
+  // 检查第一行是否是章节标题（如"一、单选题"或"（一）单选题"）
   const firstLine = lines[0] || '';
-  const hasChapterTitle = firstLine.match(/^(一|二|三|四|五|六|七|八|九|十|十一|十二)[、.．](.*)$/);
+  const hasChapterTitle = firstLine.match(/^(一|二|三|四|五|六|七|八|九|十|十一|十二)[、.．](.*)$/) || 
+                          firstLine.match(/^（(一|二|三|四|五|六|七|八|九|十|十一|十二)）(.*)$/);
   const hasTypeMarker = firstLine.match(/\(单选题\)|\(多选题\)/);
   
   // 如果第一行既不是章节标题，也没有题目类型标识，认为是简化格式
@@ -60,7 +61,8 @@ export function parseQuestionFile(content: string): QuestionGroup[] {
   
   for (const line of lines) {
     // 匹配章节标题（支持多种格式）
-    const chapterMatch = line.match(/^(一|二|三|四|五|六|七|八|九|十)[、.．](.*)$/);
+    const chapterMatch = line.match(/^(一|二|三|四|五|六|七|八|九|十)[、.．](.*)$/) || 
+                        line.match(/^（(一|二|三|四|五|六|七|八|九|十)）(.*)$/);
     if (chapterMatch) {
       // 如果有未完成的题目，先保存
       if (currentQuestion && currentGroup) {
@@ -74,7 +76,8 @@ export function parseQuestionFile(content: string): QuestionGroup[] {
         groups.push(currentGroup);
       }
       
-      const title = chapterMatch[2];
+      // 提取标题（中文括号格式匹配的是第3组，其他格式匹配的是第2组）
+      const title = chapterMatch.length === 4 ? chapterMatch[3] : chapterMatch[2];
       currentGroup = { title, questions: [] };
       
       // 从标题中提取分数和题目数量
@@ -218,15 +221,16 @@ export function parseQuestionFile(content: string): QuestionGroup[] {
     
     // 处理解析部分
     if (currentQuestion && inExplanation) {
-      // 检查是否是章节标题
-      const chapterMatch = line.match(/^(一|二|三|四|五|六|七|八|九|十)[、.．](.*)$/);
+      // 检查是否是章节标题（支持多种格式）
+      const chapterMatch = line.match(/^(一|二|三|四|五|六|七|八|九|十)[、.．](.*)$/) || 
+                          line.match(/^（(一|二|三|四|五|六|七|八|九|十)）(.*)$/);
       if (chapterMatch) {
         // 将当前题目添加到组
         currentQuestion.explanation = currentExplanation.trim();
         currentGroup.questions.push(currentQuestion as Question);
         
         // 开始新章节
-        const title = chapterMatch[2];
+        const title = chapterMatch.length === 4 ? chapterMatch[3] : chapterMatch[2];
         currentGroup = { title, questions: [] };
         
         // 从标题中提取分数和题目数量
