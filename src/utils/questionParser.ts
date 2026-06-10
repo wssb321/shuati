@@ -33,6 +33,8 @@ export function parseQuestionFile(content: string): QuestionGroup[] {
   let inOptions = false;
   let inExplanation = false;
   let currentExplanation = '';
+  let pendingQuestionText = ''; // 缓存无编号的题目文本
+  let questionCounter = 0; // 无编号题目的自增ID
   
   // 尝试从标题中提取总分
   let totalScore = 0;
@@ -92,6 +94,35 @@ export function parseQuestionFile(content: string): QuestionGroup[] {
     
     if (!currentGroup) continue;
     
+    // 检测无编号题目格式：当遇到A选项但没有当前题目时，用缓存的文本创建题目
+    const optionStartMatch = line.match(/^([A-D])[．.、]\s*(.+)/);
+    if (optionStartMatch && !currentQuestion && !inOptions && pendingQuestionText) {
+      questionCounter++;
+      let questionType: 'single' | 'multiple' = 'single';
+      if (currentGroup?.title.includes('多选题')) {
+        questionType = 'multiple';
+      }
+      currentQuestion = {
+        id: questionCounter,
+        type: questionType,
+        question: pendingQuestionText,
+        options: [],
+        correctAnswer: [],
+        score: 0,
+        explanation: '',
+        knowledgePoints: []
+      };
+      currentQuestion.options.push({
+        key: optionStartMatch[1],
+        value: optionStartMatch[2]
+      });
+      inOptions = true;
+      inExplanation = false;
+      currentExplanation = '';
+      pendingQuestionText = '';
+      continue;
+    }
+    
     // 匹配题目（支持多种格式）
     // 格式1: 1. (单选题) 问题内容?
     // 格式2: 1.(单选题)问题内容
@@ -129,6 +160,7 @@ export function parseQuestionFile(content: string): QuestionGroup[] {
         inOptions = true;
         inExplanation = false;
         currentExplanation = '';
+        pendingQuestionText = '';
         continue;
       }
     }
@@ -153,6 +185,7 @@ export function parseQuestionFile(content: string): QuestionGroup[] {
       inOptions = true;
       inExplanation = false;
       currentExplanation = '';
+      pendingQuestionText = '';
       continue;
     }
     
@@ -344,6 +377,19 @@ export function parseQuestionFile(content: string): QuestionGroup[] {
       
       // 累积解析内容
       currentExplanation += (currentExplanation ? '\n' : '') + line;
+    }
+    
+    // 缓存未匹配的行作为潜在的无编号题目文本
+    // 仅当不在选项/解析状态且没有当前题目时缓存
+    if (!currentQuestion && !inOptions && !inExplanation && currentGroup) {
+      // 排除选项行、答案行、解析行等
+      const isOption = line.match(/^[A-D][．.、]/);
+      const isAnswer = line.match(/^答案[：:]/);
+      const isExplanation = line.match(/^(答案)?解析[：:]/);
+      const isKnowledge = line.match(/^(知识点|AI讲解)/);
+      if (!isOption && !isAnswer && !isExplanation && !isKnowledge) {
+        pendingQuestionText = line;
+      }
     }
   }
   
