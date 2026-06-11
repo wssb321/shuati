@@ -23,8 +23,20 @@ export interface QuestionGroup {
 }
 
 export function parseQuestionFile(content: string): QuestionGroup[] {
+  // 输入验证
+  if (!content || typeof content !== 'string') {
+    console.warn('parseQuestionFile: 无效的输入内容');
+    return [];
+  }
+
+  const trimmedContent = content.trim();
+  if (trimmedContent.length === 0) {
+    console.warn('parseQuestionFile: 输入内容为空');
+    return [];
+  }
+
   const groups: QuestionGroup[] = [];
-  const lines = content.split('\n').map(line => line.trim()).filter(line => line);
+  const lines = trimmedContent.split('\n').map(line => line.trim()).filter(line => line);
   
   console.log(`解析题库: ${lines.length} 行`);
   

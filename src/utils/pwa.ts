@@ -1,4 +1,5 @@
 // PWA 相关工具函数
+import { getQuizUrl } from './quizConfig';
 
 export const registerServiceWorker = async () => {
   if ('serviceWorker' in navigator) {
@@ -77,11 +78,15 @@ export const cacheQuizData = async (quizFiles: string[]) => {
     for (const file of quizFiles) {
       const cached = localStorage.getItem(`quiz_cache_${file}`);
       if (!cached) {
-        const response = await fetch(`/shuati/tiku/${encodeURIComponent(file)}`);
+        const response = await fetch(getQuizUrl(file));
         if (response.ok) {
           const content = await response.text();
-          localStorage.setItem(`quiz_cache_${file}`, content);
-          localStorage.setItem(`quiz_cache_time_${file}`, Date.now().toString());
+          try {
+            localStorage.setItem(`quiz_cache_${file}`, content);
+            localStorage.setItem(`quiz_cache_time_${file}`, Date.now().toString());
+          } catch (e) {
+            console.error('缓存题库写入失败:', e);
+          }
         }
       }
     }
@@ -93,7 +98,11 @@ export const cacheQuizData = async (quizFiles: string[]) => {
 
 // 从本地缓存获取题库
 export const getCachedQuizData = (file: string): string | null => {
-  return localStorage.getItem(`quiz_cache_${file}`);
+  try {
+    return localStorage.getItem(`quiz_cache_${file}`);
+  } catch {
+    return null;
+  }
 };
 
 // 发送本地通知

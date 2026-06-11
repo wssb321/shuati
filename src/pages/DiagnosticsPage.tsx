@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { fetchWithTimeout } from '../utils/networkUtils';
 import { verifyAllQuizFiles } from '../utils/quizLoader';
+import { QUIZ_FILES } from '../utils/quizConfig';
 
 interface DiagnosticResults {
   exists: string[];
@@ -54,14 +55,7 @@ export function DiagnosticsPage() {
       setStatus(s => ({ ...s, step: '检查题库文件...' }));
       
       // 2. 检查题库文件
-      const quizFiles = [
-        '模拟第一章.txt', '模拟第二章.txt', '模拟第三章.txt', '模拟第四章.txt',
-        '模拟第五章.txt', '模拟第六章.txt', '模拟第七章.txt', '模拟第八章.txt',
-        '第一章.txt', '第三章.txt', '第四章.txt', '第五章.txt', 
-        '第六章.txt', '第七章.txt', '第八章.txt', '第八章2.txt', 
-        '第八章3.txt', '第八章4.txt', '第八章5.txt', '第九章.txt', 
-        '第九章1.txt', '第九章2.txt', '第九章3.txt', '第九章4.txt'
-      ];
+      const quizFiles = [...QUIZ_FILES];
       
       const results = await verifyAllQuizFiles(quizFiles, (current, total) => {
         setStatus(s => ({ 

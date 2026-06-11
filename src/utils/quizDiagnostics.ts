@@ -2,16 +2,10 @@
  * 题库文件诊断工具
  * 用于检查所有题库文件是否能够正常访问
  */
+import { QUIZ_FILES, TIKU_PATH } from './quizConfig';
 
 export const diagnoseQuizFiles = async (baseUrl: string = '') => {
-  const quizFiles = [
-    '模拟第一章.txt', '模拟第二章.txt', '模拟第三章.txt', '模拟第四章.txt',
-    '模拟第五章.txt', '模拟第六章.txt', '模拟第七章.txt', '模拟第八章.txt',
-    '第一章.txt', '第三章.txt', '第四章.txt', '第五章.txt', 
-    '第六章.txt', '第七章.txt', '第八章.txt', '第八章2.txt', 
-    '第八章3.txt', '第八章4.txt', '第八章5.txt', '第九章.txt', 
-    '第九章1.txt', '第九章2.txt', '第九章3.txt', '第九章4.txt'
-  ];
+  const quizFiles = [...QUIZ_FILES];
 
   const results: {
     file: string;
@@ -28,7 +22,7 @@ export const diagnoseQuizFiles = async (baseUrl: string = '') => {
 
   for (const file of quizFiles) {
     const startTime = performance.now();
-    const url = `${baseUrl}/tiku/${encodeURIComponent(file)}`;
+    const url = `${baseUrl}${TIKU_PATH}/${encodeURIComponent(file)}`;
     
     try {
       const response = await fetch(url, { 
@@ -88,7 +82,7 @@ export const diagnoseQuizFiles = async (baseUrl: string = '') => {
 
 // 诊断单个文件
 export const diagnoseSingleFile = async (fileName: string, baseUrl: string = '') => {
-  const url = `${baseUrl}/tiku/${encodeURIComponent(fileName)}`;
+  const url = `${baseUrl}${TIKU_PATH}/${encodeURIComponent(fileName)}`;
   
   console.log(`诊断文件: ${fileName}`);
   console.log(`完整URL: ${url}`);

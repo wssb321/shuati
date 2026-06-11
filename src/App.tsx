@@ -3,6 +3,7 @@ import { QuizPage } from '@/pages/QuizPage';
 import { BookmarkPage } from '@/pages/BookmarkPage';
 import { WrongQuestionPage } from '@/pages/WrongQuestionPage';
 import { DiagnosticsPage } from '@/pages/DiagnosticsPage';
+import { ExamResultPage } from '@/pages/ExamResultPage';
 import SoftAurora from './components/SoftAurora';
 import { ToastProvider } from './components/Toast';
 import { ConfirmDialogProvider } from './components/ConfirmDialog';
@@ -27,6 +28,7 @@ export default function App() {
                 <Route path="/diagnostics" element={<DiagnosticsPage />} />
                 <Route path="/bookmarks" element={<BookmarkPage />} />
                 <Route path="/wrong-questions" element={<WrongQuestionPage />} />
+                <Route path="/result/:quizId" element={<ExamResultPage />} />
               </Routes>
             </Router>
           </ConfirmDialogProvider>

@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, memo } from 'react';
 import { Question } from '../utils/questionParser';
 import { isBookmarked, toggleBookmark } from '../utils/bookmarkManager';
+import { renderTextWithCode } from '../lib/utils';
 
 interface QuestionCardProps {
   question: Question;
@@ -109,24 +110,6 @@ export const QuestionCard = memo(function QuestionCard({
   const isAnswerCorrect = displayResult &&
     selected.length === question.correctAnswer.length &&
     selected.every(s => question.correctAnswer.includes(s));
-
-  const renderTextWithCode = (text: string) => {
-    const parts = text.split(/(`[^`]+`)/g);
-    return parts.map((part, idx) => {
-      if (part.startsWith('`') && part.endsWith('`')) {
-        const code = part.slice(1, -1);
-        return (
-          <code
-            key={idx}
-            className={`font-mono text-sm px-1.5 py-0.5 rounded bg-gray-100 text-gray-700`}
-          >
-            {code}
-          </code>
-        );
-      }
-      return <span key={idx}>{part}</span>;
-    });
-  };
 
   return (
     <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-6 sm:p-8 shadow-sm border border-white/50">

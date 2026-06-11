@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { getBookmarks, removeBookmark, BookmarkItem } from '../utils/bookmarkManager';
 import { parseQuestionFile, Question, shuffleArray } from '../utils/questionParser';
 import { Empty } from '../components/Empty';
+import { getQuizUrl } from '../utils/quizConfig';
 
 export function BookmarkPage() {
   const navigate = useNavigate();
@@ -28,7 +29,7 @@ export function BookmarkPage() {
       const data: { [key: string]: Question[] } = {};
       for (const quizFile of quizFiles) {
         try {
-          const response = await fetch(`/shuati/tiku/${encodeURIComponent(quizFile)}`);
+          const response = await fetch(getQuizUrl(quizFile));
           if (response.ok) {
             const content = await response.text();
             const groups = parseQuestionFile(content);

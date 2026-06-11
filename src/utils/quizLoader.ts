@@ -2,6 +2,8 @@
 import { fetchWithTimeout } from './networkUtils';
 import { parseQuestionFile, Question, QuestionGroup } from './questionParser';
 
+const TIKU_PATH = '/shuati/tiku';
+
 // 增强版加载题库函数
 export const enhancedLoadQuiz = async (
   quizFile: string,
@@ -21,8 +23,8 @@ export const enhancedLoadQuiz = async (
     setLoading(true);
     
     // 使用带超时的 fetch
-    console.log(`📡 发起请求: /tiku/${quizFile}`);
-    const response = await fetchWithTimeout(`/tiku/${quizFile}`, {}, 10000);
+    console.log(`📡 发起请求: ${TIKU_PATH}/${quizFile}`);
+    const response = await fetchWithTimeout(`${TIKU_PATH}/${quizFile}`, {}, 10000);
     
     if (!response.ok) {
       throw new Error(`HTTP错误: ${response.status}`);
@@ -77,7 +79,7 @@ export const enhancedLoadQuiz = async (
 // 验证题库文件是否存在
 export const verifyQuizFile = async (quizFile: string): Promise<boolean> => {
   try {
-    const response = await fetchWithTimeout(`/tiku/${quizFile}`, { method: 'HEAD' }, 5000);
+    const response = await fetchWithTimeout(`${TIKU_PATH}/${quizFile}`, { method: 'HEAD' }, 5000);
     return response.ok;
   } catch {
     return false;

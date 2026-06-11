@@ -7,6 +7,7 @@ import { toggleBookmark, isBookmarked as checkBookmarked } from '../utils/bookma
 import { getQuizSettings, saveQuizSettings } from '../utils/settingsManager';
 import { Menu, X } from 'lucide-react';
 import { ToggleSwitch } from '../components/ToggleSwitch';
+import { getQuizUrl, QUIZ_FILES } from '../utils/quizConfig';
 
 type Mode = 'practice' | 'mixed' | 'wrong' | 'favorites';
 
@@ -56,7 +57,7 @@ export const MinimalQuizPage: React.FC = () => {
 
   const loadQuiz = async (quizFile: string) => {
     try {
-      const response = await fetch(`/shuati/tiku/${encodeURIComponent(quizFile)}`);
+      const response = await fetch(getQuizUrl(quizFile));
       if (!response.ok) {
         throw new Error('Failed to load quiz');
       }

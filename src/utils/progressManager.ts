@@ -20,6 +20,19 @@ export interface QuizProgress {
   mode: 'practice' | 'exam' | 'mixed' | 'wrong' | 'favorites';
 }
 
+// 轻量级进度数据，只存题目ID和用户答案，不存完整题目内容
+export interface LightweightQuizProgress {
+  quizId: string;
+  currentQuestionIndex: number;
+  questionIds: number[];
+  answerRecords: AnswerRecord[];
+  score: number;
+  startTime: number;
+  lastUpdateTime: number;
+  completed: boolean;
+  mode: 'practice' | 'exam' | 'mixed' | 'wrong' | 'favorites';
+}
+
 const PROGRESS_KEY_PREFIX = 'quiz_progress_';
 const COMPLETED_PROGRESS_KEY = 'quiz_completed_progress';
 const CLEANUP_TIMESTAMP_KEY = 'quiz_cleanup_timestamp';
@@ -33,6 +46,27 @@ export function getProgressKey(quizId: string): string {
 
 let saveTimer: number | null = null;
 
+// 将完整进度转为轻量级格式（普通练习模式只存ID，考试/混合/错题模式存完整题目）
+function toLightweight(progress: QuizProgress): LightweightQuizProgress | QuizProgress {
+  const isDynamicMode = progress.mode === 'exam' || progress.mode === 'mixed' || progress.mode === 'wrong' || progress.mode === 'favorites';
+  if (isDynamicMode) {
+    // 动态模式的题目无法从文件重新加载，必须保存完整题目
+    return progress;
+  }
+  // 普通练习模式只存题目ID
+  return {
+    quizId: progress.quizId,
+    currentQuestionIndex: progress.currentQuestionIndex,
+    questionIds: progress.questions.map(q => q.id),
+    answerRecords: progress.answerRecords,
+    score: progress.score,
+    startTime: progress.startTime,
+    lastUpdateTime: progress.lastUpdateTime,
+    completed: progress.completed,
+    mode: progress.mode,
+  };
+}
+
 export function saveQuizProgress(progress: QuizProgress): void {
   if (saveTimer) {
     clearTimeout(saveTimer);
@@ -40,8 +74,9 @@ export function saveQuizProgress(progress: QuizProgress): void {
   
   saveTimer = window.setTimeout(() => {
     try {
+      const lightweight = toLightweight(progress);
       const data = {
-        ...progress,
+        ...lightweight,
         lastUpdateTime: Date.now()
       };
       localStorage.setItem(getProgressKey(progress.quizId), JSON.stringify(data));
@@ -67,25 +102,42 @@ export function getQuizProgress(quizId: string): QuizProgress | null {
     const data = localStorage.getItem(getProgressKey(quizId));
     if (!data) return null;
     
-    const progress = JSON.parse(data) as QuizProgress;
+    const parsed = JSON.parse(data);
     
-    if (!progress.quizId || progress.currentQuestionIndex === undefined) {
+    if (!parsed.quizId || parsed.currentQuestionIndex === undefined) {
       return null;
     }
     
-    const daysSinceLastUpdate = (Date.now() - progress.lastUpdateTime) / (1000 * 60 * 60 * 24);
+    const daysSinceLastUpdate = (Date.now() - parsed.lastUpdateTime) / (1000 * 60 * 60 * 24);
     
-    if (progress.completed && daysSinceLastUpdate > COMPLETED_EXPIRE_DAYS) {
+    if (parsed.completed && daysSinceLastUpdate > COMPLETED_EXPIRE_DAYS) {
       clearQuizProgress(quizId);
       return null;
     }
     
-    if (!progress.completed && daysSinceLastUpdate > INCOMPLETED_EXPIRE_DAYS) {
+    if (!parsed.completed && daysSinceLastUpdate > INCOMPLETED_EXPIRE_DAYS) {
       clearQuizProgress(quizId);
       return null;
     }
     
-    return progress;
+    // 兼容轻量级格式（questionIds）和完整格式（questions）
+    if (parsed.questionIds && !parsed.questions) {
+      // 轻量级格式，questions 为空，调用者需从文件重新加载
+      const lightweight = parsed as LightweightQuizProgress;
+      return {
+        quizId: lightweight.quizId,
+        currentQuestionIndex: lightweight.currentQuestionIndex,
+        questions: [], // 调用者需根据 quizId 重新加载题目
+        answerRecords: lightweight.answerRecords,
+        score: lightweight.score,
+        startTime: lightweight.startTime,
+        lastUpdateTime: lightweight.lastUpdateTime,
+        completed: lightweight.completed,
+        mode: lightweight.mode,
+      };
+    }
+    
+    return parsed as QuizProgress;
   } catch {
     return null;
   }

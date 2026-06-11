@@ -1,3 +1,5 @@
+import { Question } from './questionParser';
+
 export interface WrongQuestion {
   id: string;
   question: string;
@@ -15,58 +17,67 @@ export interface WrongQuestion {
 
 const STORAGE_KEY = 'quiz_wrong_questions';
 
-export function saveWrongQuestion(question: any, userAnswer: string[], sourceQuiz: string) {
-  const wrongQuestions = getWrongQuestions();
-  const id = `${sourceQuiz}_${question.id}`;
-  
-  const existingQuestion = wrongQuestions.find(q => q.id === id);
-  
-  if (existingQuestion) {
-    existingQuestion.wrongCount += 1;
-    existingQuestion.lastWrongTime = Date.now();
-    existingQuestion.userAnswer = userAnswer;
-    existingQuestion.consecutiveCorrect = 0;
-  } else {
-    wrongQuestions.push({
-      id,
-      question: question.question,
-      type: question.type,
-      options: question.options,
-      correctAnswer: question.correctAnswer,
-      userAnswer,
-      explanation: question.explanation,
-      knowledgePoints: question.knowledgePoints,
-      wrongCount: 1,
-      lastWrongTime: Date.now(),
-      consecutiveCorrect: 0,
-      sourceQuiz
-    });
+export function saveWrongQuestion(question: Question, userAnswer: string[], sourceQuiz: string) {
+  try {
+    const wrongQuestions = getWrongQuestions();
+    const id = `${sourceQuiz}_${question.id}`;
+    
+    const existingQuestion = wrongQuestions.find(q => q.id === id);
+    
+    if (existingQuestion) {
+      existingQuestion.wrongCount += 1;
+      existingQuestion.lastWrongTime = Date.now();
+      existingQuestion.userAnswer = userAnswer;
+      existingQuestion.consecutiveCorrect = 0;
+    } else {
+      wrongQuestions.push({
+        id,
+        question: question.question,
+        type: question.type,
+        options: question.options,
+        correctAnswer: question.correctAnswer,
+        userAnswer,
+        explanation: question.explanation,
+        knowledgePoints: question.knowledgePoints,
+        wrongCount: 1,
+        lastWrongTime: Date.now(),
+        consecutiveCorrect: 0,
+        sourceQuiz
+      });
+    }
+    
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(wrongQuestions));
+  } catch (error) {
+    console.error('保存错题失败:', error);
   }
-  
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(wrongQuestions));
 }
 
 export function recordCorrectAnswer(questionId: number, sourceQuiz: string): boolean {
-  const wrongQuestions = getWrongQuestions();
-  const id = `${sourceQuiz}_${questionId}`;
-  
-  const existingQuestion = wrongQuestions.find(q => q.id === id);
-  
-  if (!existingQuestion) {
+  try {
+    const wrongQuestions = getWrongQuestions();
+    const id = `${sourceQuiz}_${questionId}`;
+    
+    const existingQuestion = wrongQuestions.find(q => q.id === id);
+    
+    if (!existingQuestion) {
+      return false;
+    }
+    
+    existingQuestion.consecutiveCorrect += 1;
+    
+    // 如果连续答对3次，从错题库中移除
+    if (existingQuestion.consecutiveCorrect >= 3) {
+      const filtered = wrongQuestions.filter(q => q.id !== id);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(filtered));
+      return true;
+    }
+    
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(wrongQuestions));
+    return false;
+  } catch (error) {
+    console.error('记录正确答案失败:', error);
     return false;
   }
-  
-  existingQuestion.consecutiveCorrect += 1;
-  
-  // 如果连续答对3次，从错题库中移除
-  if (existingQuestion.consecutiveCorrect >= 3) {
-    const filtered = wrongQuestions.filter(q => q.id !== id);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(filtered));
-    return true;
-  }
-  
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(wrongQuestions));
-  return false;
 }
 
 export function getWrongQuestions(): WrongQuestion[] {
@@ -79,16 +90,24 @@ export function getWrongQuestions(): WrongQuestion[] {
 }
 
 export function removeWrongQuestion(id: string) {
-  const wrongQuestions = getWrongQuestions();
-  const filtered = wrongQuestions.filter(q => q.id !== id);
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(filtered));
+  try {
+    const wrongQuestions = getWrongQuestions();
+    const filtered = wrongQuestions.filter(q => q.id !== id);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(filtered));
+  } catch (error) {
+    console.error('移除错题失败:', error);
+  }
 }
 
 export function clearWrongQuestions() {
-  localStorage.removeItem(STORAGE_KEY);
+  try {
+    localStorage.removeItem(STORAGE_KEY);
+  } catch (error) {
+    console.error('清除错题失败:', error);
+  }
 }
 
-export function convertToQuestion(wrongQuestion: WrongQuestion): any {
+export function convertToQuestion(wrongQuestion: WrongQuestion): Question {
   return {
     id: parseInt(wrongQuestion.id.split('_').pop() || '0'),
     type: wrongQuestion.type,

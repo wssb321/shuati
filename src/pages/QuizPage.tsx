@@ -9,6 +9,7 @@ import { Empty } from '../components/Empty';
 import { parseQuestionFile, Question, QuestionGroup, shuffleArray } from '../utils/questionParser';
 import { saveWrongQuestion, getWrongQuestions, removeWrongQuestion, clearWrongQuestions, convertToQuestion, recordCorrectAnswer } from '../utils/wrongQuestionManager';
 import { getBookmarks } from '../utils/bookmarkManager';
+import { QUIZ_FILES, getQuizUrl, TIKU_PATH } from '../utils/quizConfig';
 import { 
   saveQuizProgress, 
   getQuizProgress, 
@@ -120,14 +121,7 @@ export function QuizPage() {
   const [startTime, setStartTime] = useState(Date.now());
   const [answerRecords, setAnswerRecords] = useState<AnswerRecord[]>([]);
   const [bookmarkCount, setBookmarkCount] = useState(0);
-  // 新增状态
-  const [isNightMode, setIsNightMode] = useState(false);
-  const [isPaused, setIsPaused] = useState(false);
-  const [markedQuestions, setMarkedQuestions] = useState<Set<number>>(new Set());
-  const [showExplanationPanel, setShowExplanationPanel] = useState(false);
-  const [showAnswerSheet, setShowAnswerSheet] = useState(false);
-  const [showSubmitDialog, setShowSubmitDialog] = useState(false);
-  const [swipeOffset, setSwipeOffset] = useState(0);
+  const swipeOffsetRef = useRef(0);
   
   // 触摸滑动相关
   const touchStartX = useRef(0);
@@ -136,9 +130,23 @@ export function QuizPage() {
   const touchEndY = useRef(0);
   const isSwiping = useRef(false);
   const mainRef = useRef<HTMLDivElement>(null);
-  
+
   // 竞态处理 - 跟踪最新的题库加载请求
   const latestQuizRequestRef = useRef<string>('');
+
+  const buildProgress = (completed: boolean): StoredQuizProgress => ({
+    quizId: isExamMode ? 'exam_mode' : isMixedMode ? 'mixed_mode' : isWrongMode ? 'wrong_mode' : currentQuiz,
+    currentQuestionIndex,
+    questions,
+    answerRecords,
+    score,
+    startTime,
+    lastUpdateTime: Date.now(),
+    completed,
+    mode: isExamMode ? 'exam' : isMixedMode ? 'mixed' : isWrongMode ? 'wrong' : 'practice'
+  });
+
+  const currentQuizId = isExamMode ? 'exam_mode' : isMixedMode ? 'mixed_mode' : isWrongMode ? 'wrong_mode' : currentQuiz;
 
   useEffect(() => {
     if (shouldCleanup()) {
@@ -149,7 +157,7 @@ export function QuizPage() {
   useEffect(() => {
     const discoverQuizzes = async () => {
       try {
-        const quizzes = ['模拟第一章.txt', '模拟第二章.txt', '模拟第三章.txt', '模拟第四章.txt', '模拟第五章.txt', '模拟第六章.txt', '模拟第七章.txt', '模拟第八章.txt', '模拟第九章.txt', '模拟考试.txt', '模拟考试一.txt', '模拟考试二.txt', '第一章.txt', '第三章.txt', '第四章.txt', '第五章.txt', '第六章.txt', '第七章.txt', '第八章.txt', '第八章2.txt', '第八章3.txt', '第八章4.txt', '第八章5.txt', '第九章.txt', '第九章1.txt', '第九章2.txt', '第九章3.txt', '第九章4.txt', '案例一.txt', '案例二.txt', '案例三.txt', '小游戏.txt'];
+        const quizzes = [...QUIZ_FILES];
         setAvailableQuizzes(quizzes);
         setSelectedQuizFiles(quizzes);
         
@@ -190,8 +198,8 @@ export function QuizPage() {
         const selectedQuestionIdFromStorage = sessionStorage.getItem('selectedQuestionId');
         
         // 确定要加载的题库
-        let quizToLoad = quizzes[0];
-        if (selectedQuizFromStorage && quizzes.includes(selectedQuizFromStorage)) {
+        let quizToLoad: string = quizzes[0];
+        if (selectedQuizFromStorage && quizzes.includes(selectedQuizFromStorage as typeof quizzes[number])) {
           quizToLoad = selectedQuizFromStorage;
           console.log(`从收藏页面跳转，加载指定题库: ${quizToLoad}`);
         } else {
@@ -230,17 +238,7 @@ export function QuizPage() {
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       if (questions.length > 0 && !showResult) {
-        const progress: StoredQuizProgress = {
-          quizId: isExamMode ? 'exam_mode' : isMixedMode ? 'mixed_mode' : isWrongMode ? 'wrong_mode' : currentQuiz,
-          currentQuestionIndex,
-          questions,
-          answerRecords,
-          score,
-          startTime,
-          lastUpdateTime: Date.now(),
-          completed: false,
-          mode: isExamMode ? 'exam' : isMixedMode ? 'mixed' : isWrongMode ? 'wrong' : 'practice'
-        };
+        const progress = buildProgress(false);
         
         try {
           localStorage.setItem(getProgressKey(progress.quizId), JSON.stringify(progress));
@@ -292,7 +290,7 @@ export function QuizPage() {
       timer = window.setInterval(() => {
         setTimeLeft(prev => {
           if (prev <= 1) {
-            handleSubmit();
+            handleSubmitRef.current();
             return 0;
           }
           return prev - 1;
@@ -379,10 +377,6 @@ export function QuizPage() {
     setCorrectAnswers(new Set());
     setAnswerRecords([]);
     setStartTime(Date.now());
-    setMarkedQuestions(new Set());
-    setShowExplanationPanel(false);
-    setShowAnswerSheet(false);
-    setShowSubmitDialog(false);
   };
   
   // 统一的章节切换处理函数
@@ -421,7 +415,7 @@ export function QuizPage() {
     const allQuestions: Question[] = [];
     for (const file of quizFiles) {
       try {
-        const response = await fetch(`/shuati/tiku/${file}`);
+        const response = await fetch(`${TIKU_PATH}/${file}`);
         if (response.ok) {
           const content = await response.text();
           const groups = parseQuestionFile(content);
@@ -512,7 +506,7 @@ export function QuizPage() {
     loadQuiz(currentQuiz);
   };
 
-  const checkAndSaveWrongQuestion = (question: any, userAnswer: string[]) => {
+  const checkAndSaveWrongQuestion = (question: Question, userAnswer: string[]) => {
     const isAnswerCorrect = userAnswer.length === question.correctAnswer.length &&
       userAnswer.every(s => question.correctAnswer.includes(s));
     
@@ -593,18 +587,7 @@ export function QuizPage() {
     if (questions.length > 0 && !showResult) {
       clearTimeout(autoSaveRef.current);
       autoSaveRef.current = window.setTimeout(() => {
-        const progress: StoredQuizProgress = {
-          quizId: isExamMode ? 'exam_mode' : isMixedMode ? 'mixed_mode' : isWrongMode ? 'wrong_mode' : currentQuiz,
-          currentQuestionIndex,
-          questions,
-          answerRecords,
-          score,
-          startTime,
-          lastUpdateTime: Date.now(),
-          completed: false,
-          mode: isExamMode ? 'exam' : isMixedMode ? 'mixed' : isWrongMode ? 'wrong' : 'practice'
-        };
-        saveQuizProgress(progress);
+        saveQuizProgress(buildProgress(false));
       }, 500);
     }
     return () => clearTimeout(autoSaveRef.current);
@@ -643,7 +626,6 @@ export function QuizPage() {
       setTimeLeft(0);
       setStartTime(Date.now());
       
-      const currentQuizId = isExamMode ? 'exam_mode' : isMixedMode ? 'mixed_mode' : isWrongMode ? 'wrong_mode' : currentQuiz;
       clearQuizProgress(currentQuizId);
 
       if (isExamMode && examQuestions.length > 0) {
@@ -684,20 +666,7 @@ export function QuizPage() {
     setCorrectAnswers(correct);
     setAnswerRecords(newRecords);
     
-    const currentQuizId = isExamMode ? 'exam_mode' : isMixedMode ? 'mixed_mode' : isWrongMode ? 'wrong_mode' : currentQuiz;
-    
-    const completedProgress: StoredQuizProgress = {
-      quizId: currentQuizId,
-      currentQuestionIndex,
-      questions,
-      answerRecords: newRecords,
-      score: earnedScore,
-      startTime,
-      lastUpdateTime: Date.now(),
-      completed: true,
-      mode: isExamMode ? 'exam' : isMixedMode ? 'mixed' : isWrongMode ? 'wrong' : 'practice'
-    };
-    saveQuizProgress(completedProgress);
+    saveQuizProgress(buildProgress(true));
 
     if (isExamMode) {
       setExamCompleted(true);
@@ -707,6 +676,12 @@ export function QuizPage() {
     // 跳转到结果页面
     navigate(`/result/${encodeURIComponent(currentQuizId)}`);
   };
+
+  const handleSubmitRef = useRef(handleSubmit);
+
+  useEffect(() => {
+    handleSubmitRef.current = handleSubmit;
+  }, [handleSubmit]);
 
   const handleResumeContinue = async () => {
     if (pendingProgress) {
@@ -725,39 +700,33 @@ export function QuizPage() {
         setIsWrongMode(false);
         
         if (quizId === 'exam_mode') {
-          // 考试模式
+          // 考试模式 - 动态题目，必须从进度恢复
           setIsExamMode(true);
-          setExamQuestions(pendingProgress.questions);
-          setQuestions(pendingProgress.questions);
+          if (pendingProgress.questions.length > 0) {
+            setExamQuestions(pendingProgress.questions);
+            setQuestions(pendingProgress.questions);
+          }
           if (pendingProgress.mode === 'exam') {
-            // 如果之前是考试模式，设置考试状态
             setExamStarted(true);
-            // 这里我们假设没有保存时间，所以不设置 timeLeft
           }
         } else if (quizId === 'mixed_mode') {
-          // 混合模式
+          // 混合模式 - 动态题目，必须从进度恢复
           setIsMixedMode(true);
-          setMixedQuestions(pendingProgress.questions);
-          setQuestions(pendingProgress.questions);
-        } else if (quizId === 'wrong_mode') {
-          // 错题模式
-          setIsWrongMode(true);
-          setWrongQuestions(pendingProgress.questions);
-          setQuestions(pendingProgress.questions);
-        } else {
-          // 普通练习模式
-          setCurrentQuiz(quizId);
-          
-          // 检查是否有题目，没有的话加载一下
           if (pendingProgress.questions.length > 0) {
-            // 使用存储的题目
+            setMixedQuestions(pendingProgress.questions);
             setQuestions(pendingProgress.questions);
-            // 尝试提取分组信息
-            // 这里简单处理，直接使用题目
-          } else {
-            // 如果没有存储题目，重新加载
-            await loadQuiz(quizId);
           }
+        } else if (quizId === 'wrong_mode') {
+          // 错题模式 - 动态题目，必须从进度恢复
+          setIsWrongMode(true);
+          if (pendingProgress.questions.length > 0) {
+            setWrongQuestions(pendingProgress.questions);
+            setQuestions(pendingProgress.questions);
+          }
+        } else {
+          // 普通练习模式 - 轻量级存储，需从文件重新加载题目
+          setCurrentQuiz(quizId);
+          await loadQuiz(quizId);
         }
         
         // 恢复进度
@@ -879,13 +848,19 @@ export function QuizPage() {
     // 如果水平移动距离大于垂直移动距离，认为是横向滑动
     if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 10) {
       isSwiping.current = true;
-      setSwipeOffset(deltaX * 0.3); // 限制偏移量
+      swipeOffsetRef.current = deltaX * 0.3;
+      if (mainRef.current) {
+        mainRef.current.style.transform = `translateX(${deltaX * 0.3}px)`;
+      }
     }
   };
 
   const handleTouchEnd = () => {
     if (!isSwiping.current) {
-      setSwipeOffset(0);
+      swipeOffsetRef.current = 0;
+      if (mainRef.current) {
+        mainRef.current.style.transform = '';
+      }
       return;
     }
     
@@ -899,7 +874,10 @@ export function QuizPage() {
       handleNext();
     }
     
-    setSwipeOffset(0);
+    swipeOffsetRef.current = 0;
+    if (mainRef.current) {
+      mainRef.current.style.transform = '';
+    }
     isSwiping.current = false;
   };
 
@@ -1591,7 +1569,7 @@ export function QuizPage() {
             <div className="flex-1">
               <div
                 className="transition-transform duration-100"
-                style={{ transform: `translateX(${swipeOffset}px)` }}
+
               >
                 <QuestionCard
                   question={currentQuestion}
@@ -1635,7 +1613,7 @@ export function QuizPage() {
             <div className="flex-1">
               <div
                 className="transition-transform duration-100"
-                style={{ transform: `translateX(${swipeOffset}px)` }}
+
               >
                 <QuestionCard
                   question={currentQuestion}
@@ -1707,7 +1685,7 @@ export function QuizPage() {
               )}
               <div
                 className="transition-transform duration-100"
-                style={{ transform: `translateX(${swipeOffset}px)` }}
+
               >
                 <QuestionCard
                   question={currentQuestion}
@@ -1777,7 +1755,7 @@ export function QuizPage() {
               <div className="flex-1">
                 <div
                   className="transition-transform duration-100"
-                  style={{ transform: `translateX(${swipeOffset}px)` }}
+  
                 >
                   <QuestionCard
                     question={currentQuestion}

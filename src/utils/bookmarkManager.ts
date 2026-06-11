@@ -23,24 +23,32 @@ export function getBookmarks(): BookmarkItem[] {
 }
 
 export function saveBookmark(questionId: number, quizFile: string): void {
-  const bookmarks = getBookmarks();
-  const key = `${quizFile}_${questionId}`;
-  
-  if (!bookmarks.some(b => `${b.quizFile}_${b.questionId}` === key)) {
-    bookmarks.push({
-      questionId,
-      quizFile,
-      timestamp: Date.now()
-    });
-    localStorage.setItem(BOOKMARKS_KEY, JSON.stringify(bookmarks));
+  try {
+    const bookmarks = getBookmarks();
+    const key = `${quizFile}_${questionId}`;
+    
+    if (!bookmarks.some(b => `${b.quizFile}_${b.questionId}` === key)) {
+      bookmarks.push({
+        questionId,
+        quizFile,
+        timestamp: Date.now()
+      });
+      localStorage.setItem(BOOKMARKS_KEY, JSON.stringify(bookmarks));
+    }
+  } catch (error) {
+    console.error('保存收藏失败:', error);
   }
 }
 
 export function removeBookmark(questionId: number, quizFile: string): void {
-  const bookmarks = getBookmarks();
-  const key = `${quizFile}_${questionId}`;
-  const filtered = bookmarks.filter(b => `${b.quizFile}_${b.questionId}` !== key);
-  localStorage.setItem(BOOKMARKS_KEY, JSON.stringify(filtered));
+  try {
+    const bookmarks = getBookmarks();
+    const key = `${quizFile}_${questionId}`;
+    const filtered = bookmarks.filter(b => `${b.quizFile}_${b.questionId}` !== key);
+    localStorage.setItem(BOOKMARKS_KEY, JSON.stringify(filtered));
+  } catch (error) {
+    console.error('移除收藏失败:', error);
+  }
 }
 
 export function isBookmarked(questionId: number, quizFile: string): boolean {
@@ -69,24 +77,32 @@ export function getFlags(): FlagItem[] {
 }
 
 export function saveFlag(questionId: number, quizFile: string): void {
-  const flags = getFlags();
-  const key = `${quizFile}_${questionId}`;
-  
-  if (!flags.some(f => `${f.quizFile}_${f.questionId}` === key)) {
-    flags.push({
-      questionId,
-      quizFile,
-      timestamp: Date.now()
-    });
-    localStorage.setItem(FLAGS_KEY, JSON.stringify(flags));
+  try {
+    const flags = getFlags();
+    const key = `${quizFile}_${questionId}`;
+    
+    if (!flags.some(f => `${f.quizFile}_${f.questionId}` === key)) {
+      flags.push({
+        questionId,
+        quizFile,
+        timestamp: Date.now()
+      });
+      localStorage.setItem(FLAGS_KEY, JSON.stringify(flags));
+    }
+  } catch (error) {
+    console.error('保存标记失败:', error);
   }
 }
 
 export function removeFlag(questionId: number, quizFile: string): void {
-  const flags = getFlags();
-  const key = `${quizFile}_${questionId}`;
-  const filtered = flags.filter(f => `${f.quizFile}_${f.questionId}` !== key);
-  localStorage.setItem(FLAGS_KEY, JSON.stringify(filtered));
+  try {
+    const flags = getFlags();
+    const key = `${quizFile}_${questionId}`;
+    const filtered = flags.filter(f => `${f.quizFile}_${f.questionId}` !== key);
+    localStorage.setItem(FLAGS_KEY, JSON.stringify(filtered));
+  } catch (error) {
+    console.error('移除标记失败:', error);
+  }
 }
 
 export function isFlagged(questionId: number, quizFile: string): boolean {
@@ -106,9 +122,17 @@ export function toggleFlag(questionId: number, quizFile: string): boolean {
 }
 
 export function clearBookmarks(): void {
-  localStorage.removeItem(BOOKMARKS_KEY);
+  try {
+    localStorage.removeItem(BOOKMARKS_KEY);
+  } catch (error) {
+    console.error('清除收藏失败:', error);
+  }
 }
 
 export function clearFlags(): void {
-  localStorage.removeItem(FLAGS_KEY);
+  try {
+    localStorage.removeItem(FLAGS_KEY);
+  } catch (error) {
+    console.error('清除标记失败:', error);
+  }
 }
