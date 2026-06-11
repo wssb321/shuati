@@ -1,0 +1,1123 @@
+一、单选题（共80题）
+
+1. (单选题) 微信小程序四大核心文件中，负责页面结构搭建和数据绑定的是?
+A. .js
+B. .json
+C. .wxml
+D. .wxss
+答案：C
+解析：.wxml 是结构层，对应 HTML，负责搭建页面结构、绑定数据和事件。.js 处理逻辑，.json 负责配置，.wxss 负责样式。
+
+2. (单选题) 微信小程序中，负责样式控制的文件类型是?
+A. WXML
+B. WXSS
+C. JS
+D. JSON
+答案：B
+解析：WXSS 是样式层，对应 CSS，用于控制页面外观，支持 rpx 自适应单位。
+
+3. (单选题) 在 app.json 中，pages 数组的第一个元素代表什么?
+A. 最后一个页面
+B. 小程序首页
+C. 随便一个页面
+D. 错误页面
+答案：B
+解析：pages 数组第一个元素为小程序首页（入口页面），新增页面必须在此注册。
+
+4. (单选题) 关于 JSON 配置文件，下列说法正确的是?
+A. 支持添加注释
+B. 支持使用单引号
+C. 使用键值对格式，无注释
+D. 支持 trailing comma
+答案：C
+解析：JSON 文件使用键值对格式，不支持注释、不支持单引号、不支持末尾逗号。
+
+5. (单选题) project.config.json 文件的主要作用是?
+A. 定义页面路径
+B. 记录开发者工具个性化配置
+C. 配置窗口表现
+D. 定义 tabBar
+答案：B
+解析：project.config.json 记录开发者工具个性化配置（AppID、编辑器设置等），换电脑可恢复配置。
+
+6. (单选题) sitemap.json 文件的作用是?
+A. 配置页面路由
+B. 配置小程序微信索引权限
+C. 配置网络请求域名
+D. 配置支付参数
+答案：B
+解析：sitemap.json 配置小程序微信索引权限，决定页面能否被微信搜索收录。
+
+7. (单选题) 关于 WXSS 的特殊规则，下列说法错误的是?
+A. 不支持 * 通配符
+B. 支持 @import 引入外部样式
+C. 组件默认样式隔离
+D. 支持 * 通配符选择器
+答案：D
+解析：WXSS 不支持 * 通配符选择器，支持 @import 引入外部样式，组件默认样式隔离。
+
+8. (单选题) 小程序应用生命周期 onLaunch 的触发时机是?
+A. 每次进入前台都触发
+B. 小程序初始化完成时触发，全局只触发一次
+C. 进入后台时触发
+D. 发生错误时触发
+答案：B
+解析：onLaunch 在小程序初始化完成时触发，全局只触发一次，是小程序入口。
+
+9. (单选题) 当用户点击 Home 键将小程序切换到后台时，会触发哪个生命周期?
+A. onLaunch
+B. onShow
+C. onHide
+D. onError
+答案：C
+解析：onHide 在小程序从前台进入后台时触发，如按 Home 键、切换应用、锁屏等。
+
+10. (单选题) 小程序页面生命周期中，onLoad 的触发特点是?
+A. 每次显示页面都触发
+B. 页面加载时触发，只会调用一次
+C. 页面渲染完成后触发
+D. 页面卸载时触发
+答案：B
+解析：onLoad 在页面加载时触发，只会调用一次，参数 options 包含页面跳转带来的参数。
+
+11. (单选题) 页面生命周期 onReady 的触发时机是?
+A. 页面加载时
+B. 页面显示时
+C. 页面初次渲染完成时
+D. 页面隐藏时
+答案：C
+解析：onReady 在页面初次渲染完成时触发，只会调用一次，此时可进行 DOM 操作。
+
+12. (单选题) 从页面 A 通过 wx.navigateTo 跳转到页面 B，页面 A 会触发哪个生命周期?
+A. onUnload
+B. onHide
+C. onShow
+D. onReady
+答案：B
+解析：wx.navigateTo 保留当前页面，页面 A 触发 onHide，不会触发 onUnload。
+
+13. (单选题) 从页面 B 通过 wx.navigateBack 返回页面 A，页面 B 会触发哪个生命周期?
+A. onHide
+B. onShow
+C. onUnload
+D. onReady
+答案：C
+解析：wx.navigateBack 关闭当前页面，页面 B 触发 onUnload，页面 A 触发 onShow。
+
+14. (单选题) 组件生命周期中，created 阶段的特点是?
+A. 可以调用 setData
+B. 还不能调用 setData
+C. 可以获取节点信息
+D. 组件已进入页面节点树
+答案：B
+解析：created 时组件实例刚创建，还不能调用 setData，适合初始化组件内部数据。
+
+15. (单选题) 组件生命周期中，attached 阶段可以做什么?
+A. 还不能调用 setData
+B. 可以调用 setData，适合请求数据
+C. 可以获取节点信息
+D. 组件已被移除
+答案：B
+解析：attached 时组件进入页面节点树，可以调用 setData，适合请求数据、监听事件。
+
+16. (单选题) 组件生命周期 ready 阶段适合做什么操作?
+A. 初始化内部数据
+B. 请求服务器数据
+C. 获取节点信息、操作 DOM
+D. 清理定时器
+答案：C
+解析：ready 时组件布局完成，可以获取节点信息，适合操作 DOM、获取组件尺寸。
+
+17. (单选题) 组件生命周期 detached 阶段适合做什么?
+A. 请求数据
+B. 操作 DOM
+C. 清理资源、取消事件监听
+D. 初始化数据
+答案：C
+解析：detached 时组件被移除，适合清理定时器、取消事件监听、释放资源。
+
+18. (单选题) 首次进入页面时，页面生命周期的执行顺序是?
+A. onShow → onLoad → onReady
+B. onLoad → onShow → onReady
+C. onLoad → onReady → onShow
+D. onShow → onReady → onLoad
+答案：B
+解析：首次进入：onLoad → onShow → onReady。onReady 在 onShow 之后触发。
+
+19. (单选题) 从后台返回到小程序页面时，会触发哪些生命周期?
+A. onLoad 和 onShow
+B. 只触发 onShow
+C. onLoad、onShow 和 onReady
+D. 只触发 onReady
+答案：B
+解析：从后台返回只触发 onShow，不会触发 onLoad 和 onReady。
+
+20. (单选题) Mustache 语法中，属性绑定的正确写法是?
+A. id={{id}}
+B. id="{{id}}"
+C. id='{{id}}'
+D. {{id}}
+答案：B
+解析：属性绑定需要在双引号内，如 id="{{id}}"。
+
+21. (单选题) 下列 Mustache 语法中，支持的操作是?
+A. 定义函数
+B. 三元运算
+C. 循环语句
+D. 条件判断语句
+答案：B
+解析：Mustache 支持三元运算、算术运算、逻辑运算、字符串拼接，不支持定义函数和流程控制语句。
+
+22. (单选题) 关于 wx:if，下列说法正确的是?
+A. 通过 display:none 控制显示隐藏
+B. 条件为 false 时组件被销毁
+C. 适合频繁切换的场景
+D. 组件始终存在于 DOM 中
+答案：B
+解析：wx:if 条件为 false 时组件不渲染/被销毁，适合不频繁切换的场景。hidden 通过 display:none 控制，组件始终存在。
+
+23. (单选题) 关于 hidden，下列说法正确的是?
+A. 条件为 false 时组件被销毁
+B. 通过 display:none 控制显示隐藏
+C. 适合不频繁切换的场景
+D. 切换时有销毁重建开销
+答案：B
+解析：hidden 通过 display:none 控制，组件始终存在，适合频繁切换（如 tab 切换），性能开销小。
+
+24. (单选题) 列表渲染 wx:for 中，默认表示当前项的变量名是?
+A. item
+B. index
+C. current
+D. value
+答案：A
+解析：wx:for 默认提供 item（当前项）和 index（当前索引）变量。
+
+25. (单选题) 列表渲染中，自定义当前项变量名使用的属性是?
+A. wx:for-key
+B. wx:for-item
+C. wx:for-index
+D. wx:for-name
+答案：B
+解析：wx:for-item 指定当前项变量名，如 wx:for-item="product"。
+
+26. (单选题) 关于 wx:key 的使用，最佳实践是?
+A. 使用 index 作为 key
+B. 使用数据中唯一的字段（如 id）作为 key
+C. 不需要设置 wx:key
+D. 使用随机数作为 key
+答案：B
+解析：建议使用数据中唯一的字段作为 wx:key，提高渲染性能。不设置会报警告，index 不推荐。
+
+27. (单选题) 关于 setData，下列说法错误的是?
+A. 必须使用 setData 更新数据
+B. 可以直接修改 this.data
+C. setData 是异步的
+D. 支持数据路径写法
+答案：B
+解析：不能直接修改 this.data，必须使用 setData，直接修改不会触发视图更新。
+
+28. (单选题) setData 的回调函数在什么时候执行?
+A. 立即执行
+B. 数据更新完成后执行
+C. 页面卸载时执行
+D. 页面显示时执行
+答案：B
+解析：setData 是异步的，回调函数在数据更新完成后执行，此时可以安全使用新数据。
+
+29. (单选题) 关于事件绑定 bindtap，下列说法正确的是?
+A. 阻止事件冒泡
+B. 不阻止事件冒泡
+C. 只在捕获阶段触发
+D. 只在冒泡阶段触发
+答案：B
+解析：bindtap 不阻止冒泡，事件会向上传递到父组件。catchtap 阻止冒泡。
+
+30. (单选题) 关于事件绑定 catchtap，下列说法正确的是?
+A. 不阻止事件冒泡
+B. 阻止事件冒泡
+C. 只在捕获阶段触发
+D. 事件会向上传递到父组件
+答案：B
+解析：catchtap 阻止事件冒泡，事件不会向上传递，只在当前组件处理。
+
+31. (单选题) 事件对象中，target 和 currentTarget 的区别是?
+A. target 是绑定事件的组件，currentTarget 是触发事件的组件
+B. target 是触发事件的源头组件，currentTarget 是绑定事件的当前组件
+C. 两者完全相同
+D. target 只在捕获阶段存在
+答案：B
+解析：target 是实际触发事件的组件，currentTarget 是绑定事件的组件。如点击子组件触发父组件绑定的事件，target 是子组件，currentTarget 是父组件。
+
+32. (单选题) 通过 data-* 属性传递参数时，获取参数的正确方式是?
+A. event.target.dataset
+B. event.currentTarget.dataset
+C. event.detail
+D. event.touches
+答案：B
+解析：通过 event.currentTarget.dataset 获取 data-* 自定义属性参数，自动转为驼峰命名。
+
+33. (单选题) data-product-id 在 dataset 中获取时的属性名是?
+A. product-id
+B. productId
+C. data-product-id
+D. product_id
+答案：B
+解析：data-* 属性自动转为驼峰命名，data-product-id 变为 productId。
+
+34. (单选题) wx.navigateTo 的跳转特点是?
+A. 关闭当前页面，不会增加页面栈
+B. 保留当前页面，页面栈最多10层
+C. 关闭所有页面
+D. 跳转到 tabBar 页面
+答案：B
+解析：wx.navigateTo 保留当前页面，页面栈最多10层，可以传参，超过会报错。
+
+35. (单选题) wx.redirectTo 的跳转特点是?
+A. 保留当前页面
+B. 关闭当前页面，不会增加页面栈
+C. 关闭所有页面
+D. 跳转到 tabBar 页面
+答案：B
+解析：wx.redirectTo 关闭当前页面，不会增加页面栈，不能返回上一页。
+
+36. (单选题) wx.switchTab 的跳转特点是?
+A. 可以传递参数
+B. 跳转到 tabBar 页面，关闭其他非 tabBar 页面
+C. 保留当前页面
+D. 关闭所有页面
+答案：B
+解析：wx.switchTab 跳转到 tabBar 页面，不能传参，会关闭其他所有非 tabBar 页面。
+
+37. (单选题) wx.reLaunch 的跳转特点是?
+A. 保留当前页面
+B. 关闭当前页面
+C. 关闭所有页面，相当于重启小程序
+D. 只能跳转到 tabBar 页面
+答案：C
+解析：wx.reLaunch 关闭所有页面，打开到应用内的某个页面，相当于重启小程序，可以传参。
+
+38. (单选题) wx.navigateBack 返回上一页时，可以指定的参数是?
+A. url
+B. delta
+C. path
+D. name
+答案：B
+解析：wx.navigateBack 通过 delta 指定返回层数，如 delta: 2 返回上两层。
+
+39. (单选题) tabBar 配置中，list 数组的最少和最多数量分别是?
+A. 最少1个，最多3个
+B. 最少2个，最多5个
+C. 最少3个，最多5个
+D. 最少1个，最多5个
+答案：B
+解析：tabBar 的 list 最少2个，最多5个，每个项包含 pagePath、text、iconPath、selectedIconPath。
+
+40. (单选题) tabBar 的 borderStyle 支持的颜色是?
+A. 任意十六进制颜色
+B. 只支持 black/white
+C. 只支持 red/blue
+D. 只支持 gray/black
+答案：B
+解析：tabBar 的 borderStyle 只支持 black 和 white 两种。
+
+41. (单选题) tabBar 页面的存放要求是?
+A. 可以放在分包中
+B. 必须在主包中
+C. 可以放在任意位置
+D. 必须放在 pages 目录根目录
+答案：B
+解析：tabBar 页面必须在主包中，不能放在分包中。
+
+42. (单选题) 页面间通过 URL 传参时，参数接收的位置是?
+A. onShow(options)
+B. onLoad(options)
+C. onReady(options)
+D. onHide(options)
+答案：B
+解析：页面跳转参数在 onLoad(options) 中接收，options 是包含所有参数的对象。
+
+43. (单选题) 关于 wx.request，下列说法错误的是?
+A. 必须使用 HTTPS 协议
+B. 可以在 header 中设置 Referer
+C. 最多10个并发请求
+D. 默认超时时间为60s
+答案：B
+解析：wx.request 的 header 中不能设置 Referer，这是微信小程序的安全限制。
+
+44. (单选题) 小程序后台配置服务器域名的每月修改次数限制是?
+A. 3次
+B. 5次
+C. 10次
+D. 无限制
+答案：B
+解析：服务器域名每月只能修改5次，需要谨慎操作。域名必须是 HTTPS 且已备案。
+
+45. (单选题) wx.request 的 complete 回调的特点是?
+A. 只在请求成功时触发
+B. 只在请求失败时触发
+C. 无论成功失败都会触发
+D. 只在网络错误时触发
+答案：C
+解析：complete 无论成功失败都会触发，适合用于隐藏 loading 等清理操作。
+
+46. (单选题) 本地存储同步 API wx.setStorageSync 的特点是?
+A. 异步操作，不会阻塞
+B. 同步操作，会阻塞其他任务
+C. 没有存储限制
+D. 支持存储函数类型
+答案：B
+解析：Sync 结尾的 API 是同步操作，会阻塞其他任务直到完成。适合数据量小、需要立即获取结果的场景。
+
+47. (单选题) 本地存储的单个 key 最大允许存储的数据长度是?
+A. 100KB
+B. 1MB
+C. 5MB
+D. 10MB
+答案：B
+解析：单个 key 最大 1MB，总存储上限 10MB。超过会报错。
+
+48. (单选题) 本地存储不支持的数据类型是?
+A. String
+B. Number
+C. Function
+D. Object
+答案：C
+解析：本地存储不支持函数、Symbol、循环引用对象等无法 JSON 序列化的数据。
+
+49. (单选题) rpx 单位的定义是?
+A. 绝对像素，与屏幕无关
+B. 响应式像素，规定屏幕宽度为750rpx
+C. 物理像素，与设备相关
+D. 相对像素，以375为基准
+答案：B
+解析：rpx（responsive pixel）规定屏幕宽度为 750rpx，自动适配不同屏幕尺寸。
+
+50. (单选题) 设计稿宽度为 375px 时，1rpx 等于多少 px?
+A. 1px
+B. 0.5px
+C. 2px
+D. 0.25px
+答案：B
+解析：设计稿 375px 时，1rpx = 0.5px。750px 时，1rpx = 1px。换算公式：px = rpx * (屏幕宽度 / 750)。
+
+51. (单选题) 关于 rpx 的使用建议，下列说法正确的是?
+A. 边框、字体、布局都使用 rpx
+B. 布局使用 rpx，边框和字体建议使用 px
+C. 所有元素都使用 px
+D. 字体使用 rpx，布局使用 px
+答案：B
+解析：布局使用 rpx 实现自适应，边框建议使用 px 避免过细，字体建议使用 px 保证一致性。
+
+52. (单选题) swiper 组件中，控制是否显示指示点的属性是?
+A. indicator
+B. indicator-dots
+C. dots
+D. show-dots
+答案：B
+解析：indicator-dots 控制是否显示面板指示点，布尔值，默认 false。
+
+53. (单选题) swiper 组件中，控制自动切换时间间隔的属性是?
+A. duration
+B. interval
+C. autoplay
+D. circular
+答案：B
+解析：interval 设置自动切换时间间隔，单位 ms，默认 5000ms。duration 是滑动动画时长。
+
+54. (单选题) swiper 组件中，circular 属性的作用是?
+A. 自动播放
+B. 循环滑动，到最后一张后可继续滑动到第一张
+C. 显示指示点
+D. 设置当前页
+答案：B
+解析：circular 开启衔接滑动，滑动到最后一张后可以继续滑动到第一张，形成循环。
+
+55. (单选题) swiper-item 组件的特点是?
+A. 可以单独使用
+B. 只能放在 swiper 中，宽高自动100%
+C. 需要手动设置宽高
+D. 可以嵌套 swiper
+答案：B
+解析：swiper-item 只能放在 swiper 中，不能单独使用，宽高自动设置为 100%。
+
+56. (单选题) wx.login 获取的 code 的有效期是?
+A. 2小时
+B. 5分钟
+C. 1小时
+D. 30分钟
+答案：B
+解析：code 有效期 5 分钟，只能使用一次，用于后端换取 session_key 和 openid。
+
+57. (单选题) session_key 的典型有效期是?
+A. 5分钟
+B. 2小时
+C. 1天
+D. 永久有效
+答案：B
+解析：session_key 有效期通常 2 小时，用于数据解密，不要暴露到前端。
+
+58. (单选题) 关于 wx.getUserInfo，下列说法正确的是?
+A. 是获取用户信息的推荐方式
+B. 已废弃，不推荐使用
+C. 每次调用都会弹出授权框
+D. 无需用户授权即可获取
+答案：B
+解析：wx.getUserInfo 已废弃，新版推荐使用 wx.getUserProfile 或 button open-type="chooseAvatar"。
+
+59. (单选题) 新版获取用户信息的方式要求是?
+A. 可以自动获取
+B. 需要用户主动触发
+C. 无需授权
+D. 只能在 onLoad 中获取
+答案：B
+解析：新版获取用户信息需要用户主动触发（如点击按钮），不能自动获取，保护用户隐私。
+
+60. (单选题) wx.authorize 的作用是?
+A. 获取用户信息
+B. 提前向用户发起授权请求
+C. 打开设置页面
+D. 取消用户授权
+答案：B
+解析：wx.authorize 提前发起授权请求，如 scope.userLocation、scope.camera 等。
+
+61. (单选题) 用户拒绝授权后，引导用户重新开启授权的方式是?
+A. wx.authorize
+B. wx.openSetting
+C. wx.getSetting
+D. wx.login
+答案：B
+解析：用户已拒绝授权后，需要引导用户去设置页面手动开启，使用 wx.openSetting。
+
+62. (单选题) 页面分享配置 onShareAppMessage 的定义位置是?
+A. app.js
+B. Page 中
+C. Component 中
+D. app.json
+答案：B
+解析：onShareAppMessage 需要在 Page 中定义，不定义则页面右上角不显示转发按钮。
+
+63. (单选题) 自定义组件的 JSON 配置中，必须设置的字段是?
+A. "page": true
+B. "component": true
+C. "usingComponents": {}
+D. "navigationBarTitleText"
+答案：B
+解析：组件的 JSON 必须设置 "component": true，标识这是一个组件。
+
+64. (单选题) 自定义组件使用哪个构造器定义?
+A. Page()
+B. Component()
+C. App()
+D. Behavior()
+答案：B
+解析：组件使用 Component 构造器，页面使用 Page 构造器，应用使用 App 构造器。
+
+65. (单选题) 组件的对外属性应该定义在?
+A. data 中
+B. properties 中
+C. methods 中
+D. observers 中
+答案：B
+解析：properties 定义组件的对外属性，用于接收父组件传递的数据。data 定义内部数据。
+
+66. (单选题) 组件向父组件传递数据使用的方法是?
+A. this.setData()
+B. this.triggerEvent()
+C. this.selectComponent()
+D. this.data
+答案：B
+解析：this.triggerEvent('eventName', data) 向父组件触发事件并传递数据。
+
+67. (单选题) 使用多个插槽时，需要在 options 中配置?
+A. multipleSlots: true
+B. multipleSlot: true
+C. slots: true
+D. multiSlot: true
+答案：A
+解析：使用多个插槽需要在 options 中配置 multipleSlots: true，默认只支持一个插槽。
+
+68. (单选题) 云开发中，获取数据库引用的方式是?
+A. wx.cloud.database()
+B. wx.cloud.db()
+C. wx.database()
+D. wx.db()
+答案：A
+解析：通过 wx.cloud.database() 获取数据库引用，然后使用 collection 操作数据。
+
+69. (单选题) 云数据库添加文档使用的方法是?
+A. collection.insert()
+B. collection.add()
+C. collection.create()
+D. collection.put()
+答案：B
+解析：collection.add({data: {}}) 添加一条数据到集合中。
+
+70. (单选题) 云数据库条件查询使用的方法是?
+A. collection.find()
+B. collection.where()
+C. collection.filter()
+D. collection.query()
+答案：B
+解析：collection.where({field: value}) 进行条件筛选查询。
+
+71. (单选题) 云数据库排序使用的方法是?
+A. collection.sort()
+B. collection.orderBy()
+C. collection.order()
+D. collection.arrange()
+答案：B
+解析：collection.orderBy(field, 'asc'/'desc') 按字段升序或降序排列。
+
+72. (单选题) 云存储上传文件使用的方法是?
+A. wx.cloud.upload()
+B. wx.cloud.uploadFile()
+C. wx.uploadFile()
+D. wx.cloud.saveFile()
+答案：B
+解析：wx.cloud.uploadFile({cloudPath, filePath}) 上传文件到云存储。
+
+73. (单选题) 云存储获取临时访问链接的方法是?
+A. wx.cloud.getFileURL()
+B. wx.cloud.getTempFileURL()
+C. wx.cloud.getDownloadURL()
+D. wx.cloud.getLink()
+答案：B
+解析：wx.cloud.getTempFileURL({fileList}) 获取文件的临时访问链接，有效期 5 分钟。
+
+74. (单选题) 云函数运行在哪个环境中?
+A. 浏览器环境
+B. 云端 Node.js 环境
+C. 客户端 Java 环境
+D. Python 环境
+答案：B
+解析：云函数运行在云端 Node.js 环境中，使用 wx-server-sdk。
+
+75. (单选题) 调用云函数使用的方法是?
+A. wx.cloud.call()
+B. wx.cloud.callFunction()
+C. wx.callFunction()
+D. wx.cloud.invoke()
+答案：B
+解析：wx.cloud.callFunction({name: 'functionName', data: {}}) 调用云函数。
+
+76. (单选题) 云调用相比传统方式的优势是?
+A. 需要手动获取 access_token
+B. 免鉴权，无需 access_token
+C. 只能在客户端使用
+D. 需要额外服务器
+答案：B
+解析：云调用免鉴权调用微信开放接口，无需获取和刷新 access_token，简化开发。
+
+77. (单选题) 小程序分包配置在 app.json 中的字段是?
+A. packages
+B. subPackages
+C. subpackages
+D. chunks
+答案：B
+解析：在 app.json 中通过 subPackages 配置分包，每个分包有 root 和 pages。
+
+78. (单选题) 单个分包/主包的大小限制是?
+A. 不超过 20M
+B. 不超过 2M
+C. 不超过 5M
+D. 不超过 10M
+答案：B
+解析：单个分包/主包大小不能超过 2M，整个小程序所有分包总共不超过 20M。
+
+79. (单选题) 关于 npm 包在小程序中的使用，下列说法正确的是?
+A. 安装后可直接使用，无需构建
+B. 安装后需要点击"工具→构建npm"
+C. 所有 npm 包都兼容小程序
+D. 不需要 package.json
+答案：B
+解析：小程序使用 npm 包需要安装后点击"工具→构建npm"，且需要小程序兼容的包。
+
+80. (单选题) 关于图片优化，下列说法错误的是?
+A. 使用 webp 格式可减小体积
+B. 使用 lazy-load 实现懒加载
+C. 雪碧图可以减少请求次数
+D. 所有图片都应该使用 base64 编码
+答案：D
+解析：base64 会增加代码体积，不适合大图。webp、懒加载、雪碧图、CDN 都是有效的图片优化手段。
+
+二、多选题（共60题）
+
+1. (多选题) 微信小程序相比原生 HTML5 开发的优势包括?
+A. 提供完整的开发框架和专门的微信开发者工具
+B. 能够无缝整合微信生态服务，如微信支付、微信登录
+C. 无需经过任何审核即可直接发布新版本
+D. 提供丰富的原生 API，如地理位置、云存储、消息推送
+答案：A、B、D
+解析：A、B、D 正确。C 错误，小程序更新需要经过微信官方审核，只是审核流程比传统应用商店更快。
+
+2. (多选题) 微信小程序版本管理包含的状态有?
+A. 开发版本
+B. 体验版本
+C. 审核版本
+D. 线上版本
+答案：A、B、C、D
+解析：四种状态：开发版本（开发者上传的最新代码）、体验版本（供体验者测试）、审核版本（提交审核中）、线上版本（已发布的正式版本）。
+
+3. (多选题) 关于微信小游戏的运营规范，下列说法正确的有?
+A. 游戏类目选择后不可修改为其他小程序类目
+B. 所有小游戏都可以自由开通虚拟道具支付
+C. 游戏名称不得包含违法违规、暴力、色情内容
+D. 需要增加适龄提示并实施未成年人防沉迷系统
+答案：A、C、D
+解析：A、C、D 正确。B 错误，并非所有小游戏都能开通虚拟道具支付，需要满足特定条件（如企业资质、版号等）。
+
+4. (多选题) 小程序应用生命周期包含哪些?
+A. onLaunch
+B. onShow
+C. onHide
+D. onError
+答案：A、B、C、D
+解析：四个应用生命周期：onLaunch（初始化完成）、onShow（启动/前台显示）、onHide（进入后台）、onError（发生错误）。
+
+5. (多选题) 关于 onLaunch 生命周期，下列说法正确的有?
+A. 小程序初始化完成时触发
+B. 全局只触发一次
+C. 适合获取用户信息、初始化数据
+D. 每次进入小程序都会触发
+答案：A、B、C
+解析：A、B、C 正确。D 错误，onShow 才是每次进入都会触发，onLaunch 只触发一次（除非小程序被销毁后重新打开）。
+
+6. (多选题) 关于 onShow 和 onHide，下列说法正确的有?
+A. onShow 在小程序启动时触发
+B. onShow 在从后台进入前台时触发
+C. onHide 在按 Home 键时触发
+D. onHide 在切换应用时触发
+答案：A、B、C、D
+解析：全部正确。onShow 在启动和从后台返回前台时触发；onHide 在按 Home 键、切换应用、锁屏等进入后台时触发。
+
+7. (多选题) 页面生命周期包含哪些?
+A. onLoad
+B. onShow
+C. onReady
+D. onUnload
+答案：A、B、C、D
+解析：五个页面生命周期：onLoad（加载）、onShow（显示）、onReady（渲染完成）、onHide（隐藏）、onUnload（卸载）。
+
+8. (多选题) 关于 onLoad 生命周期，下列说法正确的有?
+A. 页面加载时触发
+B. 只会调用一次
+C. 可以接收页面跳转参数
+D. 每次显示页面都触发
+答案：A、B、C
+解析：A、B、C 正确。D 错误，每次显示触发的是 onShow，onLoad 只在首次加载触发一次。
+
+9. (多选题) 关于 onReady 生命周期，下列说法正确的有?
+A. 页面初次渲染完成时触发
+B. 只会调用一次
+C. 在 onShow 之后触发
+D. 可以进行 DOM 操作
+答案：A、B、C、D
+解析：全部正确。onReady 在页面初次渲染完成时触发，此时 DOM 已准备好，可以进行节点操作。
+
+10. (多选题) 组件生命周期包含哪些?
+A. created
+B. attached
+C. ready
+D. detached
+答案：A、B、C、D
+解析：组件生命周期：created（创建）、attached（挂载）、ready（就绪）、moved（移动）、detached（卸载）、error（错误）。
+
+11. (多选题) 关于组件生命周期 created，下列说法正确的有?
+A. 组件实例刚被创建
+B. 还不能调用 setData
+C. 适合初始化组件内部数据
+D. 可以获取节点信息
+答案：A、B、C
+解析：A、B、C 正确。D 错误，created 时组件还未挂载，不能获取节点信息，ready 阶段才可以。
+
+12. (多选题) 关于组件生命周期 attached，下列说法正确的有?
+A. 组件进入页面节点树
+B. 可以调用 setData
+C. 适合请求数据
+D. 可以获取节点信息
+答案：A、B、C
+解析：A、B、C 正确。D 错误，attached 时布局可能还未完成，获取节点信息应在 ready 阶段。
+
+13. (多选题) 首次进入页面时的生命周期执行顺序正确的有?
+A. onLoad → onShow → onReady
+B. created → attached → ready
+C. onShow → onLoad → onReady
+D. attached → created → ready
+答案：A、B
+解析：A 是页面生命周期顺序，B 是组件生命周期顺序。C、D 顺序错误。
+
+14. (多选题) 跳转到新页面（wx.navigateTo）时，生命周期触发顺序正确的有?
+A. 当前页面 onHide
+B. 新页面 onLoad
+C. 新页面 onShow
+D. 新页面 onReady
+答案：A、B、C、D
+解析：wx.navigateTo 跳转时：当前页面 onHide → 新页面 onLoad → 新页面 onShow → 新页面 onReady。
+
+15. (多选题) 返回上一页（wx.navigateBack）时，生命周期触发顺序正确的有?
+A. 当前页面 onUnload
+B. 上一页面 onShow
+C. 当前页面 onHide
+D. 上一页面 onLoad
+答案：A、B
+解析：wx.navigateBack 时：当前页面 onUnload → 上一页面 onShow。不会触发 onLoad 和 onHide。
+
+16. (多选题) Mustache 语法支持的操作包括?
+A. 文本渲染
+B. 属性绑定
+C. 三元运算
+D. 算术运算
+答案：A、B、C、D
+解析：全部支持。还包括逻辑运算、字符串拼接等。注意属性绑定需要在双引号内。
+
+17. (多选题) 关于 wx:if 和 hidden，下列说法正确的有?
+A. wx:if 条件不满足时组件不渲染
+B. hidden 通过 display:none 控制
+C. wx:if 适合频繁切换
+D. hidden 适合频繁切换
+答案：A、B、D
+解析：A、B、D 正确。C 错误，wx:if 适合不频繁切换（如权限判断），hidden 适合频繁切换（如 tab 切换）。
+
+18. (多选题) 关于 wx:for 列表渲染，下列说法正确的有?
+A. 默认变量 item 表示当前项
+B. 默认变量 index 表示当前索引
+C. 可以使用 wx:for-item 自定义变量名
+D. 可以使用 wx:for-index 自定义索引名
+答案：A、B、C、D
+解析：全部正确。wx:for 默认提供 item 和 index，支持自定义变量名，建议设置 wx:key 提高性能。
+
+19. (多选题) 关于 setData 的使用规范，下列说法正确的有?
+A. 必须使用 setData 更新数据
+B. 直接修改 this.data 不会触发视图更新
+C. setData 是异步操作
+D. 支持数据路径写法
+答案：A、B、C、D
+解析：全部正确。setData 是异步的，支持数据路径，多次调用建议合并为一次提高性能。
+
+20. (多选题) 关于事件绑定，下列说法正确的有?
+A. bindtap 不阻止冒泡
+B. catchtap 阻止冒泡
+C. bindinput 用于输入事件
+D. bindsubmit 用于表单提交事件
+答案：A、B、C、D
+解析：全部正确。bind 系列不阻止冒泡，catch 系列阻止冒泡。还有 bindchange、bindscroll 等。
+
+21. (多选题) 事件对象包含的属性有?
+A. target
+B. currentTarget
+C. detail
+D. timeStamp
+答案：A、B、C、D
+解析：事件对象包含 target（触发源头）、currentTarget（绑定组件）、detail（自定义数据）、touches（触摸点）、timeStamp（时间戳）等。
+
+22. (多选题) 关于事件冒泡，下列说法正确的有?
+A. bind 不阻止冒泡
+B. catch 阻止冒泡
+C. capture-bind 在捕获阶段绑定
+D. capture-catch 在捕获阶段绑定并阻止冒泡
+答案：A、B、C、D
+解析：全部正确。事件传播顺序：捕获阶段（从外到内）→ 目标阶段 → 冒泡阶段（从内到外）。
+
+23. (多选题) 页面导航的方式包括?
+A. navigator 组件
+B. wx.navigateTo API
+C. wx.redirectTo API
+D. wx.switchTab API
+答案：A、B、C、D
+解析：全部正确。还有 wx.reLaunch、wx.navigateBack 等导航方式。
+
+24. (多选题) 关于 navigator 组件的 open-type，支持的有?
+A. navigate
+B. redirect
+C. switchTab
+D. reLaunch
+答案：A、B、C、D
+解析：全部支持。还有 navigateBack，对应 API 跳转功能相同。
+
+25. (多选题) 关于页面栈，下列说法正确的有?
+A. wx.navigateTo 会增加页面栈
+B. 页面栈最多10层
+C. wx.redirectTo 不会增加页面栈
+D. wx.switchTab 会关闭其他非 tabBar 页面
+答案：A、B、C、D
+解析：全部正确。页面栈最多10层，超过会报错。redirect 替换当前页面，switchTab 跳转到 tabBar 页面。
+
+26. (多选题) tabBar 配置可以设置的属性有?
+A. color
+B. selectedColor
+C. backgroundColor
+D. borderStyle
+答案：A、B、C、D
+解析：全部正确。还有 list 数组，每个项包含 pagePath、text、iconPath、selectedIconPath。
+
+27. (多选题) 页面间传参的方式包括?
+A. URL 传参
+B. app.globalData
+C. 本地存储
+D. EventChannel
+答案：A、B、C、D
+解析：全部正确。URL 传参适合简单数据，globalData 适合跨页面共享，本地存储适合持久化，EventChannel 适合页面间复杂交互。
+
+28. (多选题) 关于 wx.request，下列说法正确的有?
+A. 必须使用 HTTPS
+B. 需要在后台配置合法域名
+C. header 中不能设置 Referer
+D. 最多10个并发请求
+答案：A、B、C、D
+解析：全部正确。wx.request 是小程序网络请求的主要方式，默认和最大超时时间都是 60s。
+
+29. (多选题) 域名配置的类型包括?
+A. request 合法域名
+B. uploadFile 合法域名
+C. downloadFile 合法域名
+D. websocket 合法域名
+答案：A、B、C
+解析：A、B、C 正确。小程序后台可配置 request、uploadFile、downloadFile、socket（websocket）合法域名。
+
+30. (多选题) 关于请求封装，下列说法正确的有?
+A. 统一处理请求拦截，如添加 token
+B. 统一处理响应拦截，如处理错误码
+C. 使用 Promise 封装支持 async/await
+D. 不需要处理错误情况
+答案：A、B、C
+解析：A、B、C 正确。D 错误，请求封装需要统一处理网络错误、服务器错误、业务错误等情况。
+
+31. (多选题) 本地存储的同步 API 包括?
+A. wx.setStorageSync
+B. wx.getStorageSync
+C. wx.removeStorageSync
+D. wx.clearStorageSync
+答案：A、B、C、D
+解析：全部正确。Sync 结尾的是同步 API，会阻塞其他任务，适合数据量小的场景。
+
+32. (多选题) 本地存储的异步 API 包括?
+A. wx.setStorage
+B. wx.getStorage
+C. wx.removeStorage
+D. wx.clearStorage
+答案：A、B、C、D
+解析：全部正确。异步 API 通过 success、fail、complete 回调处理结果，不会阻塞其他任务。
+
+33. (多选题) 本地存储的使用场景包括?
+A. 用户偏好设置
+B. 临时数据缓存
+C. 离线数据存储
+D. 登录状态存储
+答案：A、B、C、D
+解析：全部正确。偏好设置适合同步 API，临时缓存和离线数据适合异步 API，登录状态需注意安全性。
+
+34. (多选题) 关于本地存储限制，下列说法正确的有?
+A. 单个 key 最大 1MB
+B. 总存储上限 10MB
+C. 支持存储函数类型
+D. 支持 JSON 序列化的对象
+答案：A、B、D
+解析：A、B、D 正确。C 错误，不支持函数、Symbol、循环引用等无法序列化的数据。
+
+35. (多选题) 关于 rpx 单位，下列说法正确的有?
+A. 规定屏幕宽度为 750rpx
+B. 自动适配不同屏幕尺寸
+C. 设计稿 750px 时，1rpx = 1px
+D. 设计稿 375px 时，1rpx = 0.5px
+答案：A、B、C、D
+解析：全部正确。rpx 是小程序特有的响应式像素单位，实现自适应布局。
+
+36. (多选题) 关于 rpx 的使用建议，下列说法正确的有?
+A. 布局使用 rpx
+B. 边框建议使用 px
+C. 字体建议使用 px
+D. 所有元素都使用 rpx
+答案：A、B、C
+解析：A、B、C 正确。D 错误，边框和字体建议使用 px，避免在不同屏幕上显示不一致。
+
+37. (多选题) swiper 组件支持的属性有?
+A. indicator-dots
+B. autoplay
+C. interval
+D. circular
+答案：A、B、C、D
+解析：全部正确。还有 duration（动画时长）、current（当前索引）、bindchange（切换事件）等。
+
+38. (多选题) 关于 swiper-item，下列说法正确的有?
+A. 只能放在 swiper 中使用
+B. 宽高自动设置为 100%
+C. 可以嵌套 image、view 等组件
+D. 可以单独使用
+答案：A、B、C
+解析：A、B、C 正确。D 错误，swiper-item 是 swiper 的子组件，不能单独使用。
+
+39. (多选题) 小程序登录流程包括?
+A. 前端 wx.login 获取 code
+B. 后端用 code 换取 session_key 和 openid
+C. 前端直接获取 openid
+D. 后端返回自定义登录态
+答案：A、B、D
+解析：A、B、D 正确。C 错误，openid 需要后端调用微信接口换取，前端不能直接获取。
+
+40. (多选题) 关于用户信息获取，下列说法正确的有?
+A. wx.getUserInfo 已废弃
+B. wx.getUserProfile 每次调用都会弹出授权框
+C. 需要用户主动触发
+D. 可以自动获取用户信息
+答案：A、B、C
+解析：A、B、C 正确。D 错误，新版获取用户信息需要用户主动触发，不能自动获取。
+
+41. (多选题) 常用的用户授权 scope 包括?
+A. scope.userInfo
+B. scope.userLocation
+C. scope.camera
+D. scope.record
+答案：A、B、C、D
+解析：全部正确。分别对应用户信息、地理位置、摄像头、录音等授权。
+
+42. (多选题) 关于页面分享 onShareAppMessage，下列说法正确的有?
+A. 需要在 Page 中定义
+B. 可以设置标题、路径、图片
+C. 不定义则页面不显示转发按钮
+D. 分享图片建议使用 5:4 比例
+答案：A、B、C、D
+解析：全部正确。分享图片建议宽度 500px，5:4 比例，可以是本地或网络图片。
+
+43. (多选题) 自定义组件的文件包括?
+A. .wxml
+B. .wxss
+C. .js
+D. .json
+答案：A、B、C、D
+解析：全部正确。组件也需要四个文件，JSON 中必须设置 "component": true。
+
+44. (多选题) 关于 properties，下列说法正确的有?
+A. 用于接收父组件传递的数据
+B. 支持 type 类型检查
+C. 支持 value 默认值
+D. 支持 observer 变化监听
+答案：A、B、C、D
+解析：全部正确。properties 类似 React 的 props，支持类型检查、默认值和变化监听。
+
+45. (多选题) 关于组件的 data 和 properties，下列说法正确的有?
+A. data 是组件内部数据
+B. properties 是外部传入数据
+C. 两者都使用 setData 更新
+D. data 可以直接修改
+答案：A、B、C
+解析：A、B、C 正确。D 错误，data 也需要使用 setData 更新，直接修改不会触发视图更新。
+
+46. (多选题) 组件通信的方式包括?
+A. 父传子通过 properties
+B. 子传父通过 triggerEvent
+C. 默认插槽
+D. 具名插槽
+答案：A、B、C、D
+解析：全部正确。父传子用 properties，子传父用 triggerEvent，插槽实现内容分发。
+
+47. (多选题) 云开发的组成部分包括?
+A. 云函数
+B. 云数据库
+C. 云存储
+D. 云调用
+答案：A、B、C、D
+解析：全部正确。云开发四大组成：云函数、云数据库、云存储、云调用。
+
+48. (多选题) 云开发的优势包括?
+A. 无需搭建服务器
+B. 自动扩容
+C. 前端可以直接操作数据库
+D. 数据安全有保障
+答案：A、B、C、D
+解析：全部正确。云开发减少后端工作量，微信官方提供安全保障，支持权限控制。
+
+49. (多选题) 云数据库的特点包括?
+A. NoSQL 文档型数据库
+B. 数据以 JSON 格式存储
+C. 支持实时数据推送
+D. 支持细粒度权限控制
+答案：A、B、C、D
+解析：全部正确。云数据库类似 MongoDB，自动扩容，支持实时推送和权限控制。
+
+50. (多选题) 云数据库的操作方法包括?
+A. collection.add()
+B. collection.get()
+C. collection.update()
+D. collection.remove()
+答案：A、B、C、D
+解析：全部正确。还有 where（条件查询）、limit（限制数量）、skip（跳过）、orderBy（排序）等。
+
+51. (多选题) 云数据库的权限类型包括?
+A. 所有用户可读，仅创建者可写
+B. 仅创建者可读写
+C. 所有用户可读写
+D. 仅管理员可读写
+答案：A、B、C、D
+解析：全部正确。四种权限模式，还可以编写自定义安全规则实现更细粒度控制。
+
+52. (多选题) 云存储的操作方法包括?
+A. wx.cloud.uploadFile
+B. wx.cloud.downloadFile
+C. wx.cloud.getTempFileURL
+D. wx.cloud.deleteFile
+答案：A、B、C、D
+解析：全部正确。云存储支持上传、下载、获取临时链接、删除等操作。
+
+53. (多选题) 关于云存储，下列说法正确的有?
+A. 单个文件最大 10MB
+B. 免费空间 5GB
+C. 临时链接有效期 5 分钟
+D. 支持 CDN 加速
+答案：A、B、C、D
+解析：全部正确。云存储高可用高可靠，支持 CDN 全球加速访问。
+
+54. (多选题) 云函数的特点包括?
+A. 运行在云端 Node.js 环境
+B. 无需管理服务器
+C. 自动扩容
+D. 按调用次数计费
+答案：A、B、C、D
+解析：全部正确。云函数使用 Node.js，微信自动管理，每月有免费额度。
+
+55. (多选题) 云函数的优势包括?
+A. 敏感信息存储在云端不暴露到前端
+B. 在云端处理敏感操作
+C. 在云端验证数据安全
+D. 处理复杂业务逻辑
+答案：A、B、C、D
+解析：全部正确。云函数提高安全性，适合处理支付、批量操作、数据统计等。
+
+56. (多选题) 云调用的优势包括?
+A. 免鉴权，无需 access_token
+B. 简化开发流程
+C. 提高安全性
+D. 降低成本
+答案：A、B、C、D
+解析：全部正确。云调用直接在云函数中调用微信开放接口，微信自动处理鉴权。
+
+57. (多选题) 云调用支持的接口包括?
+A. 消息发送（subscribeMessage.send）
+B. 内容安全（security.imgSecCheck）
+C. 图像处理
+D. 数据分析
+答案：A、B、C、D
+解析：全部正确。云调用支持消息发送、内容安全、图像处理、数据分析等接口。
+
+58. (多选题) 性能优化中，分包加载的好处包括?
+A. 减少主包大小
+B. 按需加载
+C. 提高首次加载速度
+D. 主包/分包不超过 2M
+答案：A、B、C
+解析：A、B、C 正确。D 是分包限制条件，不是好处。整个小程序所有分包总共不超过 20M。
+
+59. (多选题) 性能优化中，图片优化的方法包括?
+A. 使用 webp 格式
+B. 图片懒加载
+C. 图片压缩
+D. 使用雪碧图
+答案：A、B、C、D
+解析：全部正确。还有 CDN 加速、控制图片尺寸等方法。
+
+60. (多选题) 性能优化中，代码优化的方法包括?
+A. 减少 setData 调用次数
+B. 使用防抖节流
+C. 避免深层嵌套
+D. 使用纯数据字段
+答案：A、B、C、D
+解析：全部正确。合并 setData、防抖节流、减少 DOM 层级、pureDataPattern 都是有效手段。
