@@ -1,7 +1,7 @@
-{
-  "name": "Steam刷题管家",
-  "short_name": "刷题管家",
-  "description": "高效的刷题学习工具，帮助你掌握知识点",
+﻿{
+  "name": "Quiz Master",
+  "short_name": "Quiz",
+  "description": "Efficient quiz learning tool",
   "start_url": "/shuati/",
   "display": "standalone",
   "background_color": "#f1f5f9",

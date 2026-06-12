@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef, lazy, Suspense, memo } from 'react';
+import { useState, useEffect, useCallback, useRef, lazy } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { QuestionCard } from '../components/QuestionCard';
 import { ProgressPanel } from '../components/ProgressPanel';
@@ -7,21 +7,20 @@ import { ExplanationPanel } from '../components/ExplanationPanel';
 import { QuizPageSkeleton } from '../components/Skeleton';
 import { Empty } from '../components/Empty';
 import { parseQuestionFile, Question, QuestionGroup, shuffleArray } from '../utils/questionParser';
-import { saveWrongQuestion, getWrongQuestions, removeWrongQuestion, clearWrongQuestions, convertToQuestion, recordCorrectAnswer } from '../utils/wrongQuestionManager';
+import { saveWrongQuestion, getWrongQuestions, clearWrongQuestions, convertToQuestion, recordCorrectAnswer } from '../utils/wrongQuestionManager';
 import { getBookmarks } from '../utils/bookmarkManager';
 import { QUIZ_FILES, getQuizUrl, TIKU_PATH } from '../utils/quizConfig';
-import { 
-  saveQuizProgress, 
-  getQuizProgress, 
-  clearQuizProgress, 
-  hasQuizProgress, 
-  QuizProgress as StoredQuizProgress, 
+import {
+  saveQuizProgress,
+  clearQuizProgress,
+  QuizProgress as StoredQuizProgress,
   AnswerRecord,
   shouldCleanup,
-  clearExpiredProgress,
-  getIncompleteProgressList,
-  getProgressKey
+  clearExpiredProgress
 } from '../utils/progressManager';
+import { useExamTimer } from '../hooks/useExamTimer';
+import { useProgress } from '../hooks/useProgress';
+import { useSwipe } from '../hooks/useSwipe';
 
 const TopBar = lazy(() => import('../components/TopBar').then(module => ({ default: module.TopBar })));
 const BottomNav = lazy(() => import('../components/BottomNav').then(module => ({ default: module.BottomNav })));
@@ -101,9 +100,6 @@ export function QuizPage() {
   const [immediateFeedback, setImmediateFeedback] = useState(false);
   const [examQuestions, setExamQuestions] = useState<Question[]>([]);
   const [isExamMode, setIsExamMode] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(0);
-  const [examStarted, setExamStarted] = useState(false);
-  const [examCompleted, setExamCompleted] = useState(false);
   const [selectedQuizFiles, setSelectedQuizFiles] = useState<string[]>([]);
   const [examConfig, setExamConfig] = useState({
     singleCount: '10',
@@ -121,32 +117,16 @@ export function QuizPage() {
   const [startTime, setStartTime] = useState(Date.now());
   const [answerRecords, setAnswerRecords] = useState<AnswerRecord[]>([]);
   const [bookmarkCount, setBookmarkCount] = useState(0);
-  const swipeOffsetRef = useRef(0);
-  
-  // 触摸滑动相关
-  const touchStartX = useRef(0);
-  const touchStartY = useRef(0);
-  const touchEndX = useRef(0);
-  const touchEndY = useRef(0);
-  const isSwiping = useRef(false);
-  const mainRef = useRef<HTMLDivElement>(null);
+
+  // 自定义 Hooks
+  const { timeLeft, setTimeLeft, examStarted, setExamStarted, examCompleted, setExamCompleted, handleSubmitRef, formatTime } = useExamTimer();
+  const { currentQuizId, buildProgress } = useProgress({
+    questions, currentQuestionIndex, answerRecords, score, startTime, showResult,
+    isExamMode, isMixedMode, isWrongMode, currentQuiz,
+  });
 
   // 竞态处理 - 跟踪最新的题库加载请求
   const latestQuizRequestRef = useRef<string>('');
-
-  const buildProgress = (completed: boolean): StoredQuizProgress => ({
-    quizId: isExamMode ? 'exam_mode' : isMixedMode ? 'mixed_mode' : isWrongMode ? 'wrong_mode' : currentQuiz,
-    currentQuestionIndex,
-    questions,
-    answerRecords,
-    score,
-    startTime,
-    lastUpdateTime: Date.now(),
-    completed,
-    mode: isExamMode ? 'exam' : isMixedMode ? 'mixed' : isWrongMode ? 'wrong' : 'practice'
-  });
-
-  const currentQuizId = isExamMode ? 'exam_mode' : isMixedMode ? 'mixed_mode' : isWrongMode ? 'wrong_mode' : currentQuiz;
 
   useEffect(() => {
     if (shouldCleanup()) {
@@ -235,45 +215,6 @@ export function QuizPage() {
     }
   }, [questions.length]);
 
-  useEffect(() => {
-    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-      if (questions.length > 0 && !showResult) {
-        const progress = buildProgress(false);
-        
-        try {
-          localStorage.setItem(getProgressKey(progress.quizId), JSON.stringify(progress));
-        } catch (error) {
-          console.error('页面关闭时保存进度失败:', error);
-        }
-      }
-    };
-
-    const handleVisibilityChange = () => {
-      if (document.hidden && questions.length > 0 && !showResult) {
-        const progress: StoredQuizProgress = {
-          quizId: isExamMode ? 'exam_mode' : isMixedMode ? 'mixed_mode' : isWrongMode ? 'wrong_mode' : currentQuiz,
-          currentQuestionIndex,
-          questions,
-          answerRecords,
-          score,
-          startTime,
-          lastUpdateTime: Date.now(),
-          completed: false,
-          mode: isExamMode ? 'exam' : isMixedMode ? 'mixed' : isWrongMode ? 'wrong' : 'practice'
-        };
-        saveQuizProgress(progress);
-      }
-    };
-
-    window.addEventListener('beforeunload', handleBeforeUnload);
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-    };
-  }, [questions, currentQuestionIndex, answerRecords, score, startTime, showResult, isExamMode, isMixedMode, isWrongMode, currentQuiz]);
-
   const updateWrongQuestionsCount = () => {
     const wrongQs = getWrongQuestions();
     setWrongQuestionsCount(wrongQs.length);
@@ -283,24 +224,6 @@ export function QuizPage() {
     const bookmarks = getBookmarks();
     setBookmarkCount(bookmarks.length);
   };
-
-  useEffect(() => {
-    let timer: number | undefined;
-    if (examStarted && !examCompleted) {
-      timer = window.setInterval(() => {
-        setTimeLeft(prev => {
-          if (prev <= 1) {
-            handleSubmitRef.current();
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-    }
-    return () => {
-      if (timer) clearInterval(timer);
-    };
-  }, [examStarted, examCompleted]);
 
   const loadQuiz = useCallback(async (quizFile: string) => {
     // 竞态处理：记录当前请求的题库文件
@@ -312,7 +235,7 @@ export function QuizPage() {
       setLoading(true);
       
       console.log(`1. 发起请求: /tiku/${quizFile}`);
-      const response = await fetch(`/shuati/tiku/${encodeURIComponent(quizFile)}`);
+      const response = await fetch(getQuizUrl(quizFile));
       
       if (!response.ok) {
         throw new Error(`HTTP错误: ${response.status}`);
@@ -581,18 +504,6 @@ export function QuizPage() {
     });
   };
 
-  // 自动保存进度（防抖，避免频繁写入 localStorage）
-  const autoSaveRef = useRef<number>(0);
-  useEffect(() => {
-    if (questions.length > 0 && !showResult) {
-      clearTimeout(autoSaveRef.current);
-      autoSaveRef.current = window.setTimeout(() => {
-        saveQuizProgress(buildProgress(false));
-      }, 500);
-    }
-    return () => clearTimeout(autoSaveRef.current);
-  }, [currentQuestionIndex, questions, answerRecords, score, startTime]);
-
   const handlePrev = () => {
     if (currentQuestionIndex > 0) {
       setCurrentQuestionIndex(currentQuestionIndex - 1);
@@ -666,7 +577,7 @@ export function QuizPage() {
     setCorrectAnswers(correct);
     setAnswerRecords(newRecords);
     
-    saveQuizProgress(buildProgress(true));
+    saveQuizProgress(buildProgress(true, { answerRecords: newRecords, score: earnedScore }));
 
     if (isExamMode) {
       setExamCompleted(true);
@@ -677,8 +588,7 @@ export function QuizPage() {
     navigate(`/result/${encodeURIComponent(currentQuizId)}`);
   };
 
-  const handleSubmitRef = useRef(handleSubmit);
-
+  // 同步 handleSubmit 到 timer ref
   useEffect(() => {
     handleSubmitRef.current = handleSubmit;
   }, [handleSubmit]);
@@ -785,12 +695,6 @@ export function QuizPage() {
     loadQuiz(currentQuiz);
   };
 
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-  };
-
   const answeredQuestions = new Set(
     questions
       .map((q, idx) => (q.userAnswer && q.userAnswer.length > 0 ? idx : -1))
@@ -831,55 +735,8 @@ export function QuizPage() {
     );
   }
 
-  // 触摸滑动处理函数
-  const handleTouchStart = (e: React.TouchEvent) => {
-    touchStartX.current = e.touches[0].clientX;
-    touchStartY.current = e.touches[0].clientY;
-    isSwiping.current = false;
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    touchEndX.current = e.touches[0].clientX;
-    touchEndY.current = e.touches[0].clientY;
-    
-    const deltaX = touchEndX.current - touchStartX.current;
-    const deltaY = touchEndY.current - touchStartY.current;
-    
-    // 如果水平移动距离大于垂直移动距离，认为是横向滑动
-    if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 10) {
-      isSwiping.current = true;
-      swipeOffsetRef.current = deltaX * 0.3;
-      if (mainRef.current) {
-        mainRef.current.style.transform = `translateX(${deltaX * 0.3}px)`;
-      }
-    }
-  };
-
-  const handleTouchEnd = () => {
-    if (!isSwiping.current) {
-      swipeOffsetRef.current = 0;
-      if (mainRef.current) {
-        mainRef.current.style.transform = '';
-      }
-      return;
-    }
-    
-    const deltaX = touchEndX.current - touchStartX.current;
-    
-    if (deltaX > 50) {
-      // 向右滑动，上一题
-      handlePrev();
-    } else if (deltaX < -50) {
-      // 向左滑动，下一题
-      handleNext();
-    }
-    
-    swipeOffsetRef.current = 0;
-    if (mainRef.current) {
-      mainRef.current.style.transform = '';
-    }
-    isSwiping.current = false;
-  };
+  // 触摸滑动 Hook
+  const { mainRef, handleTouchStart, handleTouchMove, handleTouchEnd } = useSwipe({ onPrev: handlePrev, onNext: handleNext });
 
   return (
     <div className="min-h-screen relative overflow-hidden">
@@ -1603,7 +1460,8 @@ export function QuizPage() {
       )}
 
       {isMixedMode && (
-        <main 
+        <main
+          ref={mainRef}
           className="max-w-6xl mx-auto px-3 sm:px-4 py-4 sm:py-6 touch-pan-y pt-24 sm:pt-28"
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
@@ -1653,7 +1511,8 @@ export function QuizPage() {
       )}
 
       {isWrongMode && (
-        <main 
+        <main
+          ref={mainRef}
           className="max-w-6xl mx-auto px-3 sm:px-4 py-4 sm:py-6 touch-pan-y pt-24 sm:pt-28"
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
@@ -1726,7 +1585,8 @@ export function QuizPage() {
       )}
 
       {(mode === 'practice' && !isExamMode && !isMixedMode && !isWrongMode) && (
-        <main 
+        <main
+          ref={mainRef}
           className="max-w-6xl mx-auto px-3 sm:px-4 py-4 sm:py-6 touch-pan-y pt-24 sm:pt-28"
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}

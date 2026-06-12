@@ -1,6 +1,5 @@
 import { memo } from 'react';
 import { Question } from '../utils/questionParser';
-import { renderTextWithCode } from '../lib/utils';
 
 interface ExplanationPanelProps {
   question: Question;
@@ -14,6 +13,24 @@ export const ExplanationPanel = memo(function ExplanationPanel({
   if (!showResult || !question.explanation || question.explanation.trim() === '') {
     return null;
   }
+
+  const renderTextWithCode = (text: string) => {
+    const parts = text.split(/(`[^`]+`)/g);
+    return parts.map((part, idx) => {
+      if (part.startsWith('`') && part.endsWith('`')) {
+        const code = part.slice(1, -1);
+        return (
+          <code
+            key={idx}
+            className="font-mono text-sm px-1.5 py-0.5 rounded bg-gray-100 text-gray-700"
+          >
+            {code}
+          </code>
+        );
+      }
+      return <span key={idx}>{part}</span>;
+    });
+  };
 
   return (
     <div className="bg-white/90 backdrop-blur-sm rounded-xl p-4 shadow-sm border border-indigo-100/50 mb-4">
