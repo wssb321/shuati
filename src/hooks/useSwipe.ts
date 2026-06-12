@@ -1,11 +1,11 @@
-import { useRef, useCallback } from 'react';
+import { useRef, useCallback, useEffect } from 'react';
 
 interface UseSwipeParams {
-  onPrev: () => void;
-  onNext: () => void;
+  onPrev?: () => void;
+  onNext?: () => void;
 }
 
-export function useSwipe({ onPrev, onNext }: UseSwipeParams) {
+export function useSwipe({ onPrev, onNext }: UseSwipeParams = {}) {
   const swipeOffsetRef = useRef(0);
   const touchStartX = useRef(0);
   const touchStartY = useRef(0);
@@ -13,6 +13,16 @@ export function useSwipe({ onPrev, onNext }: UseSwipeParams) {
   const touchEndY = useRef(0);
   const isSwiping = useRef(false);
   const mainRef = useRef<HTMLDivElement>(null);
+  
+  // 使用 ref 存储回调，避免闭包问题
+  const onPrevRef = useRef(onPrev || (() => {}));
+  const onNextRef = useRef(onNext || (() => {}));
+  
+  // 动态更新回调
+  useEffect(() => {
+    if (onPrev) onPrevRef.current = onPrev;
+    if (onNext) onNextRef.current = onNext;
+  }, [onPrev, onNext]);
 
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
@@ -48,9 +58,9 @@ export function useSwipe({ onPrev, onNext }: UseSwipeParams) {
     const deltaX = touchEndX.current - touchStartX.current;
 
     if (deltaX > 50) {
-      onPrev();
+      onPrevRef.current();
     } else if (deltaX < -50) {
-      onNext();
+      onNextRef.current();
     }
 
     swipeOffsetRef.current = 0;
@@ -58,12 +68,19 @@ export function useSwipe({ onPrev, onNext }: UseSwipeParams) {
       mainRef.current.style.transform = '';
     }
     isSwiping.current = false;
-  }, [onPrev, onNext]);
+  }, []);
+
+  // 更新回调的方法
+  const setCallbacks = useCallback((callbacks: { onPrev?: () => void; onNext?: () => void }) => {
+    if (callbacks.onPrev) onPrevRef.current = callbacks.onPrev;
+    if (callbacks.onNext) onNextRef.current = callbacks.onNext;
+  }, []);
 
   return {
     mainRef,
     handleTouchStart,
     handleTouchMove,
     handleTouchEnd,
+    setCallbacks,
   };
 }

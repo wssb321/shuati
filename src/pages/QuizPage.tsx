@@ -128,6 +128,9 @@ export function QuizPage() {
   // 竞态处理 - 跟踪最新的题库加载请求
   const latestQuizRequestRef = useRef<string>('');
 
+  // 触摸滑动 Hook - 必须在所有条件返回之前调用
+  const { mainRef, handleTouchStart, handleTouchMove, handleTouchEnd, setCallbacks } = useSwipe();
+
   useEffect(() => {
     if (shouldCleanup()) {
       clearExpiredProgress();
@@ -518,6 +521,11 @@ export function QuizPage() {
     }
   };
 
+  // 更新滑动回调
+  useEffect(() => {
+    setCallbacks({ onPrev: handlePrev, onNext: handleNext });
+  }, [handlePrev, handleNext, setCallbacks]);
+
   const handleSelectQuestion = (index: number) => {
     setCurrentQuestionIndex(index);
     setShowResult(false);
@@ -734,9 +742,6 @@ export function QuizPage() {
       </div>
     );
   }
-
-  // 触摸滑动 Hook
-  const { mainRef, handleTouchStart, handleTouchMove, handleTouchEnd } = useSwipe({ onPrev: handlePrev, onNext: handleNext });
 
   return (
     <div className="min-h-screen relative overflow-hidden">
